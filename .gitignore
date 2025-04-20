@@ -1,0 +1,8 @@
+node_modules/
+.venv/
+.millennium/
+build/
+!bun.lockb
+public/achievements.css.map
+public/achievements.css
+._extensions/
