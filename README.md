@@ -1,11 +1,12 @@
-# Achievement groups plugin for Millennium
+# Extendium
 
-This plugin ports the achievement groups and many other features of the [SteamHunters website](https://steamhunters.com/) right into your Steam client using Millennium.
+A Millennium plugin that adds chrome extensions support to the steam client
+> [!IMPORTANT]
+> This plugin is still in development and will not work as expected
+> The README is not up to date or correct
 
 ## Features
-- Achievement groups based on updates and dlc from [SteamHunters.com](https://steamhunters.com/)
-- Achievement points
-- A better achievements screen (that also works in the steam overlay)
+- TODO
 
 |           **Main interface**             |                **Groups**                 |
 |:----------------------------------------:|:-----------------------------------------:|
@@ -18,20 +19,15 @@ This plugin ports the achievement groups and many other features of the [SteamHu
 
 ## Installation
 1. Ensure you have Millennium installed on your Steam client
-2. Download the [latest release](https://github.com/tddebart/SteamHunter-plugin/releases/latest) of this plugin from GitHub or from the [Steambrew](https://steambrew.app/plugins) website
+2. Download the [latest release](https://github.com/BossSloth/Extendium/releases/latest) of this plugin from GitHub or from the [Steambrew](https://steambrew.app/plugins) website
 3. Place the plugin files in your Millennium plugins directory (should be a plugins folder in your Steam client directory)
 4. Restart your Steam client
-5. Enable the Achievement Groups plugin in the Millennium plugin menu
-6. Right click steam on your taskbar and Click "Exit Steam" to make sure the plugin is fully loaded
-7. Startup steam
-
+5. Enable the Extendium plugin in the Millennium plugin menu
+6. Save changes at the top of the Millennium plugin menu and restart Steam
 
 ## Usage
 
 Once installed it should just work out of the box.
-<br>
-To see if the plugin is working click the View my achievements button on a game page and see that there is a new tab called `ACHIEVEMENT GROUPS`.
-![Main interface](images/main-view.png)
 
 ## Contributing
 
@@ -48,11 +44,6 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 
 > Note: `bun dev` will only watch for changes in the webkit and frontend folder and the scss file, to reload the plugin just press `F5` in the steam client to reload
 > For changes to the backend, you will need to fully restart the Steam client.
-
-## Special thanks
-
-- [SteamHunters website and their API](https://steamhunters.com/)
-- [Millennium](https://github.com/shdwmtr/millennium)
 
 ## License
 
