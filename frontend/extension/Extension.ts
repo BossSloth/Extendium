@@ -1,16 +1,23 @@
-/* eslint-disable max-classes-per-file */
+import { Action } from './Action';
 import { Contexts } from './Contexts';
+import { Locale } from './Locale';
 import { RuntimeEmulator } from './Messaging';
 
 export class Extension {
   public readonly action: Action;
   public readonly runtimeEmulator: RuntimeEmulator;
   public readonly contexts: Contexts;
+  public readonly locale: Locale;
 
   constructor(readonly manifest: chrome.runtime.ManifestV3, readonly url: string) {
     this.action = new Action(this);
     this.runtimeEmulator = new RuntimeEmulator(this);
     this.contexts = new Contexts();
+    this.locale = new Locale(this);
+  }
+
+  public async init(): Promise<void> {
+    await this.locale.initLocale();
   }
 
   /**
@@ -33,42 +40,12 @@ export class Extension {
   public getBackgroundUrl(): string | undefined {
     return this.getFileUrl(this.manifest.background?.service_worker);
   }
-}
 
-export class Action {
-  constructor(readonly parent: Extension) {
+  public getName(): string {
+    return this.manifest.name;
   }
 
-  public getPopupUrl(): string | undefined {
-    return this.parent.getFileUrl(this.parent.manifest.action?.default_popup);
-  }
-
-  public getTitle(): string | undefined {
-    return this.parent.manifest.action?.default_title ?? this.parent.manifest.name;
-  }
-
-  public getIconUrl(): string | undefined {
-    if (this.parent.manifest.action?.default_icon === undefined) {
-      return undefined;
-    }
-
-    const defaultIcon = this.parent.manifest.action.default_icon;
-    if (typeof defaultIcon === 'string') {
-      return this.parent.getFileUrl(defaultIcon);
-    }
-
-    const iconPathKey = Object.keys(defaultIcon)[0];
-
-    if (iconPathKey === undefined) {
-      return undefined;
-    }
-
-    const iconPath = defaultIcon[Number.parseInt(iconPathKey)];
-
-    if (iconPath === undefined) {
-      return undefined;
-    }
-
-    return this.parent.getFileUrl(iconPath);
+  public getVersion(): string {
+    return this.manifest.version;
   }
 }

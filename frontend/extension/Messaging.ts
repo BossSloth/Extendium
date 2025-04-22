@@ -42,7 +42,7 @@ export class MessageEventEmulator {
 export class RuntimeEmulator {
   public readonly onMessage: MessageEventEmulator;
 
-  constructor(readonly parent: Extension) {
+  constructor(readonly extension: Extension) {
     this.onMessage = new MessageEventEmulator();
   }
 

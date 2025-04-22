@@ -2,8 +2,8 @@ import { Extension } from '../extension/Extension';
 import { createOffscreen } from '../windowManagement';
 import { createChrome } from './createChrome';
 
-export async function injectBrowser(context: string, window: Window, extension: Extension, deps: { createOffscreen: typeof createOffscreen; }): Promise<void> {
-  window.chrome = await createChrome(context, extension, deps);
+export function injectBrowser(context: string, window: Window, extension: Extension, deps: { createOffscreen: typeof createOffscreen; }): void {
+  window.chrome = createChrome(context, extension, deps);
   // @ts-expect-error Property 'clients' does not exist on type 'Window'.
   window.clients = {
     matchAll: async (): Promise<unknown[]> => Promise.resolve([]),

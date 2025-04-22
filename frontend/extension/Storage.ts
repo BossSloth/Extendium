@@ -9,8 +9,8 @@ export class Storage {
 
   private readonly STORAGE_KEY: string;
 
-  constructor(readonly parent: Extension, readonly area: AreaName, readonly logger: Logger) {
-    this.STORAGE_KEY = `${this.parent.manifest.name}::${this.area}`;
+  constructor(readonly extension: Extension, readonly area: AreaName, readonly logger: Logger) {
+    this.STORAGE_KEY = `${this.extension.manifest.name}::${this.area}`;
 
     if (this.area === 'local') {
       this.QUOTA_BYTES = 5 * 1024 * 1024; // 5MB

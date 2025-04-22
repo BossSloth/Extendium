@@ -77,6 +77,10 @@ export default async function PluginMain(): Promise<void> {
     extensions.set(manifest.name, new Extension(manifest, `${EXTENSIONS_URL}/${folderName}`));
   }
 
+  await Promise.all([...extensions.values()].map(async (extension) => {
+    await extension.init();
+  }));
+
   const wnd = g_PopupManager.GetExistingPopup('SP Desktop_uid0');
   if (wnd) {
     OnPopupCreation(wnd);

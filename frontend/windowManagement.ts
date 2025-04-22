@@ -2,7 +2,7 @@ import { injectBrowser } from './browser/injectBrowser';
 import { Extension } from './extension/Extension';
 import { loadScript, mainWindow } from './shared';
 
-export async function createWindow(extension: Extension, title: string): Promise<Window> {
+export function createWindow(extension: Extension, title: string): Window {
   const popup = SteamClient.BrowserView.CreatePopup({ parentPopupBrowserID: mainWindow.SteamClient.Browser.GetBrowserID() });
   const backgroundWindow = window.open(popup.strCreateURL);
   if (!backgroundWindow) {
@@ -18,7 +18,7 @@ export async function createWindow(extension: Extension, title: string): Promise
   backgroundWindow.document.head.appendChild(base);
 
   // const backgroundWindow = backgroundPopup.m_popupContextMenu.m_popup;
-  await injectBrowser(title, backgroundWindow, extension, { createOffscreen });
+  injectBrowser(title, backgroundWindow, extension, { createOffscreen });
 
   return backgroundWindow;
 }
@@ -29,7 +29,7 @@ export async function createWindowWithScript(scriptPath: string, extension: Exte
     throw new Error(`Script ${scriptPath} not found`);
   }
 
-  const backgroundWindow = await createWindow(extension, title);
+  const backgroundWindow = createWindow(extension, title);
 
   await loadScript(script, backgroundWindow.document);
 
@@ -37,7 +37,7 @@ export async function createWindowWithScript(scriptPath: string, extension: Exte
 }
 
 export async function createOffscreen(extension: Extension, title: string, initUrl?: string): Promise<Window> {
-  const window = await createWindow(extension, title);
+  const window = createWindow(extension, title);
   const url = extension.getFileUrl(initUrl) ?? '';
   const popupContent = await fetch(url).then(async r => r.text());
   await injectHtml(popupContent, window, extension);
@@ -55,7 +55,7 @@ export async function injectHtml(html: string, popupWindow: Window, extension: E
   });
 
   // Inject the chrome variable
-  await injectBrowser('popup', popupWindow, extension, { createOffscreen });
+  injectBrowser('popup', popupWindow, extension, { createOffscreen });
 
   // Get the script tags and add them to the head
   const domParser = new DOMParser();

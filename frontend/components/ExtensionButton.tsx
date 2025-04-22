@@ -4,7 +4,8 @@ import { Extension } from '../extension/Extension';
 import { ContextMenu } from '../shared';
 import { ExtensionPopup } from './ExtensionPopup';
 
-const KEEP_OPEN = false;
+// TODO: figure out how to keep the popup open but reload the content on open
+const KEEP_OPEN = true;
 
 export function ExtensionButton({ extension }: { readonly extension: Extension; }): JSX.Element {
   const contextMenuWindow = useRef<Window | null>(null);

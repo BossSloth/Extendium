@@ -7,48 +7,13 @@ import { createOffscreen } from '../windowManagement';
 const VERBOSE = true;
 
 // Note we use dependency injection to prevent circular dependencies
-export async function createChrome(context: string, extension: Extension, deps: { createOffscreen: typeof createOffscreen; }): Promise<typeof window.chrome> {
-  const localeMessages = await initLocale(extension);
-
+export function createChrome(context: string, extension: Extension, deps: { createOffscreen: typeof createOffscreen; }): typeof window.chrome {
   const logger = new Logger(extension, VERBOSE, context);
 
   const localStorage = new Storage(extension, 'local', logger);
 
   return {
-    i18n: {
-      getMessage: (messageKey: string, substitutions?: string[] | string): string => {
-        if (typeof substitutions === 'string') {
-          substitutions = [substitutions];
-        }
-
-        logger.log('i18n.getMessage', messageKey, substitutions);
-
-        const record = localeMessages[messageKey];
-        if (!record) {
-          return messageKey;
-        }
-
-        if (!substitutions) {
-          return record.message;
-        }
-
-        let message = record.message;
-
-        const placeholders = record.placeholders;
-        for (const [key, value] of Object.entries(placeholders)) {
-          message = message.replace(`$${key.toUpperCase()}$`, value.content);
-        }
-
-        for (let i = 1; i <= substitutions.length; i++) {
-          message = message.replace(`$${i}`, substitutions[i - 1] ?? '');
-        }
-
-        return message;
-      },
-      getUILanguage: (): string => navigator.language,
-      getAcceptLanguages: async (): Promise<string[]> => Promise.resolve([navigator.language]),
-      detectLanguage: async (): Promise<chrome.i18n.LanguageDetectionResult> => Promise.resolve({ language: navigator.language, isReliable: true, languages: [{ language: navigator.language, percentage: 100 }] }),
-    },
+    i18n: extension.locale,
     storage: {
       local: localStorage,
     },
@@ -104,17 +69,4 @@ export async function createChrome(context: string, extension: Extension, deps: 
       setBadgeBackgroundColor: (): void => {},
     },
   };
-}
-
-interface LanguageRecord {
-  message: string;
-  placeholders: Record<string, { content: string; }>;
-}
-
-async function initLocale(extension: Extension): Promise<Record<string, LanguageRecord>> {
-  const language = navigator.language.split('-')[0];
-  const content = await fetch(extension.getFileUrl(`/_locales/${language}/messages.json`) ?? '').then(async r => r.text());
-  const messages = JSON.parse(content) as Record<string, LanguageRecord>;
-
-  return messages;
 }
