@@ -17,6 +17,7 @@
       "resolveJsonModule": true,
       "strictNullChecks": true,
       "noUncheckedIndexedAccess": true,
+      "strict": true,
       "types": ["steam-types", "chrome"]
     },
     "exclude": ["node_modules"]

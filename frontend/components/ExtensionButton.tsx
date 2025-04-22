@@ -4,11 +4,13 @@ import { Extension } from '../extension/Extension';
 import { ContextMenu } from '../shared';
 import { ExtensionPopup } from './ExtensionPopup';
 
+const KEEP_OPEN = false;
+
 export function ExtensionButton({ extension }: { readonly extension: Extension; }): JSX.Element {
   const contextMenuWindow = useRef<Window | null>(null);
   const contextMenuRef = useRef<ContextMenu | undefined>(undefined);
 
-  function createContextMenu(targetElement: Element): void {
+  function createContextMenu(targetElement: Element | null | undefined): void {
     if (contextMenuRef.current) return;
 
     contextMenuRef.current = (
@@ -23,8 +25,8 @@ export function ExtensionButton({ extension }: { readonly extension: Extension; 
           bGrowToElementWidth: true,
           bForcePopup: true,
           bDisableMouseOverlay: true,
-          bCreateHidden: true,
-          bRetainOnHide: true,
+          bCreateHidden: KEEP_OPEN,
+          bRetainOnHide: KEEP_OPEN,
           bNoFocusWhenShown: undefined,
           title: `${extension.action.getTitle()} - Popup`,
         },
@@ -36,15 +38,24 @@ export function ExtensionButton({ extension }: { readonly extension: Extension; 
       type="button"
       className="extension-button"
       onClick={() => {
-        if (contextMenuRef.current) {
-          contextMenuRef.current.Show();
+        // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+        if (KEEP_OPEN) {
+          if (contextMenuRef.current) {
+            contextMenuRef.current.Show();
+          }
+        } else {
+          contextMenuRef.current = undefined;
+          createContextMenu(contextMenuWindow.current?.document.activeElement);
         }
       }}
       title={extension.action.getTitle()}
       ref={(el) => {
         if (el) {
           contextMenuWindow.current = el.ownerDocument.defaultView;
-          createContextMenu(el);
+          // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+          if (KEEP_OPEN) {
+            createContextMenu(el);
+          }
         }
       }}
     >

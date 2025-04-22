@@ -47,7 +47,11 @@ export class RuntimeEmulator {
   }
 
   async sendMessage(context: string, message: unknown, responseCallback?: (response?: unknown) => void): Promise<unknown> {
-    const sender: chrome.runtime.MessageSender = {};
+    const sender: chrome.runtime.MessageSender = {
+      id: '12345',
+      // TODO: figure out how to get the actual URL and id
+      url: 'chrome-extension://12345/background.js',
+    };
     const listeners = this.onMessage.getListenersSnapshot();
 
     let responseSent = false;

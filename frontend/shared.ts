@@ -42,3 +42,5 @@ export async function loadScript(src: string, document: Document): Promise<void>
     document.head.appendChild(script);
   });
 }
+
+export type ContextType = `${chrome.runtime.ContextType}`;

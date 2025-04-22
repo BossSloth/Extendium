@@ -27,8 +27,8 @@ async function addStyles(popup: MainWindowPopup): Promise<void> {
   popup.m_popup.document.head.appendChild(style);
 }
 
-async function OnPopupCreation(popup: Popup): Promise<void> {
-  if (!isMainWindow(popup)) {
+async function OnPopupCreation(popup: Popup | undefined): Promise<void> {
+  if (!popup || !isMainWindow(popup)) {
     return;
   }
 
@@ -65,7 +65,8 @@ async function OnPopupCreation(popup: Popup): Promise<void> {
 }
 
 async function setupBackground(extension: Extension): Promise<void> {
-  await createWindowWithScript(extension.manifest.background?.service_worker ?? '', extension, `${extension.manifest.name} - Background`);
+  const backgroundWindow = await createWindowWithScript(extension.manifest.background?.service_worker ?? '', extension, 'Background');
+  extension.contexts.addContext(backgroundWindow, 'BACKGROUND', extension.getBackgroundUrl());
 }
 
 // Entry point on the front end of your plugin

@@ -1,15 +1,16 @@
 /* eslint-disable max-classes-per-file */
+import { Contexts } from './Contexts';
 import { RuntimeEmulator } from './Messaging';
-import { Storage } from './Storage';
 
 export class Extension {
   public readonly action: Action;
   public readonly runtimeEmulator: RuntimeEmulator;
-  public readonly storage: Storage;
+  public readonly contexts: Contexts;
+
   constructor(readonly manifest: chrome.runtime.ManifestV3, readonly url: string) {
     this.action = new Action(this);
     this.runtimeEmulator = new RuntimeEmulator(this);
-    this.storage = new Storage(this);
+    this.contexts = new Contexts();
   }
 
   /**
@@ -28,6 +29,10 @@ export class Extension {
 
     return `${this.url}/${path}`;
   }
+
+  public getBackgroundUrl(): string | undefined {
+    return this.getFileUrl(this.manifest.background?.service_worker);
+  }
 }
 
 export class Action {
@@ -39,7 +44,7 @@ export class Action {
   }
 
   public getTitle(): string | undefined {
-    return this.parent.manifest.action?.default_title;
+    return this.parent.manifest.action?.default_title ?? this.parent.manifest.name;
   }
 
   public getIconUrl(): string | undefined {
