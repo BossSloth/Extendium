@@ -1,5 +1,5 @@
 import { showContextMenu } from '@steambrew/client';
-import React, { JSX, useRef } from 'react';
+import React, { JSX, useEffect, useRef, useState } from 'react';
 import { Extension } from '../extension/Extension';
 import { ContextMenu } from '../shared';
 import { ExtensionPopup } from './ExtensionPopup';
@@ -8,11 +8,25 @@ import { ExtensionPopup } from './ExtensionPopup';
 const KEEP_OPEN = true;
 
 export function ExtensionButton({ extension }: { readonly extension: Extension; }): JSX.Element {
+  const [iconUrl, setIconUrl] = useState(extension.action.getIconUrl());
   const contextMenuWindow = useRef<Window | null>(null);
   const contextMenuRef = useRef<ContextMenu | undefined>(undefined);
 
+  useEffect(() => {
+    // Listener to update icon when Action notifies
+    function handleIconChange(): void {
+      setIconUrl(extension.action.getIconUrl());
+    }
+    extension.action.subscribeToIconUrlChange(handleIconChange);
+
+    // Cleanup
+    return (): void => {
+      extension.action.unsubscribeFromIconUrlChange(handleIconChange);
+    };
+  }, [extension]);
+
   function createContextMenu(targetElement: Element | null | undefined): void {
-    if (contextMenuRef.current) return;
+    if (contextMenuRef.current || extension.action.getPopupUrl() === undefined) return;
 
     contextMenuRef.current = (
       // @ts-expect-error wrong type
@@ -60,7 +74,7 @@ export function ExtensionButton({ extension }: { readonly extension: Extension; 
         }
       }}
     >
-      <img src={extension.action.getIconUrl() ?? ''} alt={extension.manifest.name} />
+      <img src={iconUrl ?? ''} alt={extension.manifest.name} />
     </button>
   );
 }

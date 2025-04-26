@@ -34,6 +34,10 @@ export class Extension {
       return `${this.url}${path}`;
     }
 
+    if (path.startsWith('./')) {
+      return `${this.url}${path.slice(1)}`;
+    }
+
     return `${this.url}/${path}`;
   }
 

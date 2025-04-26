@@ -6,7 +6,11 @@ export function ExtensionsBar({ extensions }: { readonly extensions: Map<string,
   return (
     <>
       {[...extensions.values()].map(extension => (
-        <ExtensionButton key={extension.manifest.name} extension={extension} />
+        extension.action.getIconUrl() === undefined
+          ? null
+          : (
+              <ExtensionButton key={extension.manifest.name} extension={extension} />
+            )
       ))}
     </>
   );

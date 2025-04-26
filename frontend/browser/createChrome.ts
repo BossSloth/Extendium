@@ -65,7 +65,7 @@ export function createChrome(context: string, extension: Extension, deps?: { cre
     },
     action: {
       setBadgeText: (): void => {},
-      setIcon: (): void => {},
+      setIcon: extension.action.setIcon.bind(extension.action),
       setBadgeBackgroundColor: (): void => {},
     },
   };

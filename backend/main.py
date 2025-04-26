@@ -99,6 +99,8 @@ class Plugin:
     def _load(self):
         logger.log(f"bootstrapping Extendium, millennium {Millennium.version()}")
 
+        Millennium.add_proxy_whitelisted_regex_path("steamui\/extensions")
+
         try:
             PrepareExtensionFiles()
         except Exception as e:
