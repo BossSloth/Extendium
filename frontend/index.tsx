@@ -1,9 +1,10 @@
-import { callable, findModule } from '@steambrew/client';
+import { callable, findModule, Millennium } from '@steambrew/client';
 import React from 'react';
 import { MainWindowPopup, Popup } from 'steam-types/dist/types/Global/PopupManager';
 import { ExtensionsBar } from './components/ExtensionsBar';
 import { Extension } from './extension/Extension';
-import { EXTENSIONS_URL, init, MAIN_WINDOW_NAME, WaitForElement } from './shared';
+import { EXTENSIONS_URL, initMainWindow, MAIN_WINDOW_NAME, WaitForElement } from './shared';
+import { WebkitWrapper } from './webkit';
 import { createWindowWithScript } from './windowManagement';
 
 const GetExtensionManifests = callable<[], string>('GetExtensionManifests');
@@ -19,6 +20,10 @@ function isMainWindow(popup: Popup): popup is MainWindowPopup {
   return popup.m_strName === MAIN_WINDOW_NAME;
 }
 
+const global = { webkit: new WebkitWrapper() };
+// @ts-expect-error ignore
+Millennium.exposeObj(global);
+
 async function addStyles(popup: MainWindowPopup): Promise<void> {
   const folderPath = `${pluginDir.replace(/.*\\([^\\]+)\\([^\\]+)$/, '/$1/$2')}/public`;
   const cssContent = await fetch(`https://css.millennium.app${folderPath}/extendium.css`).then(async r => r.text());
@@ -32,7 +37,7 @@ async function OnPopupCreation(popup: Popup | undefined): Promise<void> {
     return;
   }
 
-  init(popup.m_popup);
+  initMainWindow(popup.m_popup);
 
   await addStyles(popup);
 
@@ -80,6 +85,8 @@ export default async function PluginMain(): Promise<void> {
   await Promise.all([...extensions.values()].map(async (extension) => {
     await extension.init();
   }));
+
+  global.webkit.init(extensions);
 
   const wnd = g_PopupManager.GetExistingPopup('SP Desktop_uid0');
   if (wnd) {

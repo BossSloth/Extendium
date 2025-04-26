@@ -1,3 +1,4 @@
+import base64
 import json
 import os
 from os import path
@@ -34,6 +35,11 @@ def GetExtensionManifests():
                     logger.error(f"Error reading manifest {manifest_path}: {str(e)}")
 
     return json.dumps(manifests)
+
+class Webkit:
+    @staticmethod
+    def SendMessage(extensionName: str, content: str):
+        return Millennium.call_frontend_method('webkit.sendMessage', params=[extensionName, content])
 
 def PrepareExtensionFiles():
     extensions_dir = GetExtensionsDir()

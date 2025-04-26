@@ -5,7 +5,7 @@ import { BasicPopup } from 'steam-types/dist/types/Global/PopupManager';
 
 export let mainWindow: Window;
 
-export function init(_mainWindow: Window): void {
+export function initMainWindow(_mainWindow: Window): void {
   mainWindow = _mainWindow;
 }
 
@@ -42,5 +42,3 @@ export async function loadScript(src: string, document: Document): Promise<void>
     document.head.appendChild(script);
   });
 }
-
-export type ContextType = `${chrome.runtime.ContextType}`;

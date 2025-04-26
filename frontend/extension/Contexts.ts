@@ -1,5 +1,3 @@
-import { ContextType } from '../shared';
-
 export class Contexts {
   private readonly contexts: chrome.runtime.ExtensionContext[] = [];
 
@@ -43,3 +41,5 @@ export class Contexts {
     }));
   }
 }
+
+export type ContextType = `${chrome.runtime.ContextType}`;

@@ -7,7 +7,7 @@ import { createOffscreen } from '../windowManagement';
 const VERBOSE = true;
 
 // Note we use dependency injection to prevent circular dependencies
-export function createChrome(context: string, extension: Extension, deps: { createOffscreen: typeof createOffscreen; }): typeof window.chrome {
+export function createChrome(context: string, extension: Extension, deps?: { createOffscreen: typeof createOffscreen; }): typeof window.chrome {
   const logger = new Logger(extension, VERBOSE, context);
 
   const localStorage = new Storage(extension, 'local', logger);
@@ -53,7 +53,7 @@ export function createChrome(context: string, extension: Extension, deps: { crea
       createDocument: async (parameters: chrome.offscreen.CreateParameters): Promise<void> => {
         logger.log('offscreen.createDocument', parameters);
 
-        await deps.createOffscreen(extension, `${extension.manifest.name} - ${parameters.url}`, parameters.url);
+        await deps?.createOffscreen(extension, `${extension.manifest.name} - ${parameters.url}`, parameters.url);
       },
     },
     windows: {
