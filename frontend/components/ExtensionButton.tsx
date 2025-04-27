@@ -62,6 +62,11 @@ export function ExtensionButton({ extension }: { readonly extension: Extension; 
           contextMenuRef.current = undefined;
           createContextMenu(contextMenuWindow.current?.document.activeElement);
         }
+
+        if (extension.action.getPopupUrl() === undefined) {
+          /** Only fire onClicked if there is no popup @see https://developer.chrome.com/docs/extensions/reference/api/action#event-onClicked */
+          extension.action.onClicked.emit();
+        }
       }}
       title={extension.action.getTitle()}
       ref={(el) => {

@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/member-ordering */
+import { ChromeEvent } from './ChromeEvent';
 import { Extension } from './Extension';
 
 export class Action {
@@ -22,7 +24,7 @@ export class Action {
    * @param icons - The icon object from the manifest (e.g., {16: 'icon16.png', 32: 'icon32.png', 48: 'icon48.png', 128: 'icon128.png'})
    * @returns The path to the best icon for the current device, or undefined if not found.
    */
-  // eslint-disable-next-line @typescript-eslint/member-ordering
+
   public static selectBestIconPath(icons: Record<string, string>): string | undefined {
     // Typical icon sizes in Chrome extensions: 16, 32, 48, 128
     // Chrome picks the closest size >= (16 * devicePixelRatio), or the largest available if none are big enough
@@ -100,4 +102,8 @@ export class Action {
     }
   }
   // #endregion icon
+
+  // #region onClicked
+  public onClicked = new ChromeEvent<(tab?: chrome.tabs.Tab) => void>();
+  // #endregion onClicked
 }

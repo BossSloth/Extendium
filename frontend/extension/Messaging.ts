@@ -1,52 +1,16 @@
-/* eslint-disable max-classes-per-file */
+import { ChromeEvent } from './ChromeEvent';
 import { Extension } from './Extension';
-
-type Listener = (message: unknown, sender: chrome.runtime.MessageSender, sendResponse: SendResponse) => void | Promise<void> | boolean;
-
-interface ListenerWithContext {
-  context: string;
-  listener: Listener;
-}
 
 type SendResponse = (response?: unknown) => void;
 
-export class MessageEventEmulator {
-  private listeners: ListenerWithContext[] = [];
-
-  public addListener(context: string, listener: Listener): void {
-    if (this.listeners.includes({ context, listener })) {
-      console.warn('[Runtime] addListener: Listener already added.');
-
-      return;
-    }
-    this.listeners.push({ context, listener });
-  }
-
-  public hasListeners(): boolean {
-    return this.listeners.length > 0;
-  }
-
-  public hasListener(context: string, listener: Listener): boolean {
-    return this.listeners.includes({ context, listener });
-  }
-
-  public removeListener(listener: Listener): void {
-    this.listeners = this.listeners.filter(l => l.listener !== listener);
-  }
-
-  getListenersSnapshot(): readonly ListenerWithContext[] {
-    return [...this.listeners];
-  }
-}
+type Listener = (message: unknown, sender: chrome.runtime.MessageSender, sendResponse: SendResponse) => void | Promise<void> | boolean;
 
 export class RuntimeEmulator {
-  public readonly onMessage: MessageEventEmulator;
+  public readonly onMessage = new ChromeEvent<Listener>();
 
-  constructor(readonly extension: Extension) {
-    this.onMessage = new MessageEventEmulator();
-  }
+  constructor(readonly extension: Extension) {}
 
-  async sendMessage(context: string, message: unknown, responseCallback?: (response?: unknown) => void): Promise<unknown> {
+  async sendMessage(_context: string, message: unknown, responseCallback?: (response?: unknown) => void): Promise<unknown> {
     const sender: chrome.runtime.MessageSender = {
       id: '12345',
       // TODO: figure out how to get the actual URL and id
@@ -79,14 +43,10 @@ export class RuntimeEmulator {
 
       // Iterate through all listeners
       for (const listener of listeners) {
-        // Skip listeners that are in the same context
-        if (listener.context === context) {
-          continue;
-        }
         try {
           // Call the listener
           // The 'returnValue' indicates if the listener intends to respond asynchronously.
-          const returnValue = listener.listener(message, sender, sendResponse);
+          const returnValue = listener(message, sender, sendResponse);
 
           if (returnValue === true) {
             // Listener intends to call sendResponse asynchronously.

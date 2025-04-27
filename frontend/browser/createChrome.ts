@@ -24,23 +24,17 @@ export function createChrome(context: string, extension: Extension, deps?: { cre
 
         return extension.runtimeEmulator.sendMessage(context, ...args);
       },
-      // @ts-expect-error Ignore
-      onMessage: {
-        addListener: (...args): void => { extension.runtimeEmulator.onMessage.addListener(context, ...args); },
-        // @ts-expect-error Ignore
-        removeListener: (...args): void => { extension.runtimeEmulator.onMessage.removeListener(context, ...args); },
-        hasListeners: (): boolean => { return extension.runtimeEmulator.onMessage.hasListeners(); },
-        hasListener: (...args): boolean => { return extension.runtimeEmulator.onMessage.hasListener(context, ...args); },
-      },
+      onMessage: extension.runtimeEmulator.onMessage,
       onInstalled: {
         addListener: () => {},
       },
+      setUninstallURL: (): void => {},
       getURL: (path: string): string => extension.getFileUrl(path) ?? '',
       getManifest: (): chrome.runtime.Manifest => extension.manifest,
       getContexts: extension.contexts.getContexts.bind(extension.contexts),
     },
     tabs: {
-      query: (): void => {},
+      // query: (): void => {},
       create: async (properties: chrome.tabs.CreateProperties): Promise<chrome.tabs.Tab> => {
         logger.log('tabs.create', properties);
 
@@ -64,6 +58,7 @@ export function createChrome(context: string, extension: Extension, deps?: { cre
       },
     },
     action: {
+      onClicked: extension.action.onClicked,
       setBadgeText: (): void => {},
       setIcon: extension.action.setIcon.bind(extension.action),
       setBadgeBackgroundColor: (): void => {},
