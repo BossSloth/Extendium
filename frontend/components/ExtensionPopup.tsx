@@ -32,7 +32,7 @@ export function ExtensionPopup({ extension }: { readonly extension: Extension; }
 
   return (
     <>
-      <base href={`${extension.url}/`} />
+      <base href={`${extension.action.getPopupDir()}/`} />
       {/* eslint-disable-next-line react/no-danger */}
       <div ref={container} dangerouslySetInnerHTML={{ __html: popupContent ?? '' }} />
     </>

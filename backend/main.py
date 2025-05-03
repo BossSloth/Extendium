@@ -41,6 +41,16 @@ class Webkit:
     def SendMessage(extensionName: str, content: str):
         return Millennium.call_frontend_method('webkit.sendMessage', params=[extensionName, content])
 
+    @staticmethod
+    def AddTab(tabInfo: str):
+        return Millennium.call_frontend_method('webkit.addTab', params=[tabInfo])
+
+    @staticmethod
+    def FocusTab(tabId: int):
+        return Millennium.call_frontend_method('webkit.focusTab', params=[tabId])
+
+# TODO: do the same as millennium does for the file proxy but for chrome-extension:// url
+
 def PrepareExtensionFiles():
     extensions_dir = GetExtensionsDir()
 

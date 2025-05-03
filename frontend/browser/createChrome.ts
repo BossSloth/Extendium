@@ -1,7 +1,9 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
+import { ChromeEvent } from '../extension/ChromeEvent';
 import { Extension } from '../extension/Extension';
 import { Logger } from '../extension/Logger';
 import { Storage } from '../extension/Storage';
+import { queryTabs } from '../TabManager';
 import { createOffscreen } from '../windowManagement';
 
 const VERBOSE = true;
@@ -11,27 +13,31 @@ export function createChrome(context: string, extension: Extension, deps?: { cre
   const logger = new Logger(extension, VERBOSE, context);
 
   const localStorage = new Storage(extension, 'local', logger);
+  const syncStorage = new Storage(extension, 'sync', logger);
 
   return {
     i18n: extension.locale,
     storage: {
       local: localStorage,
+      sync: syncStorage,
+      onChanged: extension.storageOnChanged,
     },
     runtime: {
       // @ts-expect-error Ignore
-      sendMessage: async (...args): Promise<unknown> => {
-        logger.log('runtime.sendMessage', ...args);
+      sendMessage: async (message: unknown, callback: (response: unknown) => void): Promise<unknown> => {
+        logger.log('runtime.sendMessage', message, callback);
 
-        return extension.runtimeEmulator.sendMessage(context, ...args);
+        return extension.runtimeEmulator.sendMessage(context, message, callback);
       },
       onMessage: extension.runtimeEmulator.onMessage,
-      onInstalled: {
-        addListener: () => {},
-      },
       setUninstallURL: (): void => {},
       getURL: (path: string): string => extension.getFileUrl(path) ?? '',
       getManifest: (): chrome.runtime.Manifest => extension.manifest,
       getContexts: extension.contexts.getContexts.bind(extension.contexts),
+
+      // TODO: implement
+      onStartup: new ChromeEvent(),
+      onInstalled: new ChromeEvent<() => void>(),
     },
     tabs: {
       // query: (): void => {},
@@ -42,12 +48,16 @@ export function createChrome(context: string, extension: Extension, deps?: { cre
 
         return Promise.resolve({});
       },
+      // TODO: implement
+      onRemoved: new ChromeEvent<(tabId: number) => void>(),
+      onUpdated: new ChromeEvent<(tabId: number, changeInfo: chrome.tabs.TabChangeInfo, tab: chrome.tabs.Tab) => void>(),
+      query: queryTabs,
     },
     offscreen: {
       createDocument: async (parameters: chrome.offscreen.CreateParameters): Promise<void> => {
         logger.log('offscreen.createDocument', parameters);
 
-        await deps?.createOffscreen(extension, `${extension.manifest.name} - ${parameters.url}`, parameters.url);
+        await deps?.createOffscreen(extension, parameters.url, parameters.url);
       },
     },
     windows: {
@@ -62,6 +72,22 @@ export function createChrome(context: string, extension: Extension, deps?: { cre
       setBadgeText: (): void => {},
       setIcon: extension.action.setIcon.bind(extension.action),
       setBadgeBackgroundColor: (): void => {},
+    },
+    alarms: {
+      onAlarm: new ChromeEvent<(alarm: chrome.alarms.Alarm) => void>(),
+      create: async (...args: unknown[]): Promise<void> => {
+        console.error('alarms.create not implemented', args);
+
+        return Promise.resolve();
+      },
+    },
+    permissions: {},
+    extension: {
+      isAllowedFileSchemeAccess: async (callback?: (result: boolean) => void): Promise<boolean> => {
+        callback?.(false);
+
+        return Promise.resolve(false);
+      },
     },
   };
 }

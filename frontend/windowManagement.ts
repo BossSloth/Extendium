@@ -2,7 +2,7 @@ import { injectBrowser } from './browser/injectBrowser';
 import { Extension } from './extension/Extension';
 import { loadScript, mainWindow } from './shared';
 
-export function createWindow(extension: Extension, title: string): Window {
+export function createWindow(extension: Extension, title: string, baseHref: string): Window {
   const popup = SteamClient.BrowserView.CreatePopup({ parentPopupBrowserID: mainWindow.SteamClient.Browser.GetBrowserID() });
   const backgroundWindow = window.open(popup.strCreateURL);
   if (!backgroundWindow) {
@@ -14,7 +14,7 @@ export function createWindow(extension: Extension, title: string): Window {
 
   // Add base tag
   const base = document.createElement('base');
-  base.href = `${extension.url}/`;
+  base.href = baseHref;
   backgroundWindow.document.head.appendChild(base);
 
   // const backgroundWindow = backgroundPopup.m_popupContextMenu.m_popup;
@@ -29,7 +29,7 @@ export async function createWindowWithScript(scriptPath: string, extension: Exte
     throw new Error(`Script ${scriptPath} not found`);
   }
 
-  const backgroundWindow = createWindow(extension, title);
+  const backgroundWindow = createWindow(extension, title, extension.getFileDir(scriptPath));
 
   await loadScript(script, backgroundWindow.document);
 
@@ -37,7 +37,7 @@ export async function createWindowWithScript(scriptPath: string, extension: Exte
 }
 
 export async function createOffscreen(extension: Extension, title: string, initUrl?: string): Promise<Window> {
-  const window = createWindow(extension, title);
+  const window = createWindow(extension, title, extension.getFileDir(initUrl));
   const url = extension.getFileUrl(initUrl) ?? '';
   const popupContent = await fetch(url).then(async r => r.text());
   await injectHtml(popupContent, window, extension);

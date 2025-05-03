@@ -1,6 +1,8 @@
 import { callable } from '@steambrew/webkit';
+import { ChromeEvent } from './extension/ChromeEvent';
 import { Extension } from './extension/Extension';
 import { Logger } from './extension/Logger';
+import { base64Decode, base64Encode } from './utils';
 
 const VERBOSE = true;
 
@@ -33,23 +35,9 @@ export function createChrome(context: string, extension: Extension): typeof wind
         return response;
       },
       id: '1234',
-      // @ts-expect-error Ignore
-      onMessage: {
-        // addListener: (...args): void => { extension.runtimeEmulator.onMessage.addListener(context, ...args); },
-        // removeListener: (...args): void => { extension.runtimeEmulator.onMessage.removeListener(context, ...args); },
-        // hasListeners: (): boolean => { return extension.runtimeEmulator.onMessage.hasListeners(); },
-        // hasListener: (...args): boolean => { return extension.runtimeEmulator.onMessage.hasListener(context, ...args); },
-      },
+      onMessage: new ChromeEvent<(message: unknown, sender: chrome.runtime.MessageSender, sendResponse: (response?: unknown) => void) => void>(),
       getURL: (path: string): string => extension.getFileUrl(path) ?? '',
       getManifest: (): chrome.runtime.Manifest => extension.manifest,
     },
   };
-}
-
-function base64Encode(content: string): string {
-  return window.btoa(content);
-}
-
-function base64Decode(content: string): string {
-  return window.atob(content);
 }

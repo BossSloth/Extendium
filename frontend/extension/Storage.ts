@@ -1,15 +1,17 @@
+/* eslint-disable @typescript-eslint/class-methods-use-this */
 /* eslint-disable @typescript-eslint/no-dynamic-delete */
+import { ChromeEvent } from './ChromeEvent';
 import { Extension } from './Extension';
 import { Logger } from './Logger';
 
-export type AreaName = 'local' | 'sync' | 'managed' | 'session';
-
-export class Storage {
+export class Storage implements chrome.storage.StorageArea {
   public readonly QUOTA_BYTES: number; // Example: local = 5MB, sync = 100KB
+
+  public readonly onChanged = new ChromeEvent<(changes: Record<string, chrome.storage.StorageChange>, areaName: chrome.storage.AreaName) => void>();
 
   private readonly STORAGE_KEY: string;
 
-  constructor(readonly extension: Extension, readonly area: AreaName, readonly logger: Logger) {
+  constructor(readonly extension: Extension, readonly area: chrome.storage.AreaName, readonly logger: Logger) {
     this.STORAGE_KEY = `${this.extension.manifest.name}::${this.area}`;
 
     if (this.area === 'local') {
@@ -21,24 +23,36 @@ export class Storage {
     }
   }
 
-  async get(keys: string | string[] | Record<string, unknown> | null | undefined, callback?: (items: Record<string, unknown>) => void): Promise<Record<string, unknown>> {
+  async get<T = Record<string, unknown>>(
+    keys: NoInferX<keyof T> | NoInferX<keyof T>[] | Partial<NoInferX<T>> | null | ((items: T) => void),
+    callback?: (items: T) => void,
+  ): Promise<T> {
     this.logger.log(`storage.${this.area}.get`, keys, callback);
     const storedData = localStorage.getItem(this.STORAGE_KEY);
     let result: Record<string, unknown> = {};
     let keysToRetrieve: string[] = [];
 
     if (storedData === null) {
-      return Promise.resolve(result);
+      if (callback) {
+        callback(result as T);
+      }
+
+      return Promise.resolve(result as T);
     }
 
     const data = JSON.parse(storedData) as Record<string, unknown>;
 
-    if (keys === null || keys === undefined) {
-      result = data;
+    if (typeof keys === 'function') {
+      callback = keys;
+      keys = null;
+    }
+
+    if (keys === null) {
+      result = { ...data };
     } else if (typeof keys === 'string') {
       keysToRetrieve = [keys];
     } else if (Array.isArray(keys)) {
-      keysToRetrieve = keys;
+      keysToRetrieve = keys.map(key => String(key));
     } else {
       keysToRetrieve = Object.keys(keys);
     }
@@ -48,16 +62,18 @@ export class Storage {
     }
 
     if (callback) {
-      callback(result);
+      callback(result as T);
     }
 
-    return Promise.resolve(result);
+    return Promise.resolve(result as T);
   }
 
   async set(items: Record<string, unknown>, callback?: () => void): Promise<void> {
     this.logger.log(`storage.${this.area}.set`, items, callback);
     const storedData = localStorage.getItem(this.STORAGE_KEY);
     const data = storedData !== null ? JSON.parse(storedData) as Record<string, unknown> : {};
+
+    const oldValues: Record<string, unknown> = { ...data };
 
     Object.assign(data, items);
 
@@ -67,6 +83,18 @@ export class Storage {
       callback();
     }
 
+    const changes: Record<string, chrome.storage.StorageChange> = {};
+
+    for (const key of Object.keys(items)) {
+      changes[key] = {
+        oldValue: oldValues[key],
+        newValue: items[key],
+      };
+    }
+
+    this.extension.storageOnChanged.emit(changes, this.area);
+    this.onChanged.emit(changes, this.area);
+
     return Promise.resolve();
   }
 
@@ -74,6 +102,8 @@ export class Storage {
     this.logger.log(`storage.${this.area}.remove`, keys, callback);
     const storedData = localStorage.getItem(this.STORAGE_KEY);
     const data = storedData !== null ? JSON.parse(storedData) as Record<string, unknown> : {};
+
+    const oldValues: Record<string, unknown> = { ...data };
 
     if (typeof keys === 'string') {
       delete data[keys];
@@ -89,6 +119,18 @@ export class Storage {
       callback();
     }
 
+    const changes: Record<string, chrome.storage.StorageChange> = {};
+
+    for (const key of keys) {
+      changes[key] = {
+        oldValue: oldValues[key],
+        newValue: undefined,
+      };
+    }
+
+    this.extension.storageOnChanged.emit(changes, this.area);
+    this.onChanged.emit(changes, this.area);
+
     return Promise.resolve();
   }
 
@@ -102,4 +144,29 @@ export class Storage {
 
     return Promise.resolve();
   }
+
+  async getKeys(callback?: (keys: string[]) => void): Promise<string[]> {
+    const storedData = localStorage.getItem(this.STORAGE_KEY);
+    const data = storedData !== null ? JSON.parse(storedData) as Record<string, unknown> : {};
+
+    if (callback) {
+      callback(Object.keys(data));
+    }
+
+    return Promise.resolve(Object.keys(data));
+  }
+
+  async setAccessLevel(...args: unknown[]): Promise<void> {
+    console.error('Not implemented', args);
+
+    return Promise.resolve();
+  }
+
+  async getBytesInUse(keys?: unknown, callback?: unknown): Promise<number> {
+    console.error('Not implemented', keys, callback);
+
+    return Promise.resolve(0);
+  }
 }
+
+type NoInferX<T> = T[][T extends unknown ? 0 : never];

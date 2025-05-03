@@ -14,6 +14,10 @@ export class Action {
     return this.extension.getFileUrl(this.extension.manifest.action?.default_popup);
   }
 
+  public getPopupDir(): string | undefined {
+    return this.extension.getFileUrl(this.extension.manifest.action?.default_popup?.split('/').slice(0, -1).join('/'));
+  }
+
   public getTitle(): string | undefined {
     return this.extension.manifest.action?.default_title ?? this.extension.manifest.name;
   }
@@ -83,19 +87,19 @@ export class Action {
   }
 
   private initIconUrl(): void {
-    if (this.extension.manifest.action?.default_icon === undefined) {
+    const icons = this.extension.manifest.action?.default_icon ?? this.extension.manifest.icons;
+    if (icons === undefined) {
       this.iconUrl = undefined;
 
       return;
     }
 
-    const defaultIcon = this.extension.manifest.action.default_icon;
-    if (typeof defaultIcon === 'string') {
-      this.iconUrl = this.extension.getFileUrl(defaultIcon);
-    } else if (typeof defaultIcon === 'object') {
+    if (typeof icons === 'string') {
+      this.iconUrl = this.extension.getFileUrl(icons);
+    } else if (typeof icons === 'object') {
       // Use the new selection function for best icon
       // Ensure type compatibility: ManifestIcons may not be Record<string, string>, so cast safely
-      const bestIcon = Action.selectBestIconPath(defaultIcon as Record<string, string>);
+      const bestIcon = Action.selectBestIconPath(icons as Record<string, string>);
       this.iconUrl = bestIcon !== undefined && bestIcon !== '' ? this.extension.getFileUrl(bestIcon) : undefined;
     } else {
       this.iconUrl = undefined;

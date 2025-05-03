@@ -14,7 +14,7 @@ export class RuntimeEmulator {
     const sender: chrome.runtime.MessageSender = {
       id: '12345',
       // TODO: figure out how to get the actual URL and id
-      url: 'chrome-extension://12345/background.js',
+      url: `chrome-extension://12345/${this.extension.manifest.background?.service_worker}`,
     };
     const listeners = this.onMessage.getListenersSnapshot();
 

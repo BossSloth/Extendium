@@ -1,6 +1,9 @@
+/* eslint-disable @typescript-eslint/class-methods-use-this */
 /* eslint-disable max-classes-per-file */
 import { createChrome } from './browser/createChrome';
 import { Extension } from './extension/Extension';
+import { addTab, focusTab } from './TabManager';
+import { base64Decode, base64Encode } from './utils';
 
 export class Webkit {
   private readonly chrome: typeof window.chrome;
@@ -14,10 +17,6 @@ export class Webkit {
 
     return this.chrome.runtime.sendMessage(obj);
   }
-}
-
-function base64Decode(content: string): string {
-  return window.atob(content);
 }
 
 export class WebkitWrapper {
@@ -37,8 +36,12 @@ export class WebkitWrapper {
 
     return base64Encode(JSON.stringify(await webkit.sendMessage(content)));
   }
-}
 
-function base64Encode(content: string): string {
-  return window.btoa(content);
+  addTab(tabInfoBase64: string): number {
+    return addTab(tabInfoBase64);
+  }
+
+  focusTab(tabId: number): void {
+    focusTab(tabId);
+  }
 }

@@ -3,6 +3,7 @@ import { createChrome } from './createChrome';
 import { createContentScripts } from './createContentScripts';
 import { Extension } from './extension/Extension';
 import { ExtensionWrapper } from './ExtensionWrapper';
+import { TabInject } from './TabInject';
 
 const GetExtensionManifests = callable<[], string>('GetExtensionManifests');
 const GetExtensionsDir = callable<[], string>('GetExtensionsDir');
@@ -23,4 +24,6 @@ export default async function WebkitMain(): Promise<void> {
   await Promise.all([...extensions.values()].map(async (extension) => {
     await createContentScripts(extension.extension);
   }));
+
+  TabInject();
 }
