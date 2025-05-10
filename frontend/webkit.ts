@@ -17,6 +17,40 @@ export class Webkit {
 
     return this.chrome.runtime.sendMessage(obj);
   }
+
+  async getStorage(area: chrome.storage.AreaName, keys: string): Promise<Record<string, unknown>> {
+    const parsedKeys = JSON.parse(base64Decode(keys)) as string[];
+    switch (area) {
+      case 'sync':
+        return this.chrome.storage.sync.get(parsedKeys);
+      case 'local':
+        return this.chrome.storage.local.get(parsedKeys);
+      case 'session':
+        return this.chrome.storage.session.get(parsedKeys);
+      case 'managed':
+        return this.chrome.storage.managed.get(parsedKeys);
+      default:
+        // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+        throw new Error(`Unsupported storage area: ${area}`);
+    }
+  }
+
+  async setStorage(area: chrome.storage.AreaName, keys: string): Promise<void> {
+    const parsedKeys = JSON.parse(base64Decode(keys)) as Record<string, unknown>;
+    switch (area) {
+      case 'sync':
+        return this.chrome.storage.sync.set(parsedKeys);
+      case 'local':
+        return this.chrome.storage.local.set(parsedKeys);
+      case 'session':
+        return this.chrome.storage.session.set(parsedKeys);
+      case 'managed':
+        return this.chrome.storage.managed.set(parsedKeys);
+      default:
+        // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+        throw new Error(`Unsupported storage area: ${area}`);
+    }
+  }
 }
 
 export class WebkitWrapper {
@@ -28,13 +62,17 @@ export class WebkitWrapper {
     }
   }
 
-  async sendMessage(extensionName: string, content: string): Promise<string> {
+  findWebkit(extensionName: string): Webkit {
     const webkit = this.webkits.get(extensionName);
     if (!webkit) {
-      return 'Extension not found';
+      throw new Error(`Webkit for extension ${extensionName} not found`);
     }
 
-    const response = await webkit.sendMessage(content);
+    return webkit;
+  }
+
+  async sendMessage(extensionName: string, content: string): Promise<string> {
+    const response = await this.findWebkit(extensionName).sendMessage(content);
 
     return base64Encode(JSON.stringify(response));
   }
@@ -45,5 +83,15 @@ export class WebkitWrapper {
 
   focusTab(tabId: number): void {
     focusTab(tabId);
+  }
+
+  async getStorage(extensionName: string, area: chrome.storage.AreaName, keys: string): Promise<string> {
+    const response = await this.findWebkit(extensionName).getStorage(area, keys);
+
+    return base64Encode(JSON.stringify(response));
+  }
+
+  async setStorage(extensionName: string, area: chrome.storage.AreaName, keys: string): Promise<void> {
+    return this.findWebkit(extensionName).setStorage(area, keys);
   }
 }

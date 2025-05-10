@@ -72,6 +72,14 @@ class Webkit:
     def FocusTab(tabId: int):
         return Millennium.call_frontend_method('webkit.focusTab', params=[tabId])
 
+    @staticmethod
+    def GetStorage(extensionName: str, area: str, keys: str):
+        return Millennium.call_frontend_method('webkit.getStorage', params=[extensionName, area, keys])
+
+    @staticmethod
+    def SetStorage(extensionName: str, area: str, keys: str):
+        return Millennium.call_frontend_method('webkit.setStorage', params=[extensionName, area, keys])
+
 # TODO: do the same as millennium does for the file proxy but for chrome-extension:// url
 
 def PrepareExtensionFiles():

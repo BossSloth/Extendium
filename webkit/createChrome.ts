@@ -2,8 +2,8 @@ import { callable } from '@steambrew/webkit';
 import { ChromeEvent } from './extension/ChromeEvent';
 import { Extension } from './extension/Extension';
 import { Logger } from './extension/Logger';
-import { Storage } from './extension/Storage';
 import { base64Decode, base64Encode } from './extension/utils';
+import { WebkitStorage } from './webkit-extension/WebkitStorage';
 
 const VERBOSE = true;
 
@@ -13,7 +13,7 @@ const sendMessage = callable<[{ extensionName: string; content: string; }], stri
 export function createChrome(context: string, extension: Extension): typeof window.chrome {
   const logger = new Logger(extension, VERBOSE, context);
 
-  // const localStorage = new Storage(extension, 'local', logger);
+  const syncStorage = new WebkitStorage(extension.getName(), 'sync');
 
   return {
     i18n: extension.locale,
@@ -42,8 +42,7 @@ export function createChrome(context: string, extension: Extension): typeof wind
       getManifest: (): chrome.runtime.Manifest => extension.manifest,
     },
     storage: {
-      // TODO: sync storage to frontend storage
-      sync: new Storage(extension, 'sync', logger),
+      sync: syncStorage,
     },
   };
 }
