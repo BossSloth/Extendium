@@ -58,7 +58,11 @@ export class Storage implements chrome.storage.StorageArea {
     }
 
     for (const key of keysToRetrieve) {
-      result[key] = data[key];
+      if (key in data) {
+        result[key] = data[key];
+      } else if (keys !== null && typeof keys === 'object' && key in keys) {
+        result[key] = (keys as Record<string, unknown>)[key];
+      }
     }
 
     if (callback) {

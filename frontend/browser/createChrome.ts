@@ -40,6 +40,7 @@ export function createChrome(context: string, extension: Extension, deps?: { cre
       // TODO: implement
       onStartup: new ChromeEvent(),
       onInstalled: new ChromeEvent<() => void>(),
+      id: '1234',
     },
     tabs: {
       // query: (): void => {},
@@ -89,6 +90,15 @@ export function createChrome(context: string, extension: Extension, deps?: { cre
         callback?.(false);
 
         return Promise.resolve(false);
+      },
+    },
+    contextMenus: {
+      // TODO: implement contextMenus
+      onClicked: {
+        addListener: () => {},
+        hasListener: () => false,
+        removeListener: () => {},
+        hasListeners: () => false,
       },
     },
   };

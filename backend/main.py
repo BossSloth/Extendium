@@ -99,13 +99,16 @@ def PrepareExtensionFiles():
                     # Define file processing rules
                     processing_rules = {
                         '.css': [
-                            ("url('/", f"url('{EXTENSIONS_URL}/{ext_folder}/")
+                            ("url('/", f"url('{EXTENSIONS_URL}/{ext_folder}/"),
+                            ("url(chrome-extension://__MSG_@@extension_id__/", f"url({EXTENSIONS_URL}/{ext_folder}/"),
                         ],
                         '.html': [
                             ("href=\"/", f"href=\"{EXTENSIONS_URL}/{ext_folder}/"),
                             ("src=\"/", f"src=\"{EXTENSIONS_URL}/{ext_folder}/"),
                         ],
-                        '.js': []
+                        '.js': [
+                            ("globalThis.chrome", "chrome")
+                        ]
                     }
 
                     # Handle root folder references in JS files

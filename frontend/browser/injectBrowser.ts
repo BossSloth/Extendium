@@ -27,6 +27,17 @@ export function injectBrowser(context: string, window: Window, extension: Extens
     return originalOnUnhandledRejection?.call(this, event);
   };
 
+  // @ts-expect-error Ignore
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+  const originalConsoleError = window.console.error as (message: string, ...optionalParams: unknown[]) => void;
+  // @ts-expect-error Ignore
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, func-names
+  window.console.error = function (this: Console, message: string, ...optionalParams: unknown[]): void {
+    console.error(`Error in ${extension.manifest.name} - ${context}`, message, ...optionalParams);
+
+    originalConsoleError.call(this, message, ...optionalParams);
+  };
+
   window.importScripts = (...urls: string[]): void => {
     for (const url of urls) {
       const script = window.document.createElement('script');

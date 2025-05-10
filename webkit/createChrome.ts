@@ -14,12 +14,10 @@ export function createChrome(context: string, extension: Extension): typeof wind
   const logger = new Logger(extension, VERBOSE, context);
 
   const syncStorage = new WebkitStorage(extension.getName(), 'sync');
+  const localStorage = new WebkitStorage(extension.getName(), 'local');
 
   return {
     i18n: extension.locale,
-    // storage: {
-    //   local: localStorage,
-    // },
     runtime: {
       // TODO: response callback
       // @ts-expect-error Ignore
@@ -43,6 +41,7 @@ export function createChrome(context: string, extension: Extension): typeof wind
     },
     storage: {
       sync: syncStorage,
+      local: localStorage,
     },
   };
 }

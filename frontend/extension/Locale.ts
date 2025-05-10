@@ -27,6 +27,11 @@ export class Locale {
   }
 
   getMessage(messageKey: string, substitutions?: string[] | string): string {
+    const predefinedMessage = this.getPredefinedMessage(messageKey);
+    if (predefinedMessage !== undefined) {
+      return predefinedMessage;
+    }
+
     if (this.messages === undefined) {
       throw new Error('Locale not initialized, missing manifest.default_locale?');
     }
@@ -68,6 +73,15 @@ export class Locale {
 
   async detectLanguage(): Promise<chrome.i18n.LanguageDetectionResult> {
     return Promise.resolve({ language: navigator.language, isReliable: true, languages: [{ language: navigator.language, percentage: 100 }] });
+  }
+
+  getPredefinedMessage(key: string): string | undefined {
+    switch (key) {
+      case '@@extension_id': return '1234';
+      case '@@ui_locale': return navigator.language.split('-')[0];
+      case '@@bidi_dir': return document.body.dir;
+      default: return undefined;
+    }
   }
 }
 
