@@ -1,4 +1,4 @@
-import { base64Decode } from './utils';
+import { base64Decode } from './extension/utils';
 
 const tabs = new Map<number, ExtendedTab>();
 let nextTabId = 0;

@@ -73,10 +73,16 @@ export async function injectHtml(html: string, popupWindow: Window, extension: E
     popupDocument.head.appendChild(head);
   }
 
+  // Add all body script tags
+  const bodyScripts = doc.body.querySelectorAll('script');
+  for (const script of bodyScripts) {
+    // eslint-disable-next-line no-await-in-loop
+    await loadScript(script.getAttribute('src') ?? '', popupDocument);
+  }
+
   // Get all body children and append them to the current document
   if (addToBody) {
-    const bodyElements = doc.body.querySelectorAll('*');
-    for (const body of bodyElements) {
+    for (const body of doc.body.querySelectorAll('*')) {
       popupDocument.body.appendChild(body);
     }
   }

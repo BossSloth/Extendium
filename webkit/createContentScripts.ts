@@ -5,12 +5,12 @@ import { loadScriptWithContent, loadStyle } from './shared';
 export async function createContentScripts(extension: Extension): Promise<void> {
   const contentScripts = extension.manifest.content_scripts ?? [];
   const currentHref = window.location.href;
+  const scripts: string[] = [];
   for (const contentScript of contentScripts) {
     if (hrefMatches(currentHref, contentScript)) {
       if (contentScript.js) {
         for (const script of contentScript.js) {
-          // eslint-disable-next-line no-await-in-loop
-          await mutateScript(extension.getFileUrl(script) ?? '', extension);
+          scripts.push(extension.getFileUrl(script) ?? '');
         }
       }
 
@@ -22,16 +22,23 @@ export async function createContentScripts(extension: Extension): Promise<void> 
       }
     }
   }
+
+  await mutateScripts(scripts, extension);
 }
 
-async function mutateScript(url: string, extension: Extension): Promise<void> {
-  let content = await fetch(url).then(async r => r.text());
-  const chromeFunctionString = `const chrome = window.extensions.get('${extension.getName()}')?.chrome;`;
+async function mutateScripts(urls: string[], extension: Extension): Promise<void> {
+  const responses = await Promise.all(urls.map(async url => fetch(url)));
+  const texts = await Promise.all(responses.map(async r => r.text()));
+  let content = texts.join('');
+
+  const combinedUrl = extension.getFileUrl('content.js') ?? '';
+
+  const chromeFunctionString = `const chrome = window.extensions.get('${extension.getName().replace(/'/g, "\\'")}')?.chrome;`;
   // Wrap the script in a function to make it self-contained
   content = `(function() {\n${chromeFunctionString}\n\n${content}\n})();`;
-  content += `\n//# sourceURL=${url}`;
+  content += `\n//# sourceURL=${combinedUrl}`;
 
-  await loadScriptWithContent(url, document, content);
+  await loadScriptWithContent(combinedUrl, document, content);
 }
 
 function urlToRegex(url: string): string {

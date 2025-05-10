@@ -14,12 +14,14 @@ export function createChrome(context: string, extension: Extension, deps?: { cre
 
   const localStorage = new Storage(extension, 'local', logger);
   const syncStorage = new Storage(extension, 'sync', logger);
+  const sessionStorage = new Storage(extension, 'session', logger);
 
   return {
     i18n: extension.locale,
     storage: {
       local: localStorage,
       sync: syncStorage,
+      session: sessionStorage,
       onChanged: extension.storageOnChanged,
     },
     runtime: {

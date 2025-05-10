@@ -46,7 +46,7 @@ export class Locale {
 
     let message = record.message;
 
-    const placeholders = record.placeholders;
+    const placeholders = record.placeholders ?? {};
     for (const [key, value] of Object.entries(placeholders)) {
       message = message.replace(`$${key.toUpperCase()}$`, value.content);
     }
@@ -73,5 +73,5 @@ export class Locale {
 
 interface LanguageRecord {
   message: string;
-  placeholders: Record<string, { content: string; }>;
+  placeholders?: Record<string, { content: string; }>;
 }

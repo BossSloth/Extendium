@@ -2,8 +2,8 @@
 /* eslint-disable max-classes-per-file */
 import { createChrome } from './browser/createChrome';
 import { Extension } from './extension/Extension';
+import { base64Decode, base64Encode } from './extension/utils';
 import { addTab, focusTab } from './TabManager';
-import { base64Decode, base64Encode } from './utils';
 
 export class Webkit {
   private readonly chrome: typeof window.chrome;
@@ -34,7 +34,9 @@ export class WebkitWrapper {
       return 'Extension not found';
     }
 
-    return base64Encode(JSON.stringify(await webkit.sendMessage(content)));
+    const response = await webkit.sendMessage(content);
+
+    return base64Encode(JSON.stringify(response));
   }
 
   addTab(tabInfoBase64: string): number {

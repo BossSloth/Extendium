@@ -25,6 +25,14 @@ export function ExtensionPopup({ extension }: { readonly extension: Extension; }
       await injectHtml(popupContent, popupDocument.defaultView, extension, false);
 
       extension.contexts.addContext(popupDocument.defaultView, 'POPUP', extension.action.getPopupUrl() ?? '');
+
+      setTimeout(() => {
+        if (!container.current || !popupDocument.defaultView) return;
+
+        const size = getDesiredSize(container.current, popupDocument);
+
+        popupDocument.defaultView.SteamClient.Window.ResizeTo(size.width, size.height, true);
+      }, 500);
     }
 
     initPopup();
@@ -37,4 +45,21 @@ export function ExtensionPopup({ extension }: { readonly extension: Extension; }
       <div ref={container} dangerouslySetInnerHTML={{ __html: popupContent ?? '' }} />
     </>
   );
+}
+
+function getDesiredSize(element: HTMLElement, popupDocument: Document): { width: number; height: number; } {
+  const clone = element.cloneNode(true) as HTMLElement;
+  clone.style.visibility = 'hidden';
+  clone.style.position = 'absolute';
+  clone.style.width = 'auto';
+  clone.style.height = 'auto';
+  clone.style.whiteSpace = 'nowrap'; // if text content
+  popupDocument.body.appendChild(clone);
+
+  const width = clone.offsetWidth;
+  const height = clone.offsetHeight;
+
+  popupDocument.body.removeChild(clone);
+
+  return { width, height };
 }

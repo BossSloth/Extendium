@@ -15,6 +15,10 @@ export class RuntimeEmulator {
       id: '12345',
       // TODO: figure out how to get the actual URL and id
       url: `chrome-extension://12345/${this.extension.manifest.background?.service_worker}`,
+      tab: {
+        id: 1,
+        url: `chrome-extension://12345/${this.extension.manifest.background?.service_worker}`,
+      },
     };
     const listeners = this.onMessage.getListenersSnapshot();
 
@@ -74,6 +78,13 @@ export class RuntimeEmulator {
       // then the channel closes, and the response is undefined.
       if (!responseSent && !listenerReturnedTrue) {
         resolve(undefined);
+      } else {
+        setTimeout(() => {
+          if (!responseSent) {
+            console.error('[Runtime] No response sent for message, Timed out:', message);
+            resolve(undefined);
+          }
+        }, 10000);
       }
       // Otherwise, the promise is either already resolving (sync sendResponse)
       // or waiting for an async sendResponse call.

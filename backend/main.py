@@ -5,6 +5,7 @@ from os import path
 
 import Millennium
 import PluginUtils  # type: ignore
+import requests
 
 logger = PluginUtils.Logger()
 
@@ -35,6 +36,28 @@ def GetExtensionManifests():
                     logger.error(f"Error reading manifest {manifest_path}: {str(e)}")
 
     return json.dumps(manifests)
+
+#TODO: cors requests currently don't work like in the steamdb extension and we can't do this because of the issue below
+def BackendFetch(url: str, headersJson: str):
+    # TODO: problem this is triggered from within sendmessage and millennium does not allow two backend functions to run somehow this needs to split up?
+    logger.log(f"Fetching {url}")
+    headers = json.loads(headersJson)
+
+    try:
+        response = requests.get(url, headers=headers)
+
+        result = {
+            'status': response.status_code,
+            'url': response.url,
+            'headers': dict(response.headers),
+            'body': response.text
+        }
+
+        return json.dumps(result)
+    except Exception as e:
+        logger.error(f"Error fetching {url}: {str(e)}")
+        return None
+
 
 class Webkit:
     @staticmethod
@@ -72,7 +95,7 @@ def PrepareExtensionFiles():
                         ],
                         '.html': [
                             ("href=\"/", f"href=\"{EXTENSIONS_URL}/{ext_folder}/"),
-                            ("src=\"/", f"src=\"{EXTENSIONS_URL}/{ext_folder}/")
+                            ("src=\"/", f"src=\"{EXTENSIONS_URL}/{ext_folder}/"),
                         ],
                         '.js': []
                     }
@@ -101,7 +124,6 @@ def PrepareExtensionFiles():
                         except Exception as e:
                             logger.error(f"Error processing {file_extension} file {file_path}: {str(e)}")
 
-
 class Plugin:
     def _front_end_loaded(self):
         pass
@@ -120,5 +142,6 @@ class Plugin:
             logger.error(f"Error preparing extension files: {e}")
 
         Millennium.ready()  # this is required to tell Millennium that the backend is ready.
+
     def _unload(self):
         logger.log("unloading")

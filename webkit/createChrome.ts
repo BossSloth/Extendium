@@ -2,7 +2,8 @@ import { callable } from '@steambrew/webkit';
 import { ChromeEvent } from './extension/ChromeEvent';
 import { Extension } from './extension/Extension';
 import { Logger } from './extension/Logger';
-import { base64Decode, base64Encode } from './utils';
+import { Storage } from './extension/Storage';
+import { base64Decode, base64Encode } from './extension/utils';
 
 const VERBOSE = true;
 
@@ -25,7 +26,8 @@ export function createChrome(context: string, extension: Extension): typeof wind
       sendMessage: async (message: unknown, responseCallback?: (response?: unknown) => void): Promise<unknown> => {
         logger.log('runtime.sendMessage', message);
 
-        const responseStr = base64Decode(await sendMessage({ extensionName: extension.getName(), content: base64Encode(JSON.stringify(message)) }));
+        const messageResponse = await sendMessage({ extensionName: extension.getName(), content: base64Encode(JSON.stringify(message)) });
+        const responseStr = base64Decode(messageResponse);
         const response = responseStr === 'undefined' ? undefined : JSON.parse(responseStr) as unknown;
 
         if (responseCallback) {
@@ -38,6 +40,10 @@ export function createChrome(context: string, extension: Extension): typeof wind
       onMessage: new ChromeEvent<(message: unknown, sender: chrome.runtime.MessageSender, sendResponse: (response?: unknown) => void) => void>(),
       getURL: (path: string): string => extension.getFileUrl(path) ?? '',
       getManifest: (): chrome.runtime.Manifest => extension.manifest,
+    },
+    storage: {
+      // TODO: sync storage to frontend storage
+      sync: new Storage(extension, 'sync', logger),
     },
   };
 }

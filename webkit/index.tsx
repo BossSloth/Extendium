@@ -21,8 +21,9 @@ export default async function WebkitMain(): Promise<void> {
     extensions.set(manifest.name, new ExtensionWrapper(extension, chrome));
   }
 
-  await Promise.all([...extensions.values()].map(async (extension) => {
-    await createContentScripts(extension.extension);
+  await Promise.all([...extensions.values()].map(async (wrapper) => {
+    await wrapper.extension.init();
+    await createContentScripts(wrapper.extension);
   }));
 
   TabInject();
