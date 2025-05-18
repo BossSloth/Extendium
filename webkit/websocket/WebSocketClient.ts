@@ -77,6 +77,7 @@ export class WebSocketClient {
           if (this.pendingRequests.has(requestId)) {
             this.pendingRequests.delete(requestId);
             reject(new Error('Request timed out'));
+            console.error('Request timed out', extensionName, requestId, message);
           }
         }, this.requestTimeout);
       });

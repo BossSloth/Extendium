@@ -1,18 +1,14 @@
-import { WebkitMessage, WebkitRequestType } from '../extension/websocket/MessageTypes';
+import { StorageGetSetContent, WebkitMessage, WebkitRequestType } from '../extension/websocket/MessageTypes';
 import { WebkitWrapper } from '../webkit';
 
-export async function handleWebkitMessage(message: WebkitMessage, webkitWrapper: WebkitWrapper): Promise<string> {
+export async function handleWebkitMessage(message: WebkitMessage, webkitWrapper: WebkitWrapper): Promise<string | void> {
   switch (message.webkitRequestType) {
     case WebkitRequestType.SendMessage:
       return sendMessage(message, webkitWrapper);
-    // case WebkitType.GetStorage:
-    //   webkitWrapper.getStorage(message.extensionName, message.content);
-    //   break;
-    // case WebkitType.SetStorage:
-    //   webkitWrapper.setStorage(message.extensionName, message.content);
-    //   break;
-    case WebkitRequestType.GetStorage: { throw new Error('Not implemented yet: WebkitType.GetStorage case'); }
-    case WebkitRequestType.SetStorage: { throw new Error('Not implemented yet: WebkitType.SetStorage case'); }
+    case WebkitRequestType.GetStorage:
+      return getStorage(message, webkitWrapper);
+    case WebkitRequestType.SetStorage:
+      return setStorage(message, webkitWrapper);
     default:
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
       throw new Error(`Unsupported webkit type: ${message.webkitRequestType}`);
@@ -21,4 +17,12 @@ export async function handleWebkitMessage(message: WebkitMessage, webkitWrapper:
 
 async function sendMessage(message: WebkitMessage, webkitWrapper: WebkitWrapper): Promise<string> {
   return webkitWrapper.sendMessage(message.extensionName, message.content);
+}
+
+async function getStorage(message: WebkitMessage, webkitWrapper: WebkitWrapper): Promise<string> {
+  return webkitWrapper.getStorage(message.extensionName, message.content as StorageGetSetContent);
+}
+
+async function setStorage(message: WebkitMessage, webkitWrapper: WebkitWrapper): Promise<void> {
+  return webkitWrapper.setStorage(message.extensionName, message.content as StorageGetSetContent);
 }

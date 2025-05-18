@@ -58,28 +58,6 @@ def BackendFetch(url: str, headersJson: str):
         logger.error(f"Error fetching {url}: {str(e)}")
         return None
 
-
-class Webkit:
-    # @staticmethod
-    # def SendMessage(extensionName: str, content: str):
-    #     return Millennium.call_frontend_method('webkit.sendMessage', params=[extensionName, content])
-
-    # @staticmethod
-    # def AddTab(tabInfo: str):
-    #     return Millennium.call_frontend_method('webkit.addTab', params=[tabInfo])
-
-    # @staticmethod
-    # def FocusTab(tabId: int):
-    #     return Millennium.call_frontend_method('webkit.focusTab', params=[tabId])
-
-    @staticmethod
-    def GetStorage(extensionName: str, area: str, keys: str):
-        return Millennium.call_frontend_method('webkit.getStorage', params=[extensionName, area, keys])
-
-    @staticmethod
-    def SetStorage(extensionName: str, area: str, keys: str):
-        return Millennium.call_frontend_method('webkit.setStorage', params=[extensionName, area, keys])
-
 # TODO: do the same as millennium does for the file proxy but for chrome-extension:// url
 
 def PrepareExtensionFiles():

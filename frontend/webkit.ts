@@ -2,7 +2,7 @@
 /* eslint-disable max-classes-per-file */
 import { createChrome } from './browser/createChrome';
 import { Extension } from './extension/Extension';
-import { base64Decode, base64Encode } from './extension/utils';
+import { StorageGetSetContent } from './extension/websocket/MessageTypes';
 import { addTab, focusTab } from './TabManager';
 import { WebSocketServer } from './websocket/WebSocketServer';
 
@@ -20,34 +20,32 @@ export class Webkit {
     return this.chrome.runtime.sendMessage(content);
   }
 
-  async getStorage(area: chrome.storage.AreaName, keys: string): Promise<Record<string, unknown>> {
-    const parsedKeys = JSON.parse(base64Decode(keys)) as string[];
+  async getStorage(area: chrome.storage.AreaName, keys: Record<string, unknown>): Promise<Record<string, unknown>> {
     switch (area) {
       case 'sync':
-        return this.chrome.storage.sync.get(parsedKeys);
+        return this.chrome.storage.sync.get(keys);
       case 'local':
-        return this.chrome.storage.local.get(parsedKeys);
+        return this.chrome.storage.local.get(keys);
       case 'session':
-        return this.chrome.storage.session.get(parsedKeys);
+        return this.chrome.storage.session.get(keys);
       case 'managed':
-        return this.chrome.storage.managed.get(parsedKeys);
+        return this.chrome.storage.managed.get(keys);
       default:
         // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
         throw new Error(`Unsupported storage area: ${area}`);
     }
   }
 
-  async setStorage(area: chrome.storage.AreaName, keys: string): Promise<void> {
-    const parsedKeys = JSON.parse(base64Decode(keys)) as Record<string, unknown>;
+  async setStorage(area: chrome.storage.AreaName, keys: Record<string, unknown>): Promise<void> {
     switch (area) {
       case 'sync':
-        return this.chrome.storage.sync.set(parsedKeys);
+        return this.chrome.storage.sync.set(keys);
       case 'local':
-        return this.chrome.storage.local.set(parsedKeys);
+        return this.chrome.storage.local.set(keys);
       case 'session':
-        return this.chrome.storage.session.set(parsedKeys);
+        return this.chrome.storage.session.set(keys);
       case 'managed':
-        return this.chrome.storage.managed.set(parsedKeys);
+        return this.chrome.storage.managed.set(keys);
       default:
         // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
         throw new Error(`Unsupported storage area: ${area}`);
@@ -90,13 +88,13 @@ export class WebkitWrapper {
     focusTab(tabId);
   }
 
-  async getStorage(extensionName: string, area: chrome.storage.AreaName, keys: string): Promise<string> {
-    const response = await this.findWebkit(extensionName).getStorage(area, keys);
+  async getStorage(extensionName: string, content: StorageGetSetContent): Promise<string> {
+    const response = await this.findWebkit(extensionName).getStorage(content.area, content.keys);
 
-    return base64Encode(JSON.stringify(response));
+    return JSON.stringify(response);
   }
 
-  async setStorage(extensionName: string, area: chrome.storage.AreaName, keys: string): Promise<void> {
-    return this.findWebkit(extensionName).setStorage(area, keys);
+  async setStorage(extensionName: string, content: StorageGetSetContent): Promise<void> {
+    return this.findWebkit(extensionName).setStorage(content.area, content.keys);
   }
 }

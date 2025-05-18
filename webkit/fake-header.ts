@@ -1,5 +1,3 @@
-import { callable } from '@steambrew/webkit';
-
 function getIdFromAppConfig(): string | null {
   const appConfig = document.querySelector('#application_config');
 
@@ -34,14 +32,14 @@ function getIdFromScript(context: Node): string | null {
   return script.textContent?.match(/g_steamID.+?(\d+)/)?.[1] ?? null;
 }
 
-async function getIdFromBackend(): Promise<string | null> {
-  const backend = callable<[], string>('GetSteamId');
+// async function getIdFromBackend(): Promise<string | null> {
+//   const backend = callable<[], string>('GetSteamId');
 
-  return backend();
-}
+//   return backend();
+// }
 
 export async function createFakeSteamHeader(): Promise<void> {
-  const steamid = getIdFromAppConfig() ?? getIdFromScript(document) ?? await getIdFromBackend();
+  const steamid = getIdFromAppConfig() ?? getIdFromScript(document);
   if (steamid === null) {
     throw new Error('Could not get steamid, augmented steam will not work.');
   }

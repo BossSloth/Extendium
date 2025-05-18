@@ -19,7 +19,6 @@ export function createChrome(context: string, extension: Extension): typeof wind
   return {
     i18n: extension.locale,
     runtime: {
-      // Using WebSocket instead of callable for sendMessage
       // @ts-expect-error Ignore
       sendMessage: async (message: unknown, responseCallback?: (response?: unknown) => void): Promise<unknown> => {
         logger.log('runtime.sendMessage', message);

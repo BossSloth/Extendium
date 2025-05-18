@@ -63,3 +63,12 @@ export interface ErrorMessage extends WebSocketMessage {
   error: string;
   type: MessageType.Error;
 }
+
+// #region ContentTypes
+
+export interface StorageGetSetContent {
+  area: chrome.storage.AreaName;
+  keys: Record<string, unknown>;
+}
+
+// #endregion

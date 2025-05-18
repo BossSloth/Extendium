@@ -35,6 +35,7 @@ class MessageHandler:
             MessageType.IDENTIFY.value: self._handle_identify,
             MessageType.WEBKIT_MESSAGE.value: self._handle_webkit_message,
             MessageType.FRONTEND_RESPONSE.value: self._handle_frontend_response,
+            MessageType.ERROR.value: self._handle_error,
         }
 
     def process_message(self, client: Dict[str, Any], message: str) -> None:
@@ -122,6 +123,9 @@ class MessageHandler:
         else:
             logger.error(f"Received response for unknown request: {request_id}")
             self._send_error(client, request_id, f"Unknown request: {request_id}")
+
+    def _handle_error(self, client: Dict[str, Any], data: Dict[str, Any]) -> None:
+        logger.error(f"Received error: {data['error']} requestId: {data['requestId']} extensionName: {data['extensionName']}")
 
     def _send_error(self, client: Dict[str, Any], request_id: Optional[str], error_message: str) -> None:
         """
