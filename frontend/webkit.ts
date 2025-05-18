@@ -4,6 +4,10 @@ import { createChrome } from './browser/createChrome';
 import { Extension } from './extension/Extension';
 import { base64Decode, base64Encode } from './extension/utils';
 import { addTab, focusTab } from './TabManager';
+import { WebSocketServer } from './websocket/WebSocketServer';
+
+// Create a singleton instance of the WebSocket server
+const webSocketServer = new WebSocketServer();
 
 export class Webkit {
   private readonly chrome: typeof window.chrome;
@@ -12,10 +16,8 @@ export class Webkit {
     this.chrome = createChrome('content', this.extension);
   }
 
-  async sendMessage(content: string): Promise<string> {
-    const obj = JSON.parse(base64Decode(content)) as unknown;
-
-    return this.chrome.runtime.sendMessage(obj);
+  async sendMessage(content: unknown): Promise<string> {
+    return this.chrome.runtime.sendMessage(content);
   }
 
   async getStorage(area: chrome.storage.AreaName, keys: string): Promise<Record<string, unknown>> {
@@ -60,6 +62,9 @@ export class WebkitWrapper {
     for (const [name, extension] of extensions) {
       this.webkits.set(name, new Webkit(extension));
     }
+
+    // Set this wrapper in the WebSocketServer
+    webSocketServer.setWebkitWrapper(this);
   }
 
   findWebkit(extensionName: string): Webkit {
@@ -71,10 +76,10 @@ export class WebkitWrapper {
     return webkit;
   }
 
-  async sendMessage(extensionName: string, content: string): Promise<string> {
+  async sendMessage(extensionName: string, content: unknown): Promise<string> {
     const response = await this.findWebkit(extensionName).sendMessage(content);
 
-    return base64Encode(JSON.stringify(response));
+    return response;
   }
 
   addTab(tabInfoBase64: string): number {

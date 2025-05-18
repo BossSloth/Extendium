@@ -1,4 +1,7 @@
 import { ExtensionWrapper } from './ExtensionWrapper';
+import { getWebSocketClient } from './websocket/WebSocketClient';
+
+export const webSocketClient = getWebSocketClient();
 
 export async function loadStyle(src: string): Promise<void> {
   const content = await fetch(src).then(async response => response.text());

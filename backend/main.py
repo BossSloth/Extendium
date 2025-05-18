@@ -1,13 +1,13 @@
 import base64
 import json
 import os
+import threading
 from os import path
 
 import Millennium
-import PluginUtils  # type: ignore
 import requests
-
-logger = PluginUtils.Logger()
+from logger import logger
+from websocket import initialize_server, run_server, shutdown_server
 
 EXTENSIONS_DIR = '/steamui/extensions'
 EXTENSIONS_URL = 'https://steamloopback.host/extensions'
@@ -60,17 +60,17 @@ def BackendFetch(url: str, headersJson: str):
 
 
 class Webkit:
-    @staticmethod
-    def SendMessage(extensionName: str, content: str):
-        return Millennium.call_frontend_method('webkit.sendMessage', params=[extensionName, content])
+    # @staticmethod
+    # def SendMessage(extensionName: str, content: str):
+    #     return Millennium.call_frontend_method('webkit.sendMessage', params=[extensionName, content])
 
-    @staticmethod
-    def AddTab(tabInfo: str):
-        return Millennium.call_frontend_method('webkit.addTab', params=[tabInfo])
+    # @staticmethod
+    # def AddTab(tabInfo: str):
+    #     return Millennium.call_frontend_method('webkit.addTab', params=[tabInfo])
 
-    @staticmethod
-    def FocusTab(tabId: int):
-        return Millennium.call_frontend_method('webkit.focusTab', params=[tabId])
+    # @staticmethod
+    # def FocusTab(tabId: int):
+    #     return Millennium.call_frontend_method('webkit.focusTab', params=[tabId])
 
     @staticmethod
     def GetStorage(extensionName: str, area: str, keys: str):
@@ -152,7 +152,18 @@ class Plugin:
         except Exception as e:
             logger.error(f"Error preparing extension files: {e}")
 
+        try:
+            # Initialize and run the WebSocket server
+            initialize_server(port=8765, loglevel=0)
+            run_server()
+        except Exception as e:
+            logger.error(f"Error running websocket server: {e}")
+
         Millennium.ready()  # this is required to tell Millennium that the backend is ready.
 
     def _unload(self):
+        try:
+            shutdown_server()
+        except Exception as e:
+            logger.error(f"Error shutting down websocket server: {e}")
         logger.log("unloading")

@@ -2,6 +2,8 @@ import { Extension } from '../extension/Extension';
 import { createOffscreen } from '../windowManagement';
 import { createChrome } from './createChrome';
 
+const proxyUrl = 'http://localhost:8765/proxy/';
+
 export function injectBrowser(context: string, window: Window, extension: Extension, deps: { createOffscreen: typeof createOffscreen; }): void {
   window.chrome = createChrome(context, extension, deps);
 
@@ -27,22 +29,27 @@ export function injectBrowser(context: string, window: Window, extension: Extens
     return originalOnUnhandledRejection?.call(this, event);
   };
 
-  // @ts-expect-error Ignore
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-  const originalConsoleError = window.console.error as (message: string, ...optionalParams: unknown[]) => void;
-  // @ts-expect-error Ignore
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, func-names
-  window.console.error = function (this: Console, message: string, ...optionalParams: unknown[]): void {
-    console.error(`Error in ${extension.manifest.name} - ${context}`, message, ...optionalParams);
-
-    originalConsoleError.call(this, message, ...optionalParams);
-  };
-
   window.importScripts = (...urls: string[]): void => {
     for (const url of urls) {
       const script = window.document.createElement('script');
       script.src = extension.getFileUrl(url) ?? '';
       window.document.head.appendChild(script);
+    }
+  };
+
+  const oldFetch = window.fetch;
+  window.fetch = async (input: RequestInfo | URL, init?: RequestInit): Promise<Response> => {
+    try {
+      const response = await oldFetch(input, init);
+
+      return response;
+    } catch {
+      // Likely CORS error, refetch with backend
+      // eslint-disable-next-line @typescript-eslint/no-base-to-string
+      const requestUrl = input.toString().replace('https://', '').replace('http://', '');
+      const response = await oldFetch(proxyUrl + requestUrl, init);
+
+      return response;
     }
   };
 }
