@@ -88,10 +88,10 @@ export class WebkitWrapper {
     focusTab(tabId);
   }
 
-  async getStorage(extensionName: string, content: StorageGetSetContent): Promise<string> {
+  async getStorage(extensionName: string, content: StorageGetSetContent): Promise<Record<string, unknown>> {
     const response = await this.findWebkit(extensionName).getStorage(content.area, content.keys);
 
-    return JSON.stringify(response);
+    return response;
   }
 
   async setStorage(extensionName: string, content: StorageGetSetContent): Promise<void> {

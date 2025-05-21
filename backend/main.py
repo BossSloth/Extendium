@@ -6,6 +6,7 @@ from os import path
 
 import Millennium
 import requests
+from cors_proxy import CORSProxy
 from logger import logger
 from websocket import initialize_server, run_server, shutdown_server
 
@@ -137,6 +138,13 @@ class Plugin:
         except Exception as e:
             logger.error(f"Error running websocket server: {e}")
 
+        try:
+            # Initialize and run the CORS proxy server
+            cors_proxy = CORSProxy(host='localhost', port=8766)
+            cors_proxy.start()
+        except Exception as e:
+            logger.error(f"Error running CORS proxy server: {e}")
+
         Millennium.ready()  # this is required to tell Millennium that the backend is ready.
 
     def _unload(self):
@@ -144,4 +152,8 @@ class Plugin:
             shutdown_server()
         except Exception as e:
             logger.error(f"Error shutting down websocket server: {e}")
+        try:
+            cors_proxy.stop()
+        except Exception as e:
+            logger.error(f"Error shutting down CORS proxy server: {e}")
         logger.log("unloading")

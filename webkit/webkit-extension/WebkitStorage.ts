@@ -12,7 +12,7 @@ export class WebkitStorage implements chrome.storage.StorageArea {
       area: this.area,
       keys,
     };
-    const response = JSON.parse(await webSocketClient.sendMessage(message, WebkitRequestType.GetStorage, this.extensionName) as string) as T;
+    const response = await webSocketClient.sendMessage(message, WebkitRequestType.GetStorage, this.extensionName) as T;
 
     if (callback) {
       callback(response);

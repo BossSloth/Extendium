@@ -1,7 +1,7 @@
 import { StorageGetSetContent, WebkitMessage, WebkitRequestType } from '../extension/websocket/MessageTypes';
 import { WebkitWrapper } from '../webkit';
 
-export async function handleWebkitMessage(message: WebkitMessage, webkitWrapper: WebkitWrapper): Promise<string | void> {
+export async function handleWebkitMessage(message: WebkitMessage, webkitWrapper: WebkitWrapper): Promise<unknown> {
   switch (message.webkitRequestType) {
     case WebkitRequestType.SendMessage:
       return sendMessage(message, webkitWrapper);
@@ -19,7 +19,7 @@ async function sendMessage(message: WebkitMessage, webkitWrapper: WebkitWrapper)
   return webkitWrapper.sendMessage(message.extensionName, message.content);
 }
 
-async function getStorage(message: WebkitMessage, webkitWrapper: WebkitWrapper): Promise<string> {
+async function getStorage(message: WebkitMessage, webkitWrapper: WebkitWrapper): Promise<unknown> {
   return webkitWrapper.getStorage(message.extensionName, message.content as StorageGetSetContent);
 }
 

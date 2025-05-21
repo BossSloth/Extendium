@@ -1,8 +1,7 @@
 import { Extension } from '../extension/Extension';
 import { createOffscreen } from '../windowManagement';
+import { patchFetch } from './corsFetch';
 import { createChrome } from './createChrome';
-
-const proxyUrl = 'http://localhost:8765/proxy/';
 
 export function injectBrowser(context: string, window: Window, extension: Extension, deps: { createOffscreen: typeof createOffscreen; }): void {
   window.chrome = createChrome(context, extension, deps);
@@ -37,21 +36,7 @@ export function injectBrowser(context: string, window: Window, extension: Extens
     }
   };
 
-  const oldFetch = window.fetch;
-  window.fetch = async (input: RequestInfo | URL, init?: RequestInit): Promise<Response> => {
-    try {
-      const response = await oldFetch(input, init);
-
-      return response;
-    } catch {
-      // Likely CORS error, refetch with backend
-      // eslint-disable-next-line @typescript-eslint/no-base-to-string
-      const requestUrl = input.toString().replace('https://', '').replace('http://', '');
-      const response = await oldFetch(proxyUrl + requestUrl, init);
-
-      return response;
-    }
-  };
+  patchFetch(window);
 }
 
 declare global {

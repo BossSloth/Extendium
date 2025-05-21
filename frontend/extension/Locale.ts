@@ -54,6 +54,7 @@ export class Locale {
     const placeholders = record.placeholders ?? {};
     for (const [key, value] of Object.entries(placeholders)) {
       message = message.replace(`$${key.toUpperCase()}$`, value.content);
+      message = message.replace(`$${key}$`, value.content);
     }
 
     for (let i = 1; i <= substitutions.length; i++) {
