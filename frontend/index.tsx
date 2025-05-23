@@ -3,18 +3,18 @@ import React from 'react';
 import { MainWindowPopup, Popup } from 'steam-types/dist/types/Global/PopupManager';
 import { ExtensionsBar } from './components/ExtensionsBar';
 import { Extension } from './extension/Extension';
-import { EXTENSIONS_URL, initMainWindow, MAIN_WINDOW_NAME, WaitForElement } from './shared';
+import { initMainWindow, MAIN_WINDOW_NAME, WaitForElement } from './shared';
 import { WebkitWrapper } from './webkit';
 import { createWindowWithScript } from './windowManagement';
 
-const GetExtensionManifests = callable<[], string>('GetExtensionManifests');
-const GetPluginDir = callable<[], string>('GetPluginDir');
+const GetExtensionsInfos = callable<[], string>('GetExtensionsInfos');
 
 const extensions = new Map<string, Extension>();
 // @ts-expect-error globalThis is missing type
 globalThis.extensions = extensions;
 
 let pluginDir: string;
+let extensionsDir: string;
 
 function isMainWindow(popup: Popup): popup is MainWindowPopup {
   return popup.m_strName === MAIN_WINDOW_NAME;
@@ -76,10 +76,13 @@ async function setupBackground(extension: Extension): Promise<void> {
 
 // Entry point on the front end of your plugin
 export default async function PluginMain(): Promise<void> {
-  pluginDir = await GetPluginDir();
-  const manifests = JSON.parse(await GetExtensionManifests()) as Record<string, chrome.runtime.ManifestV3>;
+  const infos = JSON.parse(await GetExtensionsInfos()) as { extensionsDir: string; pluginDir: string; manifests: Record<string, chrome.runtime.ManifestV3>; };
+  const manifests = infos.manifests;
+  pluginDir = infos.pluginDir;
+  extensionsDir = infos.extensionsDir.replaceAll('\\', '/');
+  const extensionsUrl = `https://js.millennium.app/${extensionsDir}`;
   for (const [folderName, manifest] of Object.entries(manifests)) {
-    extensions.set(manifest.name, new Extension(manifest, `${EXTENSIONS_URL}/${folderName}`));
+    extensions.set(manifest.name, new Extension(manifest, `${extensionsUrl}/${folderName}`));
   }
 
   await Promise.all([...extensions.values()].map(async (extension) => {

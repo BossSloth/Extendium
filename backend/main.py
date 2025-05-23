@@ -36,7 +36,14 @@ def GetExtensionManifests():
                 except Exception as e:
                     logger.error(f"Error reading manifest {manifest_path}: {str(e)}")
 
-    return json.dumps(manifests)
+    return manifests
+
+def GetExtensionsInfos():
+    return json.dumps({
+        'extensionsDir': GetExtensionsDir(),
+        'pluginDir': GetPluginDir(),
+        'manifests': GetExtensionManifests()
+    })
 
 #TODO: cors requests currently don't work like in the steamdb extension and we can't do this because of the issue below
 def BackendFetch(url: str, headersJson: str):
@@ -140,7 +147,7 @@ class Plugin:
 
         try:
             # Initialize and run the CORS proxy server
-            cors_proxy = CORSProxy(host='localhost', port=8766)
+            cors_proxy = CORSProxy(host='127.0.0.1', port=8766)
             cors_proxy.start()
         except Exception as e:
             logger.error(f"Error running CORS proxy server: {e}")

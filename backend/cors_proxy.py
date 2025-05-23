@@ -132,7 +132,7 @@ class ProxyHandler(http.server.BaseHTTPRequestHandler):
         pass
 
 class CORSProxy:
-    def __init__(self, host='localhost', port=DEFAULT_PORT):
+    def __init__(self, host='127.0.0.1', port=DEFAULT_PORT):
         self.host = host
         self.port = port
         self.server = None

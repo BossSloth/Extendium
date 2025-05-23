@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-base-to-string */
 const corsCacheKey = 'extendium-cors-cache';
-const proxyUrl = 'http://localhost:8766/proxy/';
+const proxyUrl = 'http://127.0.0.1:8766/proxy/';
 
 export function patchFetch(window: Window): void {
   const oldFetch = window.fetch;

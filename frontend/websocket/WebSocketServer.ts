@@ -52,7 +52,7 @@ export class WebSocketServer {
 
     this.connectionPromise = new Promise<WebSocket>((resolve, reject) => {
       try {
-        this.socket = new WebSocket('ws://localhost:8765');
+        this.socket = new WebSocket('ws://127.0.0.1:8765');
 
         this.socket.onopen = (): void => {
           // Identify as frontend client

@@ -98,10 +98,11 @@ export class WebSocketClient {
     if (this.connectionPromise) {
       return this.connectionPromise;
     }
+    const startMark = performance.mark('[Extendium] WebSocketClient getConnection start');
 
     this.connectionPromise = new Promise<WebSocket>((resolve, reject) => {
       try {
-        this.socket = new WebSocket('ws://localhost:8765');
+        this.socket = new WebSocket('ws://127.0.0.1:8765');
 
         this.socket.onopen = (): void => {
           this.reconnectAttempts = 0;
@@ -115,6 +116,8 @@ export class WebSocketClient {
           }
 
           this.connectionPromise = null;
+          const endMark = performance.mark('[Extendium] WebSocketClient getConnection end');
+          performance.measure('[Extendium] WebSocketClient getConnection', startMark.name, endMark.name);
         };
 
         this.socket.onerror = (event: Event): void => {
@@ -249,13 +252,4 @@ export class WebSocketClient {
 
 function generateRequestId(): string {
   return `${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
-}
-
-// Singleton WebSocket client instance
-let webSocketClient: WebSocketClient | null = null;
-
-export function getWebSocketClient(): WebSocketClient {
-  webSocketClient ??= new WebSocketClient();
-
-  return webSocketClient;
 }

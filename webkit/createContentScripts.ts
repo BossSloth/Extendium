@@ -2,43 +2,67 @@ import escapeStringRegexp from 'escape-string-regexp';
 import { Extension } from './extension/Extension';
 import { loadScriptWithContent, loadStyle } from './shared';
 
+type ScriptInfo = NonNullable<chrome.runtime.ManifestV3['content_scripts']>[number];
+
 export async function createContentScripts(extension: Extension): Promise<void> {
   const contentScripts = extension.manifest.content_scripts ?? [];
   const currentHref = window.location.href;
-  const scripts: string[] = [];
+  const scripts: Map<string, ScriptInfo> = new Map<string, ScriptInfo>();
+  const styles: Set<string> = new Set<string>();
   for (const contentScript of contentScripts) {
     if (hrefMatches(currentHref, contentScript)) {
       if (contentScript.js) {
         for (const script of contentScript.js) {
-          scripts.push(extension.getFileUrl(script) ?? '');
+          scripts.set(extension.getFileUrl(script) ?? '', contentScript);
         }
       }
 
       if (contentScript.css) {
         for (const style of contentScript.css) {
-          // eslint-disable-next-line no-await-in-loop
-          await loadStyle(extension.getFileUrl(style) ?? '');
+          styles.add(extension.getFileUrl(style) ?? '');
         }
       }
     }
   }
 
+  styles.forEach((style) => {
+    loadStyle(style);
+  });
+
   await mutateScripts(scripts, extension);
 }
 
-async function mutateScripts(urls: string[], extension: Extension): Promise<void> {
-  const responses = await Promise.all(urls.map(async url => fetch(url)));
-  const texts = await Promise.all(responses.map(async r => r.text()));
-  let content = texts.join('');
+async function mutateScripts(urls: Map<string, ScriptInfo>, extension: Extension): Promise<void> {
+  const promises = Array.from(urls).map(async ([url, script]) => {
+    const content = await (await fetch(url)).text();
 
-  const combinedUrl = extension.getFileUrl('content.js') ?? '';
+    const comment = `// ${url}`;
+
+    if (script.run_at === 'document_end') {
+      return `${comment}\nonDomReady(() => {\n${content}\n});`;
+    }
+
+    return `${comment}\n${content}`;
+  });
+
+  // Also load the extension's locale
+  promises.unshift(extension.init().then(() => ''));
+
+  const startMark = performance.mark(`[Extendium][${extension.getName()}] mutateScripts start`);
+  const results = await Promise.all(promises);
+  const endMark = performance.mark(`[Extendium][${extension.getName()}] mutateScripts end`);
+  performance.measure(`[Extendium][${extension.getName()}] mutateScripts`, startMark.name, endMark.name);
+  let content = results.join('');
+
+  const combinedUrl = extension.getFileUrl(`${extension.getName()}_content.js`) ?? '';
 
   const chromeFunctionString = `const chrome = window.extensions.get('${extension.getName().replace(/'/g, "\\'")}')?.chrome;`;
   // Wrap the script in a function to make it self-contained
   content = `(function() {\n${chromeFunctionString}\n\n${content}\n})();`;
   content += `\n//# sourceURL=${combinedUrl}`;
 
-  await loadScriptWithContent(combinedUrl, document, content);
+  loadScriptWithContent(combinedUrl, document, content);
+  performance.mark(`[Extendium][${extension.getName()}] mutateScripts done`);
 }
 
 function urlToRegex(url: string): string {
