@@ -4,7 +4,7 @@ import { Extension } from '../extension/Extension';
 import { Logger } from '../extension/Logger';
 import { Storage } from '../extension/Storage';
 import { queryTabs } from '../TabManager';
-import { createOffscreen } from '../windowManagement';
+import { createOffscreen, createOptionsWindow } from '../windowManagement';
 
 const VERBOSE = true;
 
@@ -36,6 +36,11 @@ export function createChrome(context: string, extension: Extension, deps?: { cre
       getURL: (path: string): string => extension.getFileUrl(path) ?? '',
       getManifest: (): chrome.runtime.Manifest => extension.manifest,
       getContexts: extension.contexts.getContexts.bind(extension.contexts),
+      openOptionsPage: async (): Promise<void> => {
+        createOptionsWindow(extension);
+
+        return Promise.resolve();
+      },
 
       // TODO: implement
       onStartup: new ChromeEvent(),
@@ -84,7 +89,15 @@ export function createChrome(context: string, extension: Extension, deps?: { cre
         return Promise.resolve();
       },
     },
-    permissions: {},
+    permissions: {
+      onAdded: new ChromeEvent<(permissions: chrome.permissions.Permissions) => void>(),
+      onRemoved: new ChromeEvent<(permissions: chrome.permissions.Permissions) => void>(),
+      contains: async (_permissions, callback?: (result: boolean) => void): Promise<boolean> => {
+        callback?.(true);
+
+        return Promise.resolve(true);
+      },
+    },
     extension: {
       isAllowedFileSchemeAccess: async (callback?: (result: boolean) => void): Promise<boolean> => {
         callback?.(false);

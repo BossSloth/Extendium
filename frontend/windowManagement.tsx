@@ -1,4 +1,7 @@
+import { ModalRoot, showModal } from '@steambrew/client';
+import React from 'react';
 import { injectBrowser } from './browser/injectBrowser';
+import { ExtensionPopup } from './components/ExtensionPopup';
 import { Extension } from './extension/Extension';
 import { loadScript, mainWindow } from './shared';
 
@@ -36,7 +39,7 @@ export async function createWindowWithScript(scriptPath: string, extension: Exte
   return backgroundWindow;
 }
 
-export async function createOffscreen(extension: Extension, title: string, initUrl?: string): Promise<Window> {
+export async function createOffscreen(extension: Extension, title: string, initUrl: string): Promise<Window> {
   const window = createWindow(extension, title, extension.getFileDir(initUrl));
   const url = extension.getFileUrl(initUrl) ?? '';
   const popupContent = await fetch(url).then(async r => r.text());
@@ -47,12 +50,14 @@ export async function createOffscreen(extension: Extension, title: string, initU
   return window;
 }
 
-export async function injectHtml(html: string, popupWindow: Window, extension: Extension, addToBody = true): Promise<void> {
+export async function injectHtml(html: string, popupWindow: Window, extension: Extension, addToBody = true, removeSteamCss = true): Promise<void> {
   const popupDocument = popupWindow.document;
   // Remove all steam css
-  popupDocument.querySelectorAll('head > link[rel="stylesheet"]').forEach((link) => {
-    link.remove();
-  });
+  if (removeSteamCss) {
+    popupDocument.querySelectorAll('head > link[rel="stylesheet"]').forEach((link) => {
+      link.remove();
+    });
+  }
 
   // Inject the chrome variable
   injectBrowser('popup', popupWindow, extension, { createOffscreen });
@@ -87,6 +92,16 @@ export async function injectHtml(html: string, popupWindow: Window, extension: E
     }
   }
 
+  const dialogContent: HTMLElement | null = popupDocument.querySelector('.DialogContent');
+  if (dialogContent) {
+    dialogContent.style.padding = '0';
+  }
+
+  const aTags = popupDocument.querySelectorAll('a:not([target])');
+  for (const aTag of aTags) {
+    aTag.setAttribute('target', '_blank');
+  }
+
   popupDocument.dispatchEvent(new Event('DOMContentLoaded', {
     bubbles: true,
     cancelable: true,
@@ -96,4 +111,29 @@ export async function injectHtml(html: string, popupWindow: Window, extension: E
     bubbles: true,
     cancelable: true,
   }));
+}
+
+export function createOptionsWindow(extension: Extension): void {
+  const url = extension.manifest.options_ui?.page ?? '';
+
+  // TODO: this window is now not resizable which makes it sometimes hard to change settings
+  showModal(
+    <ModalRoot>
+      <ExtensionPopup extension={extension} popupContentUrl={extension.getFileUrl(url) ?? ''} baseDir={extension.getFileDir(url)} removeSteamCss={false} />
+    </ModalRoot>,
+    mainWindow,
+    {
+      // bOverlapHorizontal: true,
+      // bGrowToElementWidth: true,
+      // bForcePopup: true,
+      // bDisableMouseOverlay: true,
+      // bCreateHidden: false,
+      // bRetainOnHide: false,
+      // bNoFocusWhenShown: undefined,
+      popupHeight: mainWindow.innerHeight / 2,
+      popupWidth: mainWindow.innerWidth / 2,
+      bNeverPopOut: true,
+      strTitle: `${extension.action.getTitle()} - Options`,
+    },
+  );
 }

@@ -1,14 +1,16 @@
+import { ModalPosition } from '@steambrew/client';
 import React, { JSX, useEffect, useRef, useState } from 'react';
 import { Extension } from '../extension/Extension';
+import { mainWindow } from '../shared';
 import { injectHtml } from '../windowManagement';
 
-export function ExtensionPopup({ extension }: { readonly extension: Extension; }): JSX.Element {
+export function ExtensionPopup({ extension, popupContentUrl, baseDir, removeSteamCss = true }: { readonly extension: Extension; readonly popupContentUrl: string; readonly baseDir: string; readonly removeSteamCss?: boolean; }): JSX.Element {
   const [popupContent, setPopupContent] = useState<string | null>(null);
   const container = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     async function initPopupContent(): Promise<void> {
-      const content = await fetch(extension.action.getPopupUrl() ?? '').then(async r => r.text());
+      const content = await fetch(popupContentUrl).then(async r => r.text());
       // content = content.replace(/(href=")\/|(src=")\//g, '$1$2');
       setPopupContent(content);
     }
@@ -22,28 +24,32 @@ export function ExtensionPopup({ extension }: { readonly extension: Extension; }
       const popupDocument = container.current?.ownerDocument;
       if (!popupDocument || !popupDocument.defaultView) return;
 
-      await injectHtml(popupContent, popupDocument.defaultView, extension, false);
+      await injectHtml(popupContent, popupDocument.defaultView, extension, false, removeSteamCss);
 
-      extension.contexts.addContext(popupDocument.defaultView, 'POPUP', extension.action.getPopupUrl() ?? '');
+      // extension.contexts.addContext(popupDocument.defaultView, 'POPUP', extension.action.getPopupUrl() ?? '');
 
-      setTimeout(() => {
-        if (!container.current || !popupDocument.defaultView) return;
-
-        const size = getDesiredSize(container.current, popupDocument);
-
-        popupDocument.defaultView.SteamClient.Window.ResizeTo(size.width, size.height, true);
-      }, 500);
+      resize();
+      setTimeout(resize, 10);
     }
 
     initPopup();
   }, [popupContent]);
 
+  function resize(): void {
+    const popupDocument = container.current?.ownerDocument;
+    if (!popupDocument || !popupDocument.defaultView) return;
+
+    const size = getDesiredSize(container.current, popupDocument);
+
+    popupDocument.defaultView.SteamClient.Window.ResizeTo(size.width, size.height, true);
+  }
+
   return (
-    <>
-      <base href={`${extension.action.getPopupDir()}/`} />
+    <ModalPosition>
+      <base href={baseDir} />
       {/* eslint-disable-next-line react/no-danger */}
       <div ref={container} dangerouslySetInnerHTML={{ __html: popupContent ?? '' }} />
-    </>
+    </ModalPosition>
   );
 }
 
@@ -56,8 +62,8 @@ function getDesiredSize(element: HTMLElement, popupDocument: Document): { width:
   clone.style.whiteSpace = 'nowrap'; // if text content
   popupDocument.body.appendChild(clone);
 
-  const width = clone.offsetWidth;
-  const height = clone.offsetHeight;
+  const width = Math.min(clone.offsetWidth, mainWindow.innerWidth);
+  const height = Math.min(clone.offsetHeight, mainWindow.innerHeight - 100);
 
   popupDocument.body.removeChild(clone);
 

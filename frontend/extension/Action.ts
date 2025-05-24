@@ -15,7 +15,7 @@ export class Action {
   }
 
   public getPopupDir(): string | undefined {
-    return this.extension.getFileUrl(this.extension.manifest.action?.default_popup?.split('/').slice(0, -1).join('/'));
+    return this.extension.getFileDir(this.extension.manifest.action?.default_popup);
   }
 
   public getTitle(): string | undefined {

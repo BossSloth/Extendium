@@ -32,7 +32,7 @@ export function ExtensionButton({ extension }: { readonly extension: Extension; 
       // @ts-expect-error wrong type
       // eslint-disable-next-line @typescript-eslint/no-confusing-void-expression
       showContextMenu(
-        <ExtensionPopup extension={extension} />,
+        <ExtensionPopup extension={extension} popupContentUrl={extension.action.getPopupUrl() ?? ''} baseDir={extension.action.getPopupDir() ?? ''} />,
         targetElement,
         // @ts-expect-error wrong type
         {
