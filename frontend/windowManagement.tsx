@@ -50,6 +50,19 @@ export async function createOffscreen(extension: Extension, title: string, initU
   return window;
 }
 
+export async function closeOffscreen(extension: Extension): Promise<void> {
+  // @ts-expect-error contextType is wrong type
+  const contexts = await extension.contexts.getContexts({ contextTypes: ['OFFSCREEN_DOCUMENT'] });
+  const context = contexts[0];
+  if (!context) {
+    throw new Error('No offscreen context found');
+  }
+
+  const popupWindow = context.popupWindow;
+
+  popupWindow.close();
+}
+
 export async function injectHtml(html: string, popupWindow: Window, extension: Extension, addToBody = true, removeSteamCss = true): Promise<void> {
   const popupDocument = popupWindow.document;
   // Remove all steam css

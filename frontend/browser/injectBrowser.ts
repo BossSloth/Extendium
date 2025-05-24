@@ -1,3 +1,4 @@
+/* eslint-disable func-names */
 import { Extension } from '../extension/Extension';
 import { createOffscreen } from '../windowManagement';
 import { patchFetch } from './corsFetch';
@@ -12,7 +13,6 @@ export function injectBrowser(context: string, window: Window, extension: Extens
 
   const originalOnError = window.onerror;
 
-  // eslint-disable-next-line func-names
   window.onerror = function (this: WindowEventHandlers, message, source, lineno, colno, error): boolean {
     console.error(`Error in ${extension.manifest.name} - ${context}`, message, source, lineno, colno, error);
 
@@ -21,11 +21,17 @@ export function injectBrowser(context: string, window: Window, extension: Extens
 
   const originalOnUnhandledRejection = window.onunhandledrejection;
 
-  // eslint-disable-next-line func-names
   window.onunhandledrejection = function (this: WindowEventHandlers, event): unknown {
     console.error(`Error in ${extension.manifest.name} - ${context}`, event);
 
     return originalOnUnhandledRejection?.call(this, event);
+  };
+
+  const originalConsoleError = window.console.error;
+
+  window.console.error = function (...args: unknown[]): void {
+    originalConsoleError(...args);
+    console.error(`Error in ${extension.manifest.name} - ${context}`, ...args);
   };
 
   window.importScripts = (...urls: string[]): void => {
@@ -43,5 +49,6 @@ declare global {
   interface Window {
     importScripts(...urls: string[]): void;
     clients: { matchAll(): Promise<unknown[]>; };
+    console: typeof console;
   }
 }

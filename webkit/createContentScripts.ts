@@ -54,7 +54,7 @@ async function mutateScripts(urls: Map<string, ScriptInfo>, extension: Extension
   performance.measure(`[Extendium][${extension.getName()}] mutateScripts`, startMark.name, endMark.name);
   let content = results.join('');
 
-  const combinedUrl = extension.getFileUrl(`${extension.getName()}_content.js`) ?? '';
+  const combinedUrl = extension.getFileUrl(`${extension.getName().toLowerCase().replace(/\s/g, '_')}_content.js`) ?? '';
 
   const chromeFunctionString = `const chrome = window.extensions.get('${extension.getName().replace(/'/g, "\\'")}')?.chrome;`;
   // Wrap the script in a function to make it self-contained

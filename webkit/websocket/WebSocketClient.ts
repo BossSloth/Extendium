@@ -76,7 +76,7 @@ export class WebSocketClient {
         setTimeout(() => {
           if (this.pendingRequests.has(requestId)) {
             this.pendingRequests.delete(requestId);
-            reject(new Error('Request timed out'));
+            reject(new Error(`Request timed out for ${extensionName} - ${requestId}`));
             console.error('Request timed out', extensionName, requestId, message);
           }
         }, this.requestTimeout);

@@ -10,8 +10,13 @@ export enum MessageType {
 
 export enum WebkitRequestType {
   SendMessage = 'sendMessage',
+  // #region Storage
   GetStorage = 'getStorage',
   SetStorage = 'setStorage',
+  RemoveStorage = 'removeStorage',
+  ClearStorage = 'clearStorage',
+  // #endregion
+  OpenOptions = 'openOptions',
 }
 
 /**
@@ -64,11 +69,20 @@ export interface ErrorMessage extends WebSocketMessage {
   type: MessageType.Error;
 }
 
-// #region ContentTypes
+// #region WebkitRequestTypes content
 
 export interface StorageGetSetContent {
   area: chrome.storage.AreaName;
   keys: Record<string, unknown>;
+}
+
+export interface StorageRemoveContent {
+  area: chrome.storage.AreaName;
+  keys: string | string[];
+}
+
+export interface StorageClearContent {
+  area: chrome.storage.AreaName;
 }
 
 // #endregion

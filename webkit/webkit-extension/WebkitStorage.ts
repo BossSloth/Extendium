@@ -1,4 +1,4 @@
-import { StorageGetSetContent, WebkitRequestType } from '../extension/websocket/MessageTypes';
+import { StorageClearContent, StorageGetSetContent, StorageRemoveContent, WebkitRequestType } from '../extension/websocket/MessageTypes';
 import { webSocketClient } from '../shared';
 
 export class WebkitStorage implements chrome.storage.StorageArea {
@@ -27,6 +27,33 @@ export class WebkitStorage implements chrome.storage.StorageArea {
       keys: items,
     };
     await webSocketClient.sendMessage(message, WebkitRequestType.SetStorage, this.extensionName);
+
+    if (callback) {
+      callback();
+    }
+
+    return Promise.resolve();
+  }
+
+  async remove(keys: string | string[], callback?: () => void): Promise<void> {
+    const message: StorageRemoveContent = {
+      area: this.area,
+      keys,
+    };
+    await webSocketClient.sendMessage(message, WebkitRequestType.RemoveStorage, this.extensionName);
+
+    if (callback) {
+      callback();
+    }
+
+    return Promise.resolve();
+  }
+
+  async clear(callback?: () => void): Promise<void> {
+    const message: StorageClearContent = {
+      area: this.area,
+    };
+    await webSocketClient.sendMessage(message, WebkitRequestType.ClearStorage, this.extensionName);
 
     if (callback) {
       callback();

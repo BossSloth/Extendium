@@ -4,7 +4,7 @@ import { Extension } from '../extension/Extension';
 import { Logger } from '../extension/Logger';
 import { Storage } from '../extension/Storage';
 import { queryTabs } from '../TabManager';
-import { createOffscreen, createOptionsWindow } from '../windowManagement';
+import { closeOffscreen, createOffscreen, createOptionsWindow } from '../windowManagement';
 
 const VERBOSE = true;
 
@@ -66,6 +66,11 @@ export function createChrome(context: string, extension: Extension, deps?: { cre
         logger.log('offscreen.createDocument', parameters);
 
         await deps?.createOffscreen(extension, parameters.url, parameters.url);
+      },
+      closeDocument: async (): Promise<void> => {
+        logger.log('offscreen.closeDocument');
+
+        await closeOffscreen(extension);
       },
     },
     windows: {

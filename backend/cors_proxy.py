@@ -85,7 +85,7 @@ class ProxyHandler(http.server.BaseHTTPRequestHandler):
                     # Send the response headers (except those that might conflict with CORS or chunked encoding)
                     for header, value in response.getheaders():
                         if header.lower() not in ('access-control-allow-origin', 'access-control-allow-methods',
-                                                'access-control-allow-headers', 'access-control-max-age',
+                                                'access-control-allow-headers', 'access-control-max-age', 'access-control-allow-credentials',
                                                 'transfer-encoding', 'content-length'):
                             self.send_header(header, value)
 

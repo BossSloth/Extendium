@@ -1,5 +1,5 @@
 export class Contexts {
-  private readonly contexts: chrome.runtime.ExtensionContext[] = [];
+  private readonly contexts: ExtendedExtensionContext[] = [];
 
   public addContext(popupWindow: Window, type: ContextType, documentUrl: string | undefined): void {
     this.contexts.push({
@@ -13,10 +13,11 @@ export class Contexts {
       incognito: false,
       tabId: -1,
       windowId: -1,
+      popupWindow,
     });
   }
 
-  public async getContexts(filter: chrome.runtime.ContextFilter): Promise<chrome.runtime.ExtensionContext[]> {
+  public async getContexts(filter: chrome.runtime.ContextFilter): Promise<ExtendedExtensionContext[]> {
     return Promise.resolve(this.contexts.filter((context) => {
       if (filter.contextTypes && !filter.contextTypes.includes(context.contextType)) {
         return false;
@@ -40,6 +41,10 @@ export class Contexts {
       return true;
     }));
   }
+}
+
+export interface ExtendedExtensionContext extends chrome.runtime.ExtensionContext {
+  popupWindow: Window;
 }
 
 export type ContextType = `${chrome.runtime.ContextType}`;

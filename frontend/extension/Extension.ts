@@ -28,8 +28,8 @@ export class Extension {
    * @returns The URL of the file.
    */
   public getFileUrl(path: string | undefined): string | undefined {
-    if (path === undefined) {
-      return undefined;
+    if (path === undefined || path.startsWith(this.url)) {
+      return path;
     }
 
     if (path.trim() === '') {

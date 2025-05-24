@@ -29,7 +29,7 @@ export function ExtensionPopup({ extension, popupContentUrl, baseDir, removeStea
       // extension.contexts.addContext(popupDocument.defaultView, 'POPUP', extension.action.getPopupUrl() ?? '');
 
       resize();
-      setTimeout(resize, 10);
+      setTimeout(resize, 100);
     }
 
     initPopup();

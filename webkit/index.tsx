@@ -4,6 +4,7 @@ import { createContentScripts } from './createContentScripts';
 import { Extension } from './extension/Extension';
 import { ExtensionWrapper } from './ExtensionWrapper';
 import { createFakeSteamHeader } from './fake-header';
+import { modifyLinks } from './linkModifier';
 import { initWebSocketClient, onDomReady } from './shared';
 import { TabInject } from './TabInject';
 
@@ -35,6 +36,8 @@ export default async function WebkitMain(): Promise<void> {
     const chrome = createChrome('content', extension);
     extensions.set(manifest.name, new ExtensionWrapper(extension, chrome));
   }
+
+  modifyLinks(extensions);
 
   await Promise.all([...extensions.values()].map(async wrapper => createContentScripts(wrapper.extension)));
   performance.mark('[Extendium] WebkitMain content scripts created done');
