@@ -1,5 +1,8 @@
+import { callable } from '@steambrew/webkit';
+import { loadStyle } from '../shared';
 import { legacyFakeHeader, reactFakeHeader } from './fake-header-strings';
-import { loadStyle } from './shared';
+
+const getSteamId = callable<[], string>('GetSteamId');
 
 function getIdFromAppConfig(): string | null {
   const appConfig = document.querySelector('#application_config');
@@ -35,21 +38,16 @@ function getIdFromScript(context: Node): string | null {
   return script.textContent?.match(/g_steamID.+?(\d+)/)?.[1] ?? null;
 }
 
-// async function getIdFromBackend(): Promise<string | null> {
-//   const backend = callable<[], string>('GetSteamId');
-
-//   return backend();
-// }
-
 export async function createFakeSteamHeader(): Promise<void> {
-  const steamid = getIdFromAppConfig() ?? getIdFromScript(document);
-  if (steamid === null) {
-    throw new Error('Could not get steamid, augmented steam will not work.');
-  }
+  const steamid = getIdFromAppConfig() ?? getIdFromScript(document) ?? await getSteamId();
+  // if (steamid === null) {
+  //   steamid = '-1';
+  //   console.warn('Could not get steamid, fake header will not be complete.');
+  // }
 
   const isReactPage = document.querySelector('[data-react-nav-root]') !== null;
 
-  let node: HTMLElement;
+  let pageContent: HTMLElement | null;
   if (isReactPage) {
     // Wait on react to load
     const start = performance.now();
@@ -69,15 +67,18 @@ export async function createFakeSteamHeader(): Promise<void> {
       throw new Error('Timed out waiting for react root');
     }
 
-    node = document.createElement('header');
-    node.innerHTML = reactFakeHeader.replaceAll('%user_id%', steamid).replaceAll('%img_src%', 'https://avatars.steamstatic.com/b5bd56c1aa4644a474a2e4972be27ef9e82e517e_full.jpg');
-    const pageContent = document.querySelector('#StoreTemplate');
-    pageContent?.prepend(node);
+    const html = reactFakeHeader.replaceAll('%user_id%', steamid).replaceAll('%img_src%', 'https://avatars.steamstatic.com/b5bd56c1aa4644a474a2e4972be27ef9e82e517e_full.jpg');
+    pageContent = document.querySelector('#StoreTemplate');
+
+    if (pageContent === null) {
+      throw new Error('Could not find page content');
+    }
+
+    pageContent.insertAdjacentHTML('afterbegin', html);
   } else {
-    node = document.createElement('div');
-    node.innerHTML = legacyFakeHeader.replaceAll('%user_id%', steamid).replaceAll('%img_src%', 'https://avatars.steamstatic.com/b5bd56c1aa4644a474a2e4972be27ef9e82e517e_full.jpg');
-    const pageContent = document.querySelector('.responsive_page_content') ?? document.querySelector('.headerOverride');
-    pageContent?.prepend(node);
+    const html = legacyFakeHeader.replaceAll('%user_id%', steamid).replaceAll('%img_src%', 'https://avatars.steamstatic.com/b5bd56c1aa4644a474a2e4972be27ef9e82e517e_full.jpg');
+    pageContent = document.querySelector('.responsive_page_content') ?? document.querySelector('.headerOverride');
+    pageContent?.insertAdjacentHTML('afterbegin', html);
   }
 
   const header = document.getElementById('global_header');
@@ -85,6 +86,13 @@ export async function createFakeSteamHeader(): Promise<void> {
   if (header === null) {
     throw new Error('Could not find global header');
   }
+
+  header.style.display = 'block';
+
+  const headerContent = header.firstElementChild as HTMLElement;
+  headerContent.style.transition = 'height 0.25s ease-in-out 0s';
+  headerContent.style.overflow = 'hidden';
+  headerContent.style.setProperty('height', '0px', 'important');
 
   loadStyle('https://store.fastly.steamstatic.com/public/css/applications/store/greenenvelope.css');
 
@@ -97,9 +105,21 @@ export async function createFakeSteamHeader(): Promise<void> {
 
   showButton.textContent = 'Show Header';
 
+  let headerShown = false;
+
   showButton.addEventListener('click', () => {
-    header.style.display = header.style.display === 'block' ? 'none' : 'block';
-    showButton.textContent = header.style.display === 'block' ? 'Hide Header' : 'Show Header';
+    if (headerShown) {
+      headerContent.style.overflow = 'hidden';
+      headerContent.style.setProperty('height', '0px', 'important');
+      showButton.textContent = 'Show Header';
+    } else {
+      headerContent.style.removeProperty('height');
+      showButton.textContent = 'Hide Header';
+      setTimeout(() => {
+        headerContent.style.removeProperty('overflow');
+      }, 250);
+    }
+    headerShown = !headerShown;
   });
 
   document.addEventListener('keydown', (e) => {
@@ -114,11 +134,30 @@ export async function createFakeSteamHeader(): Promise<void> {
     }
   });
 
-  node.appendChild(showButton);
+  pageContent?.prepend(showButton);
+
+  if (!isReactPage) {
+    loadTooltips();
+  }
 }
 
 async function sleep(ms: number): Promise<void> {
   return new Promise((res) => {
     setTimeout(res, ms);
+  });
+}
+
+function loadTooltips(): void {
+  // @ts-expect-error $J is not defined
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
+  (window.$J ?? window.$)('#global_header .supernav').v_tooltip({
+    location: 'bottom',
+    destroyWhenDone: false,
+    tooltipClass: 'supernav_content',
+    offsetY: -6,
+    offsetX: 1,
+    horizontalSnap: 4,
+    tooltipParent: '#global_header .supernav_container',
+    correctForScreenSize: false,
   });
 }

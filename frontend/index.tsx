@@ -3,7 +3,7 @@ import React from 'react';
 import { MainWindowPopup, Popup } from 'steam-types/dist/types/Global/PopupManager';
 import { ExtensionsBar } from './components/ExtensionsBar';
 import { Extension } from './extension/Extension';
-import { initMainWindow, MAIN_WINDOW_NAME, WaitForElement } from './shared';
+import { getSteamId, initMainWindow, MAIN_WINDOW_NAME, WaitForElement } from './shared';
 import { WebkitWrapper } from './webkit';
 import { createWindowWithScript } from './windowManagement';
 
@@ -16,11 +16,13 @@ globalThis.extensions = extensions;
 let pluginDir: string;
 let extensionsDir: string;
 
+let steamId = '-1';
+
 function isMainWindow(popup: Popup): popup is MainWindowPopup {
   return popup.m_strName === MAIN_WINDOW_NAME;
 }
 
-const global = { webkit: new WebkitWrapper() };
+const global = { webkit: new WebkitWrapper(), getSteamId: (): string => steamId };
 // @ts-expect-error ignore
 Millennium.exposeObj(global);
 
@@ -76,6 +78,7 @@ async function setupBackground(extension: Extension): Promise<void> {
 
 // Entry point on the front end of your plugin
 export default async function PluginMain(): Promise<void> {
+  steamId = await getSteamId();
   const infos = JSON.parse(await GetExtensionsInfos()) as { extensionsDir: string; pluginDir: string; manifests: Record<string, chrome.runtime.ManifestV3>; };
   const manifests = infos.manifests;
   pluginDir = infos.pluginDir;

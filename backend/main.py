@@ -45,6 +45,14 @@ def GetExtensionsInfos():
         'manifests': GetExtensionManifests()
     })
 
+STEAM_ID = None
+
+def GetSteamId():
+    global STEAM_ID
+    if STEAM_ID is None:
+        STEAM_ID = Millennium.call_frontend_method('getSteamId')
+    return STEAM_ID
+
 #TODO: cors requests currently don't work like in the steamdb extension and we can't do this because of the issue below
 def BackendFetch(url: str, headersJson: str):
     # TODO: problem this is triggered from within sendmessage and millennium does not allow two backend functions to run somehow this needs to split up?

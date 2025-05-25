@@ -3,7 +3,7 @@ import { createChrome } from './createChrome';
 import { createContentScripts } from './createContentScripts';
 import { Extension } from './extension/Extension';
 import { ExtensionWrapper } from './ExtensionWrapper';
-import { createFakeSteamHeader } from './fake-header';
+import { createFakeSteamHeader } from './fake-header/fake-header';
 import { modifyLinks } from './linkModifier';
 import { initWebSocketClient, onDomReady } from './shared';
 import { TabInject } from './TabInject';

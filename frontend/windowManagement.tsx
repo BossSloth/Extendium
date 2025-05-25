@@ -107,7 +107,7 @@ export async function injectHtml(html: string, popupWindow: Window, extension: E
 
   const dialogContent: HTMLElement | null = popupDocument.querySelector('.DialogContent');
   if (dialogContent) {
-    dialogContent.style.padding = '0';
+    dialogContent.style.padding = '2px';
   }
 
   const aTags = popupDocument.querySelectorAll('a:not([target])');

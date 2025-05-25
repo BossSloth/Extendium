@@ -42,3 +42,14 @@ export async function loadScript(src: string, document: Document): Promise<void>
     document.head.appendChild(script);
   });
 }
+
+export async function getSteamId(): Promise<string> {
+  const loginUsers = await SteamClient.User.GetLoginUsers();
+
+  const match = loginUsers[0]?.avatarUrl.match(/avatarcache\/(\d+)/);
+  if (!match) {
+    throw new Error('Failed to match avatar URL');
+  }
+
+  return match[1] ?? '';
+}
