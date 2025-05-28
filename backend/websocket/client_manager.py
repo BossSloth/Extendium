@@ -5,11 +5,6 @@ Handles tracking and managing connected clients.
 
 from typing import Any, Dict, List, Optional
 
-from logger import logger
-from websocket_server import WebsocketServer
-
-from .message_types import ClientType
-
 
 class ClientManager:
     """

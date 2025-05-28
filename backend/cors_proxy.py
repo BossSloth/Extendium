@@ -3,13 +3,12 @@
 import http.server
 import socketserver
 import threading
+import time
 from urllib.error import HTTPError, URLError
 from urllib.request import Request, urlopen
 
 from logger import logger
 
-# Default port for the proxy server
-DEFAULT_PORT = 8766
 
 # Proxy request handler
 class ProxyHandler(http.server.BaseHTTPRequestHandler):
@@ -132,7 +131,7 @@ class ProxyHandler(http.server.BaseHTTPRequestHandler):
         pass
 
 class CORSProxy:
-    def __init__(self, host='127.0.0.1', port=DEFAULT_PORT):
+    def __init__(self, port: int, host: str = '127.0.0.1'):
         self.host = host
         self.port = port
         self.server = None
@@ -170,7 +169,7 @@ class CORSProxy:
         return False
 
 if __name__ == "__main__":
-    proxy = CORSProxy()
+    proxy = CORSProxy(port=8792)
     proxy.start()
 
     try:

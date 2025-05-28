@@ -4,10 +4,9 @@ Manages pending requests and their responses.
 """
 
 import time
-import uuid
 from typing import Any, Dict, Optional
 
-from logger import logger
+from logger.logger import logger  # pylint: disable=import-error
 
 
 class RequestHandler:

@@ -15,6 +15,7 @@ window.extensions = extensions;
 
 export default async function WebkitMain(): Promise<void> {
   performance.mark('[Extendium] WebkitMain start');
+  performance.measure('[Extendium] WebkitMain loading', 'inject-end', '[Extendium] WebkitMain start');
   // Add fake header to steam pages
   if (window.location.href.includes('https://store.steampowered.com') || window.location.href.includes('https://steamcommunity.com')) {
     onDomReady(() => {

@@ -4,22 +4,25 @@ Processes different types of messages and routes them appropriately.
 """
 
 import json
-from typing import Any, Callable, Dict, Optional
+from typing import Any, Dict, Optional
 
-from logger import logger
-from websocket_server import WebsocketServer
+from logger.logger import logger  # pylint: disable=import-error
 
 from .client_manager import ClientManager
 from .message_types import ClientType, MessageType
 from .request_handler import RequestHandler
 
 
+class MessageAdapter:
+    def send_message(self, client: Dict[str, Any], message: str):
+        pass
+
 class MessageHandler:
     """
     Handles processing and routing of WebSocket messages.
     """
 
-    def __init__(self, server: WebsocketServer, client_manager: ClientManager, request_handler: RequestHandler):
+    def __init__(self, server: MessageAdapter, client_manager: ClientManager, request_handler: RequestHandler):
         """
         Initialize the message handler.
 

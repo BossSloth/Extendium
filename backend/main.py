@@ -1,20 +1,21 @@
-import base64
 import json
 import os
-import threading
 from os import path
+from typing import Optional
 
 import Millennium
 import requests
 from cors_proxy import CORSProxy
-from logger import logger
+from logger.logger import logger  # pylint: disable=import-error
 from websocket import initialize_server, run_server, shutdown_server
 
 EXTENSIONS_DIR = '/steamui/extensions'
 EXTENSIONS_URL = 'https://steamloopback.host/extensions'
 
+cors_proxy: Optional[CORSProxy] = None
+
 def GetPluginDir():
-    return path.abspath(PLUGIN_BASE_DIR)
+    return path.abspath(PLUGIN_BASE_DIR) # pylint: disable=undefined-variable
 
 def GetExtensionsDir():
     return Millennium.steam_path() + EXTENSIONS_DIR
@@ -50,7 +51,7 @@ STEAM_ID = None
 def GetSteamId():
     global STEAM_ID
     if STEAM_ID is None:
-        STEAM_ID = Millennium.call_frontend_method('getSteamId')
+        STEAM_ID = Millennium.call_frontend_method('getSteamId') # pylint: disable=assignment-from-no-return,no-value-for-parameter
     return STEAM_ID
 
 #TODO: cors requests currently don't work like in the steamdb extension and we can't do this because of the issue below
@@ -60,7 +61,7 @@ def BackendFetch(url: str, headersJson: str):
     headers = json.loads(headersJson)
 
     try:
-        response = requests.get(url, headers=headers)
+        response = requests.get(url, headers=headers, timeout=30)
 
         result = {
             'status': response.status_code,
@@ -134,11 +135,13 @@ class Plugin:
         pass
 
     def _load(self):
+        global cors_proxy
+
         logger.log(f"bootstrapping Extendium, millennium {Millennium.version()}")
 
         try:
-            Millennium.add_proxy_pattern("steamui\/extensions")
-        except Exception as e:
+            Millennium.add_proxy_pattern(r"steamui\/extensions") # pylint: disable=no-member
+        except Exception:
             pass
 
         try:
@@ -148,14 +151,14 @@ class Plugin:
 
         try:
             # Initialize and run the WebSocket server
-            initialize_server(port=8765, loglevel=0)
-            run_server()
+            initialize_server()
+            run_server(port=8791)
         except Exception as e:
             logger.error(f"Error running websocket server: {e}")
 
         try:
             # Initialize and run the CORS proxy server
-            cors_proxy = CORSProxy(host='127.0.0.1', port=8766)
+            cors_proxy = CORSProxy(port=8792)
             cors_proxy.start()
         except Exception as e:
             logger.error(f"Error running CORS proxy server: {e}")
