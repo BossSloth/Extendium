@@ -1,4 +1,5 @@
-import { StorageClearContent, StorageGetSetContent, StorageRemoveContent, WebkitMessage, WebkitRequestType } from '../extension/websocket/MessageTypes';
+import { resolvePendingRequest } from '../browser/corsFetch';
+import { SteamRequestResponseContent, StorageClearContent, StorageGetSetContent, StorageRemoveContent, WebkitMessage, WebkitRequestType } from '../extension/websocket/MessageTypes';
 import { WebkitWrapper } from '../webkit';
 
 export async function handleWebkitMessage(message: WebkitMessage, webkitWrapper: WebkitWrapper): Promise<unknown> {
@@ -15,6 +16,9 @@ export async function handleWebkitMessage(message: WebkitMessage, webkitWrapper:
       return clearStorage(message, webkitWrapper);
     case WebkitRequestType.OpenOptions:
       openOptions(message, webkitWrapper);
+      break;
+    case WebkitRequestType.SteamRequestResponse:
+      resolvePendingRequest(message.content as SteamRequestResponseContent);
       break;
     default:
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions

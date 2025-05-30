@@ -17,6 +17,7 @@ export enum WebkitRequestType {
   ClearStorage = 'clearStorage',
   // #endregion
   OpenOptions = 'openOptions',
+  SteamRequestResponse = 'steamRequestResponse',
 }
 
 /**
@@ -83,6 +84,13 @@ export interface StorageRemoveContent {
 
 export interface StorageClearContent {
   area: chrome.storage.AreaName;
+}
+
+export interface SteamRequestResponseContent {
+  requestId: string;
+  response: string;
+  status: number;
+  url: string;
 }
 
 // #endregion

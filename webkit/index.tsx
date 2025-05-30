@@ -2,10 +2,12 @@ import { callable } from '@steambrew/webkit';
 import { createChrome } from './createChrome';
 import { createContentScripts } from './createContentScripts';
 import { Extension } from './extension/Extension';
+import { steamRequestIDKey } from './extension/requests/crossRequestKeys';
 import { ExtensionWrapper } from './ExtensionWrapper';
 import { createFakeSteamHeader } from './fake-header/fake-header';
 import { modifyLinks } from './linkModifier';
 import { initWebSocketClient, onDomReady } from './shared';
+import { handleSteamRequests } from './steam-requests/handle-steam-requests';
 import { TabInject } from './TabInject';
 
 const GetExtensionsInfos = callable<[], string>('GetExtensionsInfos');
@@ -15,15 +17,22 @@ window.extensions = extensions;
 
 export default async function WebkitMain(): Promise<void> {
   performance.mark('[Extendium] WebkitMain start');
-  performance.measure('[Extendium] WebkitMain loading', 'inject-end', '[Extendium] WebkitMain start');
+  // performance.measure('[Extendium] WebkitMain loading', '[Millennium] inject-end', '[Extendium] WebkitMain start');
+  // performance.measure('Total load time', '[Millennium] preload-start', '[Extendium] WebkitMain start');
+  initWebSocketClient();
   // Add fake header to steam pages
   if (window.location.href.includes('https://store.steampowered.com') || window.location.href.includes('https://steamcommunity.com')) {
+    const steamRequestID = new URLSearchParams(window.location.search).get(steamRequestIDKey);
+    if (steamRequestID !== null) {
+      handleSteamRequests();
+
+      return;
+    }
+
     onDomReady(() => {
       createFakeSteamHeader();
     });
   }
-
-  initWebSocketClient();
 
   const startMark = performance.mark('[Extendium] WebkitMain extensions loading start');
   const extensionInfos = JSON.parse(await GetExtensionsInfos()) as { extensionsDir: string; manifests: Record<string, chrome.runtime.ManifestV3>; };
