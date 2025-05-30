@@ -46,13 +46,13 @@ def GetExtensionsInfos():
         'manifests': GetExtensionManifests()
     })
 
-STEAM_ID = None
+USER_INFO = None
 
-def GetSteamId():
-    global STEAM_ID
-    if STEAM_ID is None:
-        STEAM_ID = Millennium.call_frontend_method('getSteamId') # pylint: disable=assignment-from-no-return,no-value-for-parameter
-    return STEAM_ID
+def GetUserInfo():
+    global USER_INFO
+    if USER_INFO is None:
+        USER_INFO = Millennium.call_frontend_method('getUserInfo') # pylint: disable=assignment-from-no-return,no-value-for-parameter
+    return USER_INFO
 
 #TODO: cors requests currently don't work like in the steamdb extension and we can't do this because of the issue below
 def BackendFetch(url: str, headersJson: str):

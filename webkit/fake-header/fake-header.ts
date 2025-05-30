@@ -1,50 +1,19 @@
 import { callable } from '@steambrew/webkit';
-import { loadStyle } from '../shared';
+import { UserInfo } from '../extension/shared';
+import { loadStyle, onDomReady } from '../shared';
 import { legacyFakeHeader, reactFakeHeader } from './fake-header-strings';
 
-const getSteamId = callable<[], string>('GetSteamId');
+const getUserInfo = callable<[], string>('GetUserInfo');
 
-function getIdFromAppConfig(): string | null {
-  const appConfig = document.querySelector('#application_config');
+export async function startCreateFakeSteamHeader(): Promise<void> {
+  const userInfo = JSON.parse(await getUserInfo()) as UserInfo;
 
-  if (!appConfig) {
-    console.warn('appConfig not found');
-
-    return null;
-  }
-
-  const userInfo = appConfig.getAttribute('data-userinfo');
-
-  if (userInfo === null) {
-    console.warn('data-userinfo not found on application_config');
-
-    return null;
-  }
-
-  const info = JSON.parse(userInfo) as { steamid: string; };
-
-  return info.steamid;
+  onDomReady(() => {
+    createFakeSteamHeader(userInfo);
+  });
 }
 
-function getIdFromScript(context: Node): string | null {
-  const script = document.evaluate('//script[contains(text(), \'g_steamID\')]', context, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
-
-  if (!script) {
-    console.warn('script steamid not found');
-
-    return null;
-  }
-
-  return script.textContent?.match(/g_steamID.+?(\d+)/)?.[1] ?? null;
-}
-
-export async function createFakeSteamHeader(): Promise<void> {
-  const steamid = getIdFromAppConfig() ?? getIdFromScript(document) ?? await getSteamId();
-  // if (steamid === null) {
-  //   steamid = '-1';
-  //   console.warn('Could not get steamid, fake header will not be complete.');
-  // }
-
+async function createFakeSteamHeader(userInfo: UserInfo): Promise<void> {
   const isReactPage = document.querySelector('[data-react-nav-root]') !== null;
 
   let pageContent: HTMLElement | null;
@@ -67,7 +36,7 @@ export async function createFakeSteamHeader(): Promise<void> {
       throw new Error('Timed out waiting for react root');
     }
 
-    const html = reactFakeHeader.replaceAll('%user_id%', steamid).replaceAll('%img_src%', 'https://avatars.steamstatic.com/b5bd56c1aa4644a474a2e4972be27ef9e82e517e_full.jpg');
+    const html = replaceKeys(reactFakeHeader, userInfo);
     pageContent = document.querySelector('#StoreTemplate');
 
     if (pageContent === null) {
@@ -76,7 +45,7 @@ export async function createFakeSteamHeader(): Promise<void> {
 
     pageContent.insertAdjacentHTML('afterbegin', html);
   } else {
-    const html = legacyFakeHeader.replaceAll('%user_id%', steamid).replaceAll('%img_src%', 'https://avatars.steamstatic.com/b5bd56c1aa4644a474a2e4972be27ef9e82e517e_full.jpg');
+    const html = replaceKeys(legacyFakeHeader, userInfo);
     pageContent = document.querySelector('.responsive_page_content') ?? document.querySelector('.headerOverride');
     pageContent?.insertAdjacentHTML('afterbegin', html);
   }
@@ -139,6 +108,8 @@ export async function createFakeSteamHeader(): Promise<void> {
   if (!isReactPage) {
     loadTooltips();
   }
+
+  document.dispatchEvent(new Event('headerReady'));
 }
 
 async function sleep(ms: number): Promise<void> {
@@ -160,4 +131,11 @@ function loadTooltips(): void {
     tooltipParent: '#global_header .supernav_container',
     correctForScreenSize: false,
   });
+}
+
+function replaceKeys(str: string, userInfo: UserInfo): string {
+  return str
+    .replaceAll('%user_id%', userInfo.userId)
+    .replaceAll('%persona_name%', userInfo.personaName)
+    .replaceAll('%img_src%', userInfo.avatarUrl);
 }

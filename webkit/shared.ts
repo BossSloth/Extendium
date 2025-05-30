@@ -30,13 +30,20 @@ declare global {
   }
 }
 
-// @ts-expect-error onDomReady is not defined on window
-window.onDomReady = onDomReady;
-
 export function onDomReady(callback: () => void): void {
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', callback);
   } else {
     callback();
+  }
+}
+// @ts-expect-error onDomReady is not defined on window
+window.onHeaderReady = onHeaderReady;
+
+export function onHeaderReady(callback: () => void): void {
+  if (document.getElementById('global_header') !== null) {
+    callback();
+  } else {
+    document.addEventListener('headerReady', callback);
   }
 }

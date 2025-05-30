@@ -6,7 +6,7 @@
       "dependencies": {
         "@steambrew/api": "^5.2.8",
         "@steambrew/client": "^5.2.16",
-        "@steambrew/ttc": "^2.4.3",
+        "@steambrew/ttc": "2.4.3",
         "@steambrew/webkit": "5.2.13",
         "escape-string-regexp": "^5.0.0",
         "sass-embedded": "^1.89.0",
@@ -28,7 +28,7 @@
         "globals": "^16.1.0",
         "nodemon": "^3.1.10",
         "semantic-release": "^24.2.4",
-        "steam-types": "^0.1.2",
+        "steam-types": "^0.1.4",
         "typescript-eslint": "^8.32.1",
       },
     },
@@ -1364,7 +1364,7 @@
 
     "split2": ["split2@1.0.0", "", { "dependencies": { "through2": "~2.0.0" } }, "sha512-NKywug4u4pX/AZBB1FCPzZ6/7O+Xhz1qMVbzTvvKvikjO99oPN87SkK08mEY9P63/5lWjK+wgOOgApnTg5r6qg=="],
 
-    "steam-types": ["steam-types@0.1.2", "", { "dependencies": { "@types/react-dom": "^19.1.2", "long": "^5.3.1", "mobx": "^6.13.7" } }, "sha512-o78iORTEBxXeC0lPYwgwvkFz9rlXLy206WP0K0k5SSoZL7y1B/3T30FVoSTsuth5ImPZ+Z3udw4TuXc+NbgxNA=="],
+    "steam-types": ["steam-types@0.1.4", "", { "dependencies": { "@types/react-dom": "^19.1.2", "long": "^5.3.1", "mobx": "^6.13.7" } }, "sha512-cp04aLJBdTK0FIRiKwla7ZTR7hz31K5wvbQS4rTC+FqNXvZYh9mDVH0fXUDQIaYRpfxiCWtBsM6B/wcltmw39Q=="],
 
     "stream-combiner2": ["stream-combiner2@1.1.1", "", { "dependencies": { "duplexer2": "~0.1.0", "readable-stream": "^2.0.2" } }, "sha512-3PnJbYgS56AeWgtKF5jtJRT6uFJe56Z0Hc5Ngg/6sI6rIt8iiMBTa9cvdyFfpMQjaVHr8dusbNeFGIIonxOvKw=="],
 

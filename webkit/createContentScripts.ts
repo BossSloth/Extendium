@@ -6,7 +6,7 @@ type ScriptInfo = NonNullable<chrome.runtime.ManifestV3['content_scripts']>[numb
 
 export async function createContentScripts(extension: Extension): Promise<void> {
   const contentScripts = extension.manifest.content_scripts ?? [];
-  const currentHref = window.location.href;
+  const currentHref = window.location.origin + window.location.pathname;
   const scripts: Map<string, ScriptInfo> = new Map<string, ScriptInfo>();
   const styles: Set<string> = new Set<string>();
   for (const contentScript of contentScripts) {
@@ -38,8 +38,8 @@ async function mutateScripts(urls: Map<string, ScriptInfo>, extension: Extension
 
     const comment = `// ${url}`;
 
-    if (script.run_at === 'document_end') {
-      return `${comment}\nonDomReady(() => {\n${content}\n});`;
+    if ((script.run_at ?? 'document_end') === 'document_end') {
+      return `${comment}\nonHeaderReady(() => {\n${content}\n});`;
     }
 
     return `${comment}\n${content}`;
@@ -60,6 +60,7 @@ async function mutateScripts(urls: Map<string, ScriptInfo>, extension: Extension
   // Wrap the script in a function to make it self-contained
   content = `(function() {\n${chromeFunctionString}\n\n${content}\n})();`;
   content += `\n//# sourceURL=${combinedUrl}`;
+  content = content.replaceAll('sourceMappingURL=', '');
 
   loadScriptWithContent(combinedUrl, document, content);
   performance.mark(`[Extendium][${extension.getName()}] mutateScripts done`);

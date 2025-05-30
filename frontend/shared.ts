@@ -2,6 +2,7 @@ import { Millennium } from '@steambrew/client';
 import * as ReactDOM from 'react-dom';
 import * as ReactDOMClient from 'react-dom/client';
 import { BasicPopup } from 'steam-types/dist/types/Global/PopupManager';
+import { UserInfo } from './extension/shared';
 
 export let mainWindow: Window;
 
@@ -43,13 +44,28 @@ export async function loadScript(src: string, document: Document): Promise<void>
   });
 }
 
-export async function getSteamId(): Promise<string> {
+export async function getUserInfo(): Promise<UserInfo> {
   const loginUsers = await SteamClient.User.GetLoginUsers();
+  const user = loginUsers[0];
 
-  const match = loginUsers[0]?.avatarUrl.match(/avatarcache\/(\d+)/);
+  if (!user) {
+    throw new Error('Failed to get user info');
+  }
+
+  const match = user.avatarUrl.match(/avatarcache\/(\d+)/);
   if (!match) {
     throw new Error('Failed to match avatar URL');
   }
 
-  return match[1] ?? '';
+  const steamid = match[1] ?? '';
+
+  const profileUrl = urlStore.m_steamUrls.SteamIDMyProfile.url;
+  const userId = profileUrl.match(/\/id\/(.+)\//)?.[1] ?? '';
+
+  return {
+    steamid,
+    userId,
+    avatarUrl: 'https://avatars.steamstatic.com/b5bd56c1aa4644a474a2e4972be27ef9e82e517e_full.jpg', // TODO: replace with loginUsers[0]?.avatarUrl and use correct steam path
+    personaName: user.personaName,
+  };
 }

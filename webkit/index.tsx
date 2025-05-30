@@ -4,9 +4,9 @@ import { createContentScripts } from './createContentScripts';
 import { Extension } from './extension/Extension';
 import { steamRequestIDKey } from './extension/requests/crossRequestKeys';
 import { ExtensionWrapper } from './ExtensionWrapper';
-import { createFakeSteamHeader } from './fake-header/fake-header';
+import { startCreateFakeSteamHeader } from './fake-header/fake-header';
 import { modifyLinks } from './linkModifier';
-import { initWebSocketClient, onDomReady } from './shared';
+import { initWebSocketClient } from './shared';
 import { handleSteamRequests } from './steam-requests/handle-steam-requests';
 import { TabInject } from './TabInject';
 
@@ -29,9 +29,7 @@ export default async function WebkitMain(): Promise<void> {
       return;
     }
 
-    onDomReady(() => {
-      createFakeSteamHeader();
-    });
+    startCreateFakeSteamHeader();
   }
 
   const startMark = performance.mark('[Extendium] WebkitMain extensions loading start');
