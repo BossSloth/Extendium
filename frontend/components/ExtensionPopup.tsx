@@ -8,6 +8,15 @@ export function ExtensionPopup({ extension, popupContentUrl, baseDir, removeStea
   const [popupContent, setPopupContent] = useState<string | null>(null);
   const container = useRef<HTMLDivElement>(null);
 
+  function popupWindow(): Window {
+    const window = container.current?.ownerDocument.defaultView;
+    if (!window) {
+      throw new Error('No popup window found');
+    }
+
+    return window;
+  }
+
   useEffect(() => {
     async function initPopupContent(): Promise<void> {
       const content = await fetch(popupContentUrl).then(async r => r.text());
@@ -29,7 +38,9 @@ export function ExtensionPopup({ extension, popupContentUrl, baseDir, removeStea
       // extension.contexts.addContext(popupDocument.defaultView, 'POPUP', extension.action.getPopupUrl() ?? '');
 
       resize();
-      setTimeout(resize, 100);
+      setTimeout(() => {
+        resize();
+      }, 100);
       popupDocument.body.click();
     }
 
@@ -42,7 +53,8 @@ export function ExtensionPopup({ extension, popupContentUrl, baseDir, removeStea
 
     const size = getDesiredSize(container.current, popupDocument);
 
-    popupDocument.defaultView.SteamClient.Window.ResizeTo(size.width, size.height, true);
+    popupWindow().SteamClient.Window.ResizeTo(size.width, size.height, false);
+    popupWindow().SteamClient.Window.MoveTo(popupWindow().screen.availWidth / 2 - size.width / 2, popupWindow().screen.availHeight / 2 - size.height / 2);
   }
 
   return (
