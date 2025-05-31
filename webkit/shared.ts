@@ -30,6 +30,10 @@ declare global {
   }
 }
 
+export function isSteamPage(): boolean {
+  return window.location.href.includes('https://store.steampowered.com') || window.location.href.includes('https://steamcommunity.com');
+}
+
 export function onDomReady(callback: () => void): void {
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', callback);
@@ -38,12 +42,16 @@ export function onDomReady(callback: () => void): void {
   }
 }
 // @ts-expect-error onDomReady is not defined on window
-window.onHeaderReady = onHeaderReady;
+window.onDomFullyReady = onDomFullyReady;
 
-export function onHeaderReady(callback: () => void): void {
-  if (document.getElementById('global_header') !== null) {
-    callback();
+export function onDomFullyReady(callback: () => void): void {
+  if (isSteamPage()) {
+    if (document.getElementById('global_header') !== null) {
+      callback();
+    } else {
+      document.addEventListener('headerReady', callback);
+    }
   } else {
-    document.addEventListener('headerReady', callback);
+    onDomReady(callback);
   }
 }

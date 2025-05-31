@@ -6,7 +6,7 @@ import { steamRequestIDKey } from './extension/requests/crossRequestKeys';
 import { ExtensionWrapper } from './ExtensionWrapper';
 import { startCreateFakeSteamHeader } from './fake-header/fake-header';
 import { modifyLinks } from './linkModifier';
-import { initWebSocketClient } from './shared';
+import { initWebSocketClient, isSteamPage } from './shared';
 import { handleSteamRequests } from './steam-requests/handle-steam-requests';
 import { TabInject } from './TabInject';
 
@@ -21,7 +21,7 @@ export default async function WebkitMain(): Promise<void> {
   // performance.measure('Total load time', '[Millennium] preload-start', '[Extendium] WebkitMain start');
   initWebSocketClient();
   // Add fake header to steam pages
-  if (window.location.href.includes('https://store.steampowered.com') || window.location.href.includes('https://steamcommunity.com')) {
+  if (isSteamPage()) {
     const steamRequestID = new URLSearchParams(window.location.search).get(steamRequestIDKey);
     if (steamRequestID !== null) {
       handleSteamRequests();

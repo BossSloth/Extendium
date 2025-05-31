@@ -39,7 +39,7 @@ async function mutateScripts(urls: Map<string, ScriptInfo>, extension: Extension
     const comment = `// ${url}`;
 
     if ((script.run_at ?? 'document_end') === 'document_end') {
-      return `${comment}\nonHeaderReady(() => {\n${content}\n});`;
+      return `${comment}\nonDomFullyReady(() => {\n${content}\n});`;
     }
 
     return `${comment}\n${content}`;
