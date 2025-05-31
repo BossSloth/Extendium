@@ -30,6 +30,7 @@ export function ExtensionPopup({ extension, popupContentUrl, baseDir, removeStea
 
       resize();
       setTimeout(resize, 100);
+      popupDocument.body.click();
     }
 
     initPopup();

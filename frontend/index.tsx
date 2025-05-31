@@ -1,10 +1,9 @@
-import { callable, findModule, Millennium } from '@steambrew/client';
-import React from 'react';
+import { callable, Millennium } from '@steambrew/client';
 import { MainWindowPopup, Popup } from 'steam-types/dist/types/Global/PopupManager';
-import { ExtensionsBar } from './components/ExtensionsBar';
 import { Extension } from './extension/Extension';
 import { UserInfo } from './extension/shared';
-import { getUserInfo, initMainWindow, MAIN_WINDOW_NAME, WaitForElement } from './shared';
+import { getUserInfo, initMainWindow, MAIN_WINDOW_NAME } from './shared';
+import { patchUrlBar } from './urlBarPatch';
 import { WebkitWrapper } from './webkit';
 import { createWindowWithScript } from './windowManagement';
 
@@ -50,26 +49,7 @@ async function OnPopupCreation(popup: Popup | undefined): Promise<void> {
   }
   await Promise.all(backgroundPromises);
 
-  const classes = {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-member-access
-    steamdesktop: findModule(e => e.FocusBar) as Record<string, string>,
-  };
-  const urlBar = await WaitForElement(
-    `.${classes.steamdesktop.URLBar}`,
-    popup.m_popup.document,
-  );
-
-  if (!urlBar) {
-    return;
-  }
-
-  const extensionsBar = document.createElement('div');
-  extensionsBar.classList.add('extensions-bar');
-  urlBar.appendChild(extensionsBar);
-
-  const reactRoot = SP_REACTDOM.createRoot(extensionsBar);
-
-  reactRoot.render(<ExtensionsBar extensions={extensions} />);
+  patchUrlBar(extensions, popup.m_popup.document);
 }
 
 async function setupBackground(extension: Extension): Promise<void> {

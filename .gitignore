@@ -3,6 +3,5 @@ node_modules/
 .millennium/
 build/
 !bun.lockb
-public/achievements.css.map
-public/achievements.css
+public/extendium.css
 ._extensions/

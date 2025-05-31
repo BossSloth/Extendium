@@ -1,12 +1,5 @@
 // Variables
-$background-color: #1b2838;
-$text-color: #c6d4df;
-$accent-color: #66c0f4;
-$hover-background: rgba(103, 193, 245, 0.1);
-$button-background: rgba(103, 193, 245, 0.2);
-$button-hover-background: rgba(103, 193, 245, 0.4);
-$secondary-text: #8f98a0;
-$tooltip-background: #16202d;
+$button-hover-background: rgba(255, 255, 255, 0.2);
 
 // Mixins
 @mixin flex-between {
@@ -20,17 +13,33 @@ $tooltip-background: #16202d;
   gap: $gap;
 }
 
-.extensions-bar {
+.extensions-bar-container {
   margin-left: auto;
 
+  .extensions-bar {
+    @include flex-gap(2px);
+    border-radius: 1rem;
+    border: 1px solid transparent;
+    transition: border 0.2s ease;
+
+    &:hover {
+      border: 1px solid gray;
+    }
+  }
+
   .extension-button {
-    width: 24px;
-    height: 24px;
+    width: 31px;
+    height: 31px;
     border: none;
-    background: white;
+    background: none;
     cursor: pointer;
-    padding: 4px;
-    margin: 0;
+    padding: 7px;
+    border-radius: 50%;
+    transition: background 0.2s ease;
+
+    &:hover {
+      background: $button-hover-background;
+    }
 
     img {
       width: 100%;
