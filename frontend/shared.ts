@@ -2,6 +2,7 @@ import { Millennium } from '@steambrew/client';
 import * as ReactDOM from 'react-dom';
 import * as ReactDOMClient from 'react-dom/client';
 import { BasicPopup } from 'steam-types/dist/types/Global/PopupManager';
+import { Extension } from './extension/Extension';
 import { UserInfo } from './extension/shared';
 
 export let mainWindow: Window;
@@ -10,8 +11,15 @@ export function initMainWindow(_mainWindow: Window): void {
   mainWindow = _mainWindow;
 }
 
+export let pluginDir: string;
+
+export function initPluginDir(_pluginDir: string): void {
+  pluginDir = _pluginDir;
+}
+
 declare global {
   const SP_REACTDOM: typeof ReactDOM & typeof ReactDOMClient;
+  const extensions: Map<string, Extension>;
 }
 
 export const EXTENSIONS_URL = 'https://steamloopback.host/extensions';
@@ -21,6 +29,7 @@ export async function WaitForElement(sel: string, parent = document): Promise<El
 }
 
 export interface ContextMenu {
+  Close(): void;
   Hide(): void;
   Show(): void;
   m_popupContextMenu: BasicPopup;

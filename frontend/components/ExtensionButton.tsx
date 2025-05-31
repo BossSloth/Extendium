@@ -36,6 +36,12 @@ export function ExtensionButton({ extension }: { readonly extension: Extension; 
     };
   }, [extension]);
 
+  useEffect(() => {
+    return (): void => {
+      contextMenuRef.current?.Close();
+    };
+  }, []);
+
   function createContextMenu(targetElement: Element | null | undefined): void {
     if (contextMenuRef.current || extension.action.getPopupUrl() === undefined) return;
 

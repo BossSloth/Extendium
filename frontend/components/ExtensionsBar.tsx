@@ -1,14 +1,13 @@
 import { closestCenter, DndContext, DragEndEvent, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
 import { restrictToHorizontalAxis, restrictToParentElement } from '@dnd-kit/modifiers';
 import { arrayMove, horizontalListSortingStrategy, SortableContext } from '@dnd-kit/sortable';
-import React, { JSX, useEffect, useState } from 'react';
+import React, { JSX, useEffect } from 'react';
 import { Extension } from '../extension/Extension';
 import { ExtensionButton } from './ExtensionButton';
-
-const storageKey = 'extendium_extensionsOrder';
+import { useExtensionsOrderStore } from './extensionsOrderStore';
 
 export function ExtensionsBar({ extensions }: { readonly extensions: Map<string, Extension>; }): JSX.Element {
-  const [extensionsOrder, setExtensionsOrder] = useState<string[]>([]);
+  const { extensionsOrder, setExtensionsOrder } = useExtensionsOrderStore();
 
   const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 8 } }));
 
@@ -26,17 +25,10 @@ export function ExtensionsBar({ extensions }: { readonly extensions: Map<string,
   }
 
   useEffect(() => {
-    const storedOrder = localStorage.getItem(storageKey);
-    if (storedOrder !== null) {
-      setExtensionsOrder(JSON.parse(storedOrder) as string[]);
-    } else {
+    if (extensionsOrder.length === 0) {
       setExtensionsOrder([...extensions.keys()]);
     }
   }, []);
-
-  useEffect(() => {
-    localStorage.setItem(storageKey, JSON.stringify(extensionsOrder));
-  }, [extensionsOrder]);
 
   return (
     <DndContext

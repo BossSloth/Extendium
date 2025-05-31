@@ -41,7 +41,8 @@
     "@steambrew/ttc": "2.4.3",
     "@steambrew/webkit": "5.2.13",
     "escape-string-regexp": "^5.0.0",
-    "sass-embedded": "^1.89.0"
+    "sass-embedded": "^1.89.0",
+    "zustand": "^5.0.5"
   },
   "patchedDependencies": {
     "@steambrew/client@4.2.1": "patches/@steambrew%2Fclient@4.2.1.patch"
