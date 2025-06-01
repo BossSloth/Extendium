@@ -5,6 +5,7 @@ import { showContextMenu } from '@steambrew/client';
 import React, { CSSProperties, JSX, useEffect, useRef, useState } from 'react';
 import { Extension } from '../extension/Extension';
 import { ContextMenu } from '../shared';
+import { ExtensionContextMenu } from './ExtensionContextMenu';
 import { ExtensionPopup } from './ExtensionPopup';
 // TODO: figure out how to keep the popup open but reload the content on open
 const KEEP_OPEN = true;
@@ -12,7 +13,7 @@ const KEEP_OPEN = true;
 export function ExtensionButton({ extension }: { readonly extension: Extension; }): JSX.Element {
   const [iconUrl, setIconUrl] = useState(extension.action.getIconUrl());
   const contextMenuWindow = useRef<Window | null>(null);
-  const contextMenuRef = useRef<ContextMenu | undefined>(undefined);
+  const popupContextMenuRef = useRef<ContextMenu | undefined>(undefined);
 
   const { attributes, listeners, setNodeRef, transform, transition, isDragging }
     = useSortable({ id: extension.manifest.name });
@@ -23,29 +24,30 @@ export function ExtensionButton({ extension }: { readonly extension: Extension; 
     zIndex: isDragging ? 1000 : undefined,
   };
 
+  // Listener to update icon when Action notifies
   useEffect(() => {
-    // Listener to update icon when Action notifies
     function handleIconChange(): void {
       setIconUrl(extension.action.getIconUrl());
     }
     extension.action.subscribeToIconUrlChange(handleIconChange);
 
-    // Cleanup
+    // Cleanup to unsubscribe from icon change
     return (): void => {
       extension.action.unsubscribeFromIconUrlChange(handleIconChange);
     };
   }, [extension]);
 
+  // Cleanup to close context menu on unmount
   useEffect(() => {
     return (): void => {
-      contextMenuRef.current?.Close();
+      popupContextMenuRef.current?.Close();
     };
   }, []);
 
-  function createContextMenu(targetElement: Element | null | undefined): void {
-    if (contextMenuRef.current || extension.action.getPopupUrl() === undefined) return;
+  function createPopupContextMenu(targetElement: Element | null | undefined): void {
+    if (popupContextMenuRef.current || extension.action.getPopupUrl() === undefined) return;
 
-    contextMenuRef.current = (
+    popupContextMenuRef.current = (
       // @ts-expect-error wrong type
       // eslint-disable-next-line @typescript-eslint/no-confusing-void-expression
       showContextMenu(
@@ -65,33 +67,57 @@ export function ExtensionButton({ extension }: { readonly extension: Extension; 
       ) as ContextMenu);
   }
 
+  function onClick(): void {
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+    if (KEEP_OPEN) {
+      if (popupContextMenuRef.current) {
+        popupContextMenuRef.current.Show();
+      }
+    } else {
+      popupContextMenuRef.current = undefined;
+      createPopupContextMenu(contextMenuWindow.current?.document.activeElement);
+    }
+
+    if (extension.action.getPopupUrl() === undefined) {
+      /** Only fire onClicked if there is no popup @see https://developer.chrome.com/docs/extensions/reference/api/action#event-onClicked */
+      extension.action.onClicked.emit();
+    }
+  }
+
+  function onContextMenu(): void {
+    // @ts-expect-error wrong type
+    // eslint-disable-next-line @typescript-eslint/no-confusing-void-expression
+    const contextMenu = showContextMenu(
+      <ExtensionContextMenu extension={extension} />,
+      contextMenuWindow.current?.document.activeElement,
+      // @ts-expect-error wrong type
+      {
+        bOverlapHorizontal: true,
+        bGrowToElementWidth: true,
+        bForcePopup: true,
+        bDisableMouseOverlay: true,
+        bCreateHidden: false,
+        bRetainOnHide: false,
+        bNoFocusWhenShown: undefined,
+        title: `${extension.action.getTitle()} - Context Menu`,
+      },
+    ) as ContextMenu;
+    contextMenu.Show();
+  }
+
   return (
     <button
       type="button"
       className="extension-button"
-      onClick={() => {
-        // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-        if (KEEP_OPEN) {
-          if (contextMenuRef.current) {
-            contextMenuRef.current.Show();
-          }
-        } else {
-          contextMenuRef.current = undefined;
-          createContextMenu(contextMenuWindow.current?.document.activeElement);
-        }
-
-        if (extension.action.getPopupUrl() === undefined) {
-          /** Only fire onClicked if there is no popup @see https://developer.chrome.com/docs/extensions/reference/api/action#event-onClicked */
-          extension.action.onClicked.emit();
-        }
-      }}
+      onClick={onClick}
+      onContextMenu={onContextMenu}
       title={extension.action.getTitle()}
       ref={(el) => {
         if (el) {
           contextMenuWindow.current = el.ownerDocument.defaultView;
           // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
           if (KEEP_OPEN) {
-            createContextMenu(el);
+            createPopupContextMenu(el);
           }
           setNodeRef(el);
         }

@@ -16,7 +16,7 @@ export async function OnPopupCreation(popup: Popup | undefined): Promise<void> {
     await OnMainWindowCreation(popup);
   }
 
-  if (popup.m_strName.includes('TabbedPopupBrowser')) {
+  if (popup.m_strName.includes('TabbedPopupBrowser') || popup.m_strName.includes('OverlayBrowser')) {
     await OnTabbedPopupBrowserCreation(popup);
   }
 }

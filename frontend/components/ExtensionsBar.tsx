@@ -4,7 +4,7 @@ import { arrayMove, horizontalListSortingStrategy, SortableContext } from '@dnd-
 import React, { JSX, useEffect } from 'react';
 import { Extension } from '../extension/Extension';
 import { ExtensionButton } from './ExtensionButton';
-import { useExtensionsOrderStore } from './extensionsOrderStore';
+import { useExtensionsOrderStore } from './stores/extensionsOrderStore';
 
 export function ExtensionsBar({ extensions }: { readonly extensions: Map<string, Extension>; }): JSX.Element {
   const { extensionsOrder, setExtensionsOrder } = useExtensionsOrderStore();

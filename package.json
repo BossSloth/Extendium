@@ -1,7 +1,7 @@
 {
   "scripts": {
     "dev": "millennium-ttc --build dev",
-    "sass": "sass ./public/extendium.scss ./public/extendium.css --style compressed --embed-sources --embed-source-map",
+    "sass": "sass ./public/extendium.scss:./public/extendium.css --style compressed --embed-sources --embed-source-map",
     "watch": "nodemon --watch webkit --watch frontend --watch public/extendium.scss --ext ts,tsx,js,jsx --exec \"npm run sass && npm run dev\"",
     "build": "npm run sass && millennium-ttc --build prod"
   },
