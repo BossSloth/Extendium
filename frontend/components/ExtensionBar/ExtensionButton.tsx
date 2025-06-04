@@ -1,14 +1,14 @@
 /* eslint-disable react/jsx-props-no-spreading */
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
+import { Extension } from '@extension/Extension';
 import { showContextMenu } from '@steambrew/client';
-import React, { CSSProperties, JSX, useEffect, useRef, useState } from 'react';
-import { Extension } from '../extension/Extension';
-import { ContextMenu } from '../shared';
+import React, { CSSProperties, JSX, MouseEvent, useEffect, useRef, useState } from 'react';
+import { ContextMenu } from '../../shared';
+import { ExtensionPopup } from '../ExtensionPopup';
 import { ExtensionContextMenu } from './ExtensionContextMenu';
-import { ExtensionPopup } from './ExtensionPopup';
 // TODO: figure out how to keep the popup open but reload the content on open
-const KEEP_OPEN = true;
+const KEEP_OPEN = false;
 
 export function ExtensionButton({ extension }: { readonly extension: Extension; }): JSX.Element {
   const [iconUrl, setIconUrl] = useState(extension.action.getIconUrl());
@@ -40,12 +40,15 @@ export function ExtensionButton({ extension }: { readonly extension: Extension; 
   // Cleanup to close context menu on unmount
   useEffect(() => {
     return (): void => {
-      popupContextMenuRef.current?.Close();
+      popupContextMenuRef.current?.Close?.();
     };
   }, []);
 
-  function createPopupContextMenu(targetElement: Element | null | undefined): void {
+  function createPopupContextMenu(targetElement: Element | null | undefined, clickEvent?: MouseEvent): void {
     if (popupContextMenuRef.current || extension.action.getPopupUrl() === undefined) return;
+
+    // Debug feature to keep the popup open to view the logs/content
+    const keepOpen = clickEvent !== undefined && clickEvent.ctrlKey && clickEvent.altKey;
 
     popupContextMenuRef.current = (
       // @ts-expect-error wrong type
@@ -59,15 +62,15 @@ export function ExtensionButton({ extension }: { readonly extension: Extension; 
           bGrowToElementWidth: true,
           bForcePopup: true,
           bDisableMouseOverlay: true,
-          bCreateHidden: KEEP_OPEN,
-          bRetainOnHide: KEEP_OPEN,
+          bCreateHidden: false,
+          bRetainOnHide: keepOpen,
           bNoFocusWhenShown: undefined,
           title: `${extension.action.getTitle()} - Popup`,
         },
       ) as ContextMenu);
   }
 
-  function onClick(): void {
+  function onClick(clickEvent: MouseEvent): void {
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     if (KEEP_OPEN) {
       if (popupContextMenuRef.current) {
@@ -75,7 +78,7 @@ export function ExtensionButton({ extension }: { readonly extension: Extension; 
       }
     } else {
       popupContextMenuRef.current = undefined;
-      createPopupContextMenu(contextMenuWindow.current?.document.activeElement);
+      createPopupContextMenu(contextMenuWindow.current?.document.activeElement, clickEvent);
     }
 
     if (extension.action.getPopupUrl() === undefined) {
@@ -85,9 +88,7 @@ export function ExtensionButton({ extension }: { readonly extension: Extension; 
   }
 
   function onContextMenu(): void {
-    // @ts-expect-error wrong type
-    // eslint-disable-next-line @typescript-eslint/no-confusing-void-expression
-    const contextMenu = showContextMenu(
+    showContextMenu(
       <ExtensionContextMenu extension={extension} />,
       contextMenuWindow.current?.document.activeElement,
       // @ts-expect-error wrong type
@@ -101,8 +102,7 @@ export function ExtensionButton({ extension }: { readonly extension: Extension; 
         bNoFocusWhenShown: undefined,
         title: `${extension.action.getTitle()} - Context Menu`,
       },
-    ) as ContextMenu;
-    contextMenu.Show();
+    );
   }
 
   return (

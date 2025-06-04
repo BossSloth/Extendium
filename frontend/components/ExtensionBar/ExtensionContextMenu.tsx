@@ -1,16 +1,25 @@
+import { Extension } from '@extension/Extension';
 import { Menu, MenuItem } from '@steambrew/client';
 import React, { JSX } from 'react';
-import { Extension } from '../extension/Extension';
-import { createOptionsWindow } from '../windowManagement';
-import { Separator } from './Separator';
+import { createOptionsWindow } from '../../windowManagement';
+import { Separator } from '../Separator';
+import { useExtensionsBarStore } from '../stores/extensionsBarStore';
 
 export function ExtensionContextMenu({ extension }: { readonly extension: Extension; }): JSX.Element {
+  const { setExtensionsOrder } = useExtensionsBarStore();
+
   const hasOptions = extension.manifest.options_ui?.page !== undefined;
 
   function openHomepage(): void {
     if (extension.manifest.homepage_url !== undefined) {
       SteamClient.System.OpenInSystemBrowser(extension.manifest.homepage_url);
     }
+  }
+
+  function unpin(): void {
+    setExtensionsOrder((order) => {
+      return order.filter(id => id !== extension.getName());
+    });
   }
 
   return (
@@ -21,7 +30,7 @@ export function ExtensionContextMenu({ extension }: { readonly extension: Extens
         </MenuItem>
         <Separator />
         {hasOptions && <MenuItem onClick={() => { createOptionsWindow(extension); }}>Options</MenuItem>}
-        <MenuItem>Unpin</MenuItem>
+        <MenuItem onClick={unpin}>Unpin</MenuItem>
         <Separator />
         <MenuItem>Manage</MenuItem>
       </Menu>

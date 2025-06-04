@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-return */
 import { findModule } from '@steambrew/client';
 import React from 'react';
-import { ExtensionsBar } from './components/ExtensionsBar';
+import { ExtensionsBar } from './components/ExtensionBar/ExtensionsBar';
 import { Extension } from './extension/Extension';
 import { WaitForElement } from './shared';
 

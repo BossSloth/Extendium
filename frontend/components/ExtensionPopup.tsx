@@ -4,7 +4,19 @@ import { Extension } from '../extension/Extension';
 import { mainWindow } from '../shared';
 import { injectHtml } from '../windowManagement';
 
-export function ExtensionPopup({ extension, popupContentUrl, baseDir, removeSteamCss = true }: { readonly extension: Extension; readonly popupContentUrl: string; readonly baseDir: string; readonly removeSteamCss?: boolean; }): JSX.Element {
+export function ExtensionPopup({
+  extension,
+  popupContentUrl,
+  baseDir,
+  centerPopup = false,
+  removeSteamCss = true,
+}: {
+  readonly extension: Extension;
+  readonly popupContentUrl: string;
+  readonly baseDir: string;
+  readonly centerPopup?: boolean;
+  readonly removeSteamCss?: boolean;
+}): JSX.Element {
   const [popupContent, setPopupContent] = useState<string | null>(null);
   const container = useRef<HTMLDivElement>(null);
 
@@ -41,7 +53,6 @@ export function ExtensionPopup({ extension, popupContentUrl, baseDir, removeStea
       setTimeout(() => {
         resize();
       }, 100);
-      popupDocument.body.click();
     }
 
     initPopup();
@@ -51,17 +62,19 @@ export function ExtensionPopup({ extension, popupContentUrl, baseDir, removeStea
     const popupDocument = container.current?.ownerDocument;
     if (!popupDocument || !popupDocument.defaultView) return;
 
-    const size = getDesiredSize(container.current, popupDocument);
+    const size = getDesiredSize(centerPopup ? container.current : popupDocument.body, popupDocument);
 
     popupWindow().SteamClient.Window.ResizeTo(size.width, size.height, false);
-    popupWindow().SteamClient.Window.MoveTo(popupWindow().screen.availWidth / 2 - size.width / 2, popupWindow().screen.availHeight / 2 - size.height / 2);
+    if (centerPopup) {
+      popupWindow().SteamClient.Window.MoveTo(popupWindow().screen.availWidth / 2 - size.width / 2, popupWindow().screen.availHeight / 2 - size.height / 2);
+    }
   }
 
   return (
     <ModalPosition>
       <base href={baseDir} />
       {/* eslint-disable-next-line react/no-danger */}
-      <div ref={container} dangerouslySetInnerHTML={{ __html: popupContent ?? '' }} />
+      <div ref={container} className="extendium-popup" dangerouslySetInnerHTML={{ __html: popupContent ?? '' }} />
     </ModalPosition>
   );
 }

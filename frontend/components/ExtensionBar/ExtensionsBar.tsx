@@ -1,13 +1,14 @@
 import { closestCenter, DndContext, DragEndEvent, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
 import { restrictToHorizontalAxis, restrictToParentElement } from '@dnd-kit/modifiers';
 import { arrayMove, horizontalListSortingStrategy, SortableContext } from '@dnd-kit/sortable';
+import { Extension } from '@extension/Extension';
 import React, { JSX, useEffect } from 'react';
-import { Extension } from '../extension/Extension';
+import { ToolbarManagerButton } from '../ToolbarExtensionManager/ToolbarManagerButton';
+import { useExtensionsBarStore } from '../stores/extensionsBarStore';
 import { ExtensionButton } from './ExtensionButton';
-import { useExtensionsOrderStore } from './stores/extensionsOrderStore';
 
 export function ExtensionsBar({ extensions }: { readonly extensions: Map<string, Extension>; }): JSX.Element {
-  const { extensionsOrder, setExtensionsOrder } = useExtensionsOrderStore();
+  const { extensionsOrder, setExtensionsOrder } = useExtensionsBarStore();
 
   const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 8 } }));
 
@@ -47,6 +48,7 @@ export function ExtensionsBar({ extensions }: { readonly extensions: Map<string,
                   <ExtensionButton key={extensionId} extension={extensions.get(extensionId)!} />
                 )
           ))}
+          <ToolbarManagerButton />
         </div>
       </SortableContext>
     </DndContext>

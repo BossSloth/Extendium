@@ -38,9 +38,10 @@
     "@dnd-kit/sortable": "^10.0.0",
     "@steambrew/api": "^5.2.8",
     "@steambrew/client": "^5.2.16",
-    "@steambrew/ttc": "2.4.3",
+    "@steambrew/ttc": "2.5.3",
     "@steambrew/webkit": "5.2.13",
     "escape-string-regexp": "^5.0.0",
+    "react-icons": "^5.5.0",
     "sass-embedded": "^1.89.0",
     "zustand": "^5.0.5"
   },

@@ -1,14 +1,14 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
-interface OrderStore {
+interface ExtensionsBarStore {
   setExtensionsOrder(order: string[] | ((order: string[]) => string[])): void;
   extensionsOrder: string[];
 }
 
-const storageKey = 'extendium_extensionsOrder';
+const storageKey = 'extendium_extensionsBarStore';
 
-export const useExtensionsOrderStore = create<OrderStore>()(persist(
+export const useExtensionsBarStore = create<ExtensionsBarStore>()(persist(
   set =>
     ({
       extensionsOrder: [],

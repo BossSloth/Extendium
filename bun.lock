@@ -9,9 +9,10 @@
         "@dnd-kit/sortable": "^10.0.0",
         "@steambrew/api": "^5.2.8",
         "@steambrew/client": "^5.2.16",
-        "@steambrew/ttc": "2.4.3",
+        "@steambrew/ttc": "^2.5.3",
         "@steambrew/webkit": "5.2.13",
         "escape-string-regexp": "^5.0.0",
+        "react-icons": "^5.5.0",
         "sass-embedded": "^1.89.0",
         "zustand": "^5.0.5",
       },
@@ -436,7 +437,7 @@
 
     "@steambrew/client": ["@steambrew/client@5.2.16", "", { "dependencies": { "@rollup/plugin-commonjs": "^25.0.7", "@rollup/plugin-json": "^6.1.0", "@rollup/plugin-node-resolve": "^15.2.3", "@rollup/plugin-replace": "^5.0.5", "@rollup/plugin-terser": "^0.4.4", "@rollup/plugin-typescript": "^11.1.6", "chalk": "^4.1.0", "fs": "0.0.1-security", "path": "^0.12.7", "rollup": "^4.17.2", "shx": "^0.3.4", "tslib": "^2.8.1", "typescript": "^4.9.5", "url": "^0.11.4" } }, "sha512-4YrUC2frGDnlgMLadKh95pxOSAwo3RIFwmrbqV4RUTUZ3HVuWfvSWyW9sMypH/77iLqhYrURjM2XXKc/8loAYw=="],
 
-    "@steambrew/ttc": ["@steambrew/ttc@2.4.3", "", { "dependencies": { "@babel/parser": "^7.27.0", "@babel/preset-env": "^7.26.0", "@babel/preset-react": "^7.25.9", "@babel/preset-typescript": "^7.27.0", "@babel/traverse": "^7.27.0", "@rollup/plugin-babel": "^6.0.4", "@rollup/plugin-commonjs": "^28.0.1", "@rollup/plugin-json": "^6.1.0", "@rollup/plugin-node-resolve": "^15.3.0", "@rollup/plugin-replace": "^6.0.1", "@rollup/plugin-terser": "^0.4.4", "@rollup/plugin-typescript": "^12.1.1", "@rollup/plugin-url": "^8.0.2", "@rollup/pluginutils": "^5.1.4", "chalk": "^5.3.0", "dotenv": "^16.4.7", "fs": "^0.0.1-security", "glob": "^11.0.2", "magic-string": "^0.30.17", "rollup": "^4.40.0", "rollup-plugin-inject-process-env": "^1.3.1", "rollup-plugin-polyfill-node": "^0.13.0", "rollup-plugin-scss": "^4.0.1", "sass": "^1.87.0", "tslib": "^2.8.1" }, "bin": { "millennium-ttc": "dist/index.js" } }, "sha512-sK+dtYLiqYzPg5iz9MmDDf9oh00DnN5ipdjbXCjKMAC+zKYV8P6965MQ8HF/ecxzEVu9w3LaN4Vyge10kUxpsw=="],
+    "@steambrew/ttc": ["@steambrew/ttc@2.5.3", "", { "dependencies": { "@babel/parser": "^7.27.0", "@babel/preset-env": "^7.26.0", "@babel/preset-react": "^7.25.9", "@babel/preset-typescript": "^7.27.0", "@babel/traverse": "^7.27.0", "@rollup/plugin-babel": "^6.0.4", "@rollup/plugin-commonjs": "^28.0.1", "@rollup/plugin-json": "^6.1.0", "@rollup/plugin-node-resolve": "^15.3.0", "@rollup/plugin-replace": "^6.0.1", "@rollup/plugin-terser": "^0.4.4", "@rollup/plugin-typescript": "^12.1.1", "@rollup/plugin-url": "^8.0.2", "@rollup/pluginutils": "^5.1.4", "chalk": "^5.3.0", "dotenv": "^16.4.7", "fs": "^0.0.1-security", "glob": "^11.0.2", "magic-string": "^0.30.17", "rollup": "^4.40.0", "rollup-plugin-inject-process-env": "^1.3.1", "rollup-plugin-polyfill-node": "^0.13.0", "rollup-plugin-scss": "^4.0.1", "sass": "^1.87.0", "tslib": "^2.8.1" }, "bin": { "millennium-ttc": "dist/index.js" } }, "sha512-AiVTIOwGpNl4wp2OW1tr7SiFmzCfmfsZqzgO/hiGiussSgIriphaxmcU//dHXsVFsXn3AnjBQ3vH8Bb4A6KHww=="],
 
     "@steambrew/webkit": ["@steambrew/webkit@5.2.13", "", { "dependencies": { "shx": "^0.3.4", "tslib": "^2.8.1", "typescript": "^4.9.5" } }, "sha512-j8JE5+rdyYafAYNbHIbnniU2n5JFrqcD9wNcm21JaW9Mf0TMVatFY219B0DOfQnXdQVa1DrufVpfhXIfDgfHUw=="],
 
@@ -1205,6 +1206,8 @@
     "react": ["react@19.1.0", "", {}, "sha512-FS+XFBNvn3GTAWq26joslQgWNoFu08F4kl0J4CgdNKADkdSGXQyTCnKteIAJy96Br6YbpEU1LSzV5dYtjMkMDg=="],
 
     "react-dom": ["react-dom@19.1.0", "", { "dependencies": { "scheduler": "^0.26.0" }, "peerDependencies": { "react": "^19.1.0" } }, "sha512-Xs1hdnE+DyKgeHJeJznQmYMIBG3TKIHJJT95Q58nHLSrElKlGQqDTR2HQ9fx5CN/Gk6Vh/kupBTDLU11/nDk/g=="],
+
+    "react-icons": ["react-icons@5.5.0", "", { "peerDependencies": { "react": "*" } }, "sha512-MEFcXdkP3dLo8uumGI5xN3lDFNsRtrjbOEKDLD7yv76v4wpnEq2Lt2qeHaQOr34I/wPN3s3+N08WkQ+CW37Xiw=="],
 
     "react-is": ["react-is@16.13.1", "", {}, "sha512-24e6ynE2H+OKt4kqsOvNd8kBpV65zoxbA4BVsEOB3ARVWQki/DHzaUoC5KuON/BiccDaCCTZBuOcfZs70kR8bQ=="],
 

@@ -1,4 +1,4 @@
-import { ModalRoot, showModal } from '@steambrew/client';
+import { findClass, ModalRoot, showModal } from '@steambrew/client';
 import React from 'react';
 import { injectBrowser } from './browser/injectBrowser';
 import { ExtensionPopup } from './components/ExtensionPopup';
@@ -115,6 +115,8 @@ export async function injectHtml(html: string, popupWindow: Window, extension: E
     aTag.setAttribute('target', '_blank');
   }
 
+  injectModalStyle(popupDocument);
+
   popupDocument.dispatchEvent(new Event('DOMContentLoaded', {
     bubbles: true,
     cancelable: true,
@@ -132,7 +134,13 @@ export function createOptionsWindow(extension: Extension): void {
   // TODO: this window is now not resizable which makes it sometimes hard to change settings
   showModal(
     <ModalRoot>
-      <ExtensionPopup extension={extension} popupContentUrl={extension.getFileUrl(url) ?? ''} baseDir={extension.getFileDir(url)} removeSteamCss={false} />
+      <ExtensionPopup
+        extension={extension}
+        popupContentUrl={extension.getFileUrl(url) ?? ''}
+        baseDir={extension.getFileDir(url)}
+        removeSteamCss={false}
+        centerPopup
+      />
     </ModalRoot>,
     mainWindow,
     {
@@ -150,3 +158,23 @@ export function createOptionsWindow(extension: Extension): void {
     },
   );
 }
+
+function injectModalStyle(popupDocument: Document): void {
+  let cssContent = customModalStyle;
+  const steamClassNames = [...cssContent.matchAll(/\.__(\w+)__/g)];
+  steamClassNames.forEach((className) => {
+    if (className[1] === undefined) return;
+    const realClassName = findClass(className[1]) as string;
+    cssContent = cssContent.replaceAll(className[0], `.${realClassName}`);
+  });
+
+  const style = document.createElement('style');
+  style.textContent = cssContent;
+  popupDocument.head.appendChild(style);
+}
+
+const customModalStyle = /* css */`
+.__ContextMenuPosition__:has(.extendium-popup) {
+  outline: none !important;
+}
+`;

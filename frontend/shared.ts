@@ -29,7 +29,7 @@ export async function WaitForElement(sel: string, parent = document): Promise<El
 }
 
 export interface ContextMenu {
-  Close(): void;
+  Close?(): void;
   Hide(): void;
   Show(): void;
   m_popupContextMenu: BasicPopup;
