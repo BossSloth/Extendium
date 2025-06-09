@@ -22,7 +22,6 @@ declare global {
   const extensions: Map<string, Extension>;
 }
 
-export const EXTENSIONS_URL = 'https://steamloopback.host/extensions';
 export const MAIN_WINDOW_NAME = 'SP Desktop_uid0';
 export async function WaitForElement(sel: string, parent = document): Promise<Element | undefined> {
   return [...(await Millennium.findElement(parent, sel))][0];

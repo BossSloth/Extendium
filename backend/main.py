@@ -1,5 +1,10 @@
+# pylint: disable=invalid-name
 import json
 import os
+import shutil
+import struct
+import tempfile
+import zipfile
 from os import path
 from typing import Optional
 
@@ -9,8 +14,9 @@ from cors_proxy import CORSProxy
 from logger.logger import logger  # pylint: disable=import-error
 from websocket import initialize_server, run_server, shutdown_server
 
-EXTENSIONS_DIR = '/steamui/extensions'
+EXTENSIONS_DIR = '\\steamui\\extensions'
 EXTENSIONS_URL = 'https://steamloopback.host/extensions'
+EXTENDIUM_INFO_FILE = 'extendium.info'
 
 cors_proxy: Optional[CORSProxy] = None
 
@@ -19,7 +25,6 @@ def GetPluginDir():
 
 def GetExtensionsDir():
     return Millennium.steam_path() + EXTENSIONS_DIR
-
 
 def GetExtensionManifests():
     # Get all the manifest.json files in the extensions directory
@@ -54,29 +59,74 @@ def GetUserInfo():
         USER_INFO = Millennium.call_frontend_method('getUserInfo') # pylint: disable=assignment-from-no-return,no-value-for-parameter
     return USER_INFO
 
-#TODO: cors requests currently don't work like in the steamdb extension and we can't do this because of the issue below
-def BackendFetch(url: str, headersJson: str):
-    # TODO: problem this is triggered from within sendmessage and millennium does not allow two backend functions to run somehow this needs to split up?
-    logger.log(f"Fetching {url}")
-    headers = json.loads(headersJson)
+def extract_zip_from_crx(crx_data: bytes) -> bytes:
+    # Check magic number (first 4 bytes) == Cr24
+    if crx_data[0:4] != b'Cr24':
+        raise ValueError("Not a valid CRX file.")
 
+    version = struct.unpack('<I', crx_data[4:8])[0]
+
+    if version == 2:
+        pub_key_len = struct.unpack('<I', crx_data[8:12])[0]
+        sig_len = struct.unpack('<I', crx_data[12:16])[0]
+        header_len = 16 + pub_key_len + sig_len
+    elif version == 3:
+        pub_key_len = struct.unpack('<I', crx_data[8:12])[0]
+        header_len = 12 + pub_key_len
+    else:
+        raise ValueError(f"Unsupported CRX version {version}.")
+
+    zip_data = crx_data[header_len:]
+    return zip_data
+
+def DownloadExtensionFromUrl(url: str, name: str):
+    extensions_dir = GetExtensionsDir()
+
+    if not os.path.exists(extensions_dir):
+        os.makedirs(extensions_dir)
+
+    # Download the extension
+    logger.log(f"Downloading extension from {url}")
     try:
-        response = requests.get(url, headers=headers, timeout=30)
+        response = requests.get(url, timeout=30)
+        response.raise_for_status()
 
-        result = {
-            'status': response.status_code,
-            'url': response.url,
-            'headers': dict(response.headers),
-            'body': response.text
-        }
+        crx_data = response.content
+        zip_data = extract_zip_from_crx(crx_data)
 
-        return json.dumps(result)
+        # Extract the extension directly to the extensions directory
+        ext_dir = os.path.join(extensions_dir, name)
+
+        # Remove existing directory if it exists
+        if os.path.exists(ext_dir):
+            shutil.rmtree(ext_dir)
+
+        # Create a temporary file and extract the zip
+        with tempfile.NamedTemporaryFile(delete=False, suffix='.zip') as temp_file:
+            temp_file.write(zip_data)
+            temp_file_path = temp_file.name
+
+        with zipfile.ZipFile(temp_file_path, 'r') as zip_ref:
+            zip_ref.extractall(ext_dir)
+
+        # Clean up
+        os.unlink(temp_file_path)
+
+        logger.log(f"Extension successfully extracted to {ext_dir}")
+        PrepareExtensionFiles()
+        return True
+    except requests.RequestException as e:
+        logger.error(f"Failed to download extension: {str(e)} {e.__traceback__}")
+        return False
+    except (ValueError, zipfile.BadZipFile) as e:
+        logger.error(f"Failed to process extension file: {str(e)} {e.__traceback__}")
+        return False
     except Exception as e:
-        logger.error(f"Error fetching {url}: {str(e)}")
-        return None
+        logger.error(f"Unexpected error installing extension: {str(e)} {e.__traceback__}")
+        return False
+
 
 # TODO: do the same as millennium does for the file proxy but for chrome-extension:// url
-
 def PrepareExtensionFiles():
     extensions_dir = GetExtensionsDir()
 

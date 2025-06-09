@@ -87,23 +87,26 @@ export class Action {
   }
 
   private initIconUrl(): void {
+    this.iconUrl = this.getDefaultIconUrl();
+  }
+
+  public getDefaultIconUrl(): string | undefined {
     const icons = this.extension.manifest.action?.default_icon ?? this.extension.manifest.icons;
     if (icons === undefined) {
-      this.iconUrl = undefined;
-
-      return;
+      return undefined;
     }
 
     if (typeof icons === 'string') {
-      this.iconUrl = this.extension.getFileUrl(icons);
+      return this.extension.getFileUrl(icons);
     } else if (typeof icons === 'object') {
       // Use the new selection function for best icon
       // Ensure type compatibility: ManifestIcons may not be Record<string, string>, so cast safely
       const bestIcon = Action.selectBestIconPath(icons as Record<string, string>);
-      this.iconUrl = bestIcon !== undefined && bestIcon !== '' ? this.extension.getFileUrl(bestIcon) : undefined;
-    } else {
-      this.iconUrl = undefined;
+
+      return bestIcon !== undefined && bestIcon !== '' ? this.extension.getFileUrl(bestIcon) : undefined;
     }
+
+    return undefined;
   }
   // #endregion icon
 

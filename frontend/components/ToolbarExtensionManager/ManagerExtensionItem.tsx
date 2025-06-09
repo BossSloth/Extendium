@@ -17,7 +17,7 @@ export function ManagerExtensionItem({ extension, pinned, pinExtension, unpinExt
     <Field
       key={extension.getName()}
       label={extension.getName()}
-      icon={<img width={16} height={16} src={extension.action.getIconUrl() ?? ''} alt={extension.manifest.name} />}
+      icon={<img width={16} height={16} src={extension.action.getDefaultIconUrl() ?? ''} alt={extension.manifest.name} />}
       padding="standard"
     >
       <DialogButton onClick={handlePin}>

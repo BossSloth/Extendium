@@ -1,4 +1,6 @@
 /* eslint-disable func-names */
+import { ConfirmModal, showModal } from '@steambrew/client';
+import React from 'react';
 import { Extension } from '../extension/Extension';
 import { createOffscreen } from '../windowManagement';
 import { patchFetch } from './corsFetch';
@@ -43,6 +45,18 @@ export function injectBrowser(context: string, window: Window, extension: Extens
   };
 
   patchFetch(window);
+
+  window.confirm = (message?: string): boolean => {
+    const description = (
+      <>
+        <p>Oops looks like the extension {extension.manifest.name} tried to open a confirmation dialog. Sadly, this is not supported.</p>
+        <p>Original confirmation message was: <strong>{message}</strong></p>
+      </>
+    );
+    showModal(<ConfirmModal strDescription={description} strTitle="Unsupported Dialog" />, window);
+
+    return false;
+  };
 }
 
 declare global {

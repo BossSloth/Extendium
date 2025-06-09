@@ -1,5 +1,7 @@
-import { DialogHeader } from '@steambrew/client';
+import { DialogHeader, Field } from '@steambrew/client';
+import { OpenExtensionManagerPopup } from 'extensions-manager/ExtensionManagerPopup';
 import React from 'react';
+import { FaCog } from 'react-icons/fa';
 import { useExtensionsBarStore } from '../stores/extensionsBarStore';
 import { ManagerExtensionItem } from './ManagerExtensionItem';
 
@@ -23,7 +25,7 @@ export function ToolbarManagerContextMenu(): React.JSX.Element {
   }
 
   return (
-    <div style={{ padding: '1rem' }}>
+    <div style={{ padding: '1rem', width: '15rem' }}>
       <DialogHeader>Extensions</DialogHeader>
       {[...extensions.values()].map(extension => (
         <ManagerExtensionItem
@@ -34,6 +36,7 @@ export function ToolbarManagerContextMenu(): React.JSX.Element {
           unpinExtension={unpinExtension}
         />
       ))}
+      <Field icon={<FaCog />} label="Manage extensions" onClick={OpenExtensionManagerPopup} />
     </div>
   );
 }

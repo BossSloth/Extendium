@@ -72,6 +72,15 @@ export class Extension {
     return this.manifest.name;
   }
 
+  public getDescription(): string | undefined {
+    const description = this.manifest.description;
+    if (description === '__MSG_extension_description__') {
+      return this.locale.getMessage('extension_description');
+    }
+
+    return description;
+  }
+
   public getVersion(): string {
     return this.manifest.version;
   }
