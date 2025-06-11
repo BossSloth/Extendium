@@ -14,8 +14,7 @@ from cors_proxy import CORSProxy
 from logger.logger import logger  # pylint: disable=import-error
 from websocket import initialize_server, run_server, shutdown_server
 
-EXTENSIONS_DIR = '\\steamui\\extensions'
-EXTENSIONS_URL = 'https://steamloopback.host/extensions'
+EXTENSIONS_DIR = '\\.extensions'
 EXTENDIUM_INFO_FILE = 'extendium.info'
 
 cors_proxy: Optional[CORSProxy] = None
@@ -24,7 +23,7 @@ def GetPluginDir():
     return path.abspath(PLUGIN_BASE_DIR) # pylint: disable=undefined-variable
 
 def GetExtensionsDir():
-    return Millennium.steam_path() + EXTENSIONS_DIR
+    return GetPluginDir() + EXTENSIONS_DIR
 
 def GetExtensionManifests():
     # Get all the manifest.json files in the extensions directory
@@ -128,6 +127,8 @@ def DownloadExtensionFromUrl(url: str, name: str):
 
 # TODO: do the same as millennium does for the file proxy but for chrome-extension:// url
 def PrepareExtensionFiles():
+    dir_path = GetExtensionsDir().replace('\\', '/')
+    extension_url = f"https://js.millennium.app/{dir_path}"
     extensions_dir = GetExtensionsDir()
 
     if not os.path.exists(extensions_dir):
@@ -140,16 +141,17 @@ def PrepareExtensionFiles():
                 for file in files:
                     file_extension = os.path.splitext(file)[1].lower()
                     file_path = os.path.join(root, file)
+                    ext_folder = ext_folder.replace('\\', '/')
 
                     # Define file processing rules
                     processing_rules = {
                         '.css': [
-                            ("url('/", f"url('{EXTENSIONS_URL}/{ext_folder}/"),
-                            ("url(chrome-extension://__MSG_@@extension_id__/", f"url({EXTENSIONS_URL}/{ext_folder}/"),
+                            ("url('/", f"url('{extension_url}/{ext_folder}/"),
+                            ("url(chrome-extension://__MSG_@@extension_id__/", f"url({extension_url}/{ext_folder}/"),
                         ],
                         '.html': [
-                            ("href=\"/", f"href=\"{EXTENSIONS_URL}/{ext_folder}/"),
-                            ("src=\"/", f"src=\"{EXTENSIONS_URL}/{ext_folder}/"),
+                            ("href=\"/", f"href=\"{extension_url}/{ext_folder}/"),
+                            ("src=\"/", f"src=\"{extension_url}/{ext_folder}/"),
                         ],
                         '.js': [
                             ("globalThis.chrome", "chrome")
@@ -160,7 +162,7 @@ def PrepareExtensionFiles():
                     if file_extension == '.js':
                         ext_root_folders = [d for d in os.listdir(ext_path) if os.path.isdir(os.path.join(ext_path, d))]
                         for dir_name in ext_root_folders:
-                            processing_rules['.js'].append((f"'/{dir_name}", f"'{EXTENSIONS_URL}/{ext_folder}/{dir_name}"))
+                            processing_rules['.js'].append((f"'/{dir_name}", f"'{extension_url}/{ext_folder}/{dir_name}"))
 
 
                     # Process file if we have rules for its extension

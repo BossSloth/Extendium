@@ -4,4 +4,4 @@ node_modules/
 build/
 !bun.lockb
 public/extendium.css
-._extensions/
+.extensions/
