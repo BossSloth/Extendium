@@ -41,4 +41,7 @@ export default async function PluginMain(): Promise<void> {
     OnPopupCreation(wnd);
   }
   g_PopupManager.AddPopupCreatedCallback(OnPopupCreation);
+
+  // TODO: this is how we can render resizable popups
+  // routerHook.addGlobalComponent('RandomPopup', () => <RandomPopup />, EUIMode.Desktop);
 }

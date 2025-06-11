@@ -81,8 +81,15 @@ export class Locale {
       case '@@extension_id': return '1234';
       case '@@ui_locale': return navigator.language.split('-')[0];
       case '@@bidi_dir': return document.body.dir;
+      case '@@bidi_reversed_dir': return document.body.dir === 'ltr' ? 'rtl' : 'ltr';
+      case '@@bidi_start_edge': return document.body.dir === 'ltr' ? 'left' : 'right';
+      case '@@bidi_end_edge': return document.body.dir === 'ltr' ? 'right' : 'left';
       default: return undefined;
     }
+  }
+
+  getMSGKey(key: string): string {
+    return key.replaceAll(/__MSG_(.+)__/g, '$1');
   }
 }
 

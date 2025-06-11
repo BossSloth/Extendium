@@ -69,13 +69,19 @@ export class Extension {
   }
 
   public getName(): string {
-    return this.manifest.name;
+    const name = this.manifest.name;
+    if (name.startsWith('__MSG_')) {
+      return this.locale.getMessage(this.locale.getMSGKey(name));
+    }
+
+    return name;
   }
 
   public getDescription(): string | undefined {
     const description = this.manifest.description;
-    if (description === '__MSG_extension_description__') {
-      return this.locale.getMessage('extension_description');
+    if (description?.startsWith('__MSG_') ?? false) {
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      return this.locale.getMessage(this.locale.getMSGKey(description!));
     }
 
     return description;

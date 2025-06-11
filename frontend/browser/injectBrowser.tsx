@@ -15,10 +15,11 @@ export function injectBrowser(context: string, window: Window, extension: Extens
 
   const originalOnError = window.onerror;
 
-  window.onerror = function (this: WindowEventHandlers, message, source, lineno, colno, error): boolean {
-    console.error(`Error in ${extension.manifest.name} - ${context}`, message, source, lineno, colno, error);
+  window.onerror = function (this: WindowEventHandlers, ...args: unknown[]): boolean {
+    console.error(`Error in ${extension.manifest.name} - ${context}`, ...args);
 
-    return originalOnError?.call(this, message, source, lineno, colno, error);
+    // @ts-expect-error ignore
+    return originalOnError?.call(this, ...args);
   };
 
   const originalOnUnhandledRejection = window.onunhandledrejection;
