@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-return */
-import { findModule, sleep } from '@steambrew/client';
+import { findModule } from '@steambrew/client';
 import React from 'react';
 import { ExtensionsBar } from './components/ExtensionBar/ExtensionsBar';
 import { Extension } from './extension/Extension';
@@ -23,8 +23,6 @@ export async function patchUrlBar(extensions: Map<string, Extension>, document: 
   if (document.querySelector('.extensions-bar-container') !== null) {
     return;
   }
-  // TODO: find a way to more reliably wait for the url bar to be ready. Maybe use afterPatch
-  await sleep(1000);
 
   const extensionsBar = document.createElement('div');
   extensionsBar.classList.add('extensions-bar-container');
@@ -33,4 +31,12 @@ export async function patchUrlBar(extensions: Map<string, Extension>, document: 
   const reactRoot = SP_REACTDOM.createRoot(extensionsBar);
 
   reactRoot.render(<ExtensionsBar extensions={extensions} />);
+
+  const observer = new MutationObserver(() => {
+    patchUrlBar(extensions, document);
+  });
+  observer.observe(urlBar, {
+    childList: true,
+    subtree: true,
+  });
 }
