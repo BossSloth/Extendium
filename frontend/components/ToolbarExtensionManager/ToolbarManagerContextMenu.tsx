@@ -1,5 +1,5 @@
 import { DialogHeader, Field } from '@steambrew/client';
-import { useOpenExtensionManagerPopup } from 'extensions-manager/ExtensionManagerPopup';
+import { openExtensionManagerPopup } from 'extensions-manager/ExtensionManagerPopup';
 import React from 'react';
 import { FaCog } from 'react-icons/fa';
 import { useExtensionsBarStore } from '../stores/extensionsBarStore';
@@ -7,7 +7,6 @@ import { ManagerExtensionItem } from './ManagerExtensionItem';
 
 export function ToolbarManagerContextMenu(): React.JSX.Element {
   const { extensionsOrder, setExtensionsOrder } = useExtensionsBarStore();
-  const openExtensionManagerPopup = useOpenExtensionManagerPopup();
 
   function isExtensionPinned(extensionId: string): boolean {
     return extensionsOrder.includes(extensionId);

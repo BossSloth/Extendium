@@ -1,4 +1,5 @@
-import { findClass, ModalRoot, showModal } from '@steambrew/client';
+import { findClass } from '@steambrew/client';
+import { openExtensionSettingsPopup } from 'components/ExtensionSettingsPopup';
 import React from 'react';
 import { injectBrowser } from './browser/injectBrowser';
 import { ExtensionPopup } from './components/ExtensionPopup';
@@ -131,31 +132,15 @@ export async function injectHtml(html: string, popupWindow: Window, extension: E
 export function createOptionsWindow(extension: Extension): void {
   const url = extension.manifest.options_ui?.page ?? '';
 
-  // TODO: this window is now not resizable which makes it sometimes hard to change settings
-  showModal(
-    <ModalRoot>
-      <ExtensionPopup
-        extension={extension}
-        popupContentUrl={extension.getFileUrl(url) ?? ''}
-        baseDir={extension.getFileDir(url)}
-        removeSteamCss={false}
-        centerPopup
-      />
-    </ModalRoot>,
-    mainWindow,
-    {
-      // bOverlapHorizontal: true,
-      // bGrowToElementWidth: true,
-      // bForcePopup: true,
-      // bDisableMouseOverlay: true,
-      // bCreateHidden: false,
-      // bRetainOnHide: false,
-      // bNoFocusWhenShown: undefined,
-      popupHeight: mainWindow.innerHeight / 2,
-      popupWidth: mainWindow.innerWidth / 2,
-      bNeverPopOut: true,
-      strTitle: `${extension.action.getTitle()} - Options`,
-    },
+  openExtensionSettingsPopup(
+    <ExtensionPopup
+      extension={extension}
+      popupContentUrl={extension.getFileUrl(url) ?? ''}
+      baseDir={extension.getFileDir(url)}
+      removeSteamCss={false}
+      centerPopup
+    />,
+    `${extension.action.getTitle()} - Options`,
   );
 }
 

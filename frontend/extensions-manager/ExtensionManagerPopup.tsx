@@ -67,10 +67,8 @@ export function ExtensionManagerPopup(): React.ReactNode {
 
 routerHook.addGlobalComponent('ExtensionManagerPopup', () => <ExtensionManagerPopup />, EUIMode.Desktop);
 
-export function useOpenExtensionManagerPopup(): () => void {
-  const setManagerPopupOpen = usePopupsOpenStore(state => state.setManagerPopupOpen);
+export function openExtensionManagerPopup(): void {
+  const state = usePopupsOpenStore.getState();
 
-  return () => {
-    setManagerPopupOpen(true);
-  };
+  state.setManagerPopupOpen(true);
 }

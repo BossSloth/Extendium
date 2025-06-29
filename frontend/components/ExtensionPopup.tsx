@@ -1,4 +1,3 @@
-import { ModalPosition } from '@steambrew/client';
 import React, { JSX, useEffect, useRef, useState } from 'react';
 import { Extension } from '../extension/Extension';
 import { mainWindow } from '../shared';
@@ -71,11 +70,11 @@ export function ExtensionPopup({
   }
 
   return (
-    <ModalPosition>
+    <>
       <base href={baseDir} />
       {/* eslint-disable-next-line react/no-danger */}
       <div ref={container} className="extendium-popup" dangerouslySetInnerHTML={{ __html: popupContent ?? '' }} />
-    </ModalPosition>
+    </>
   );
 }
 
