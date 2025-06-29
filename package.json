@@ -6,7 +6,7 @@
     "build": "npm run sass && millennium-ttc --build prod"
   },
   "devDependencies": {
-    "@eslint/js": "^9.28.0",
+    "@eslint/js": "^9.30.0",
     "@semantic-release/changelog": "^6.0.3",
     "@semantic-release/exec": "^7.1.0",
     "@semantic-release/git": "^10.0.1",
@@ -16,14 +16,14 @@
     "@types/react": "^18.3.23",
     "@types/react-dom": "^18.3.7",
     "@types/webpack": "^5.28.5",
-    "eslint": "^9.28.0",
-    "eslint-plugin-perfectionist": "^4.14.0",
+    "eslint": "^9.30.0",
+    "eslint-plugin-perfectionist": "^4.15.0",
     "eslint-plugin-react": "^7.37.5",
     "globals": "^16.2.0",
     "nodemon": "^3.1.10",
     "semantic-release": "^24.2.5",
     "steam-types": "^0.1.4",
-    "typescript-eslint": "^8.33.1"
+    "typescript-eslint": "^8.35.0"
   },
   "type": "module",
   "name": "extendium",
@@ -36,14 +36,14 @@
     "@dnd-kit/core": "^6.3.1",
     "@dnd-kit/modifiers": "^9.0.0",
     "@dnd-kit/sortable": "^10.0.0",
-    "@steambrew/api": "^5.2.24",
-    "@steambrew/client": "^5.2.24",
+    "@steambrew/api": "^5.4.3",
+    "@steambrew/client": "^5.4.3",
     "@steambrew/ttc": "2.5.3",
-    "@steambrew/webkit": "5.2.24",
+    "@steambrew/webkit": "^5.4.3",
     "escape-string-regexp": "^5.0.0",
     "react-icons": "^5.5.0",
-    "sass-embedded": "^1.89.1",
-    "zustand": "^5.0.5"
+    "sass-embedded": "^1.89.2",
+    "zustand": "^5.0.6"
   },
   "patchedDependencies": {
     "@steambrew/client@4.2.1": "patches/@steambrew%2Fclient@4.2.1.patch"
