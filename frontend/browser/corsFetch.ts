@@ -99,8 +99,6 @@ function getCredentialsUrl(inputUrl: string): string {
   return inputUrl;
 }
 
-// TODO: fetching https://store.steampowered.com/account/licenses/?l=english doesn't work because request is too big and the browser splits it up
-// need to upgrade websocket server check chatgpt message to use fastapi
 export function resolvePendingRequest(responseContent: SteamRequestResponseContent): void {
   const pendingRequest = pendingRequests.get(responseContent.requestId);
 

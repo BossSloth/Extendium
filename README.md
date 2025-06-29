@@ -9,15 +9,7 @@ A Millennium plugin that adds chrome extensions support to the steam client
 Want to know if your favorite chrome extension is compatible with Extendium? Check [here](https://docs.google.com/spreadsheets/d/e/2PACX-1vRDoTrxtBhLurvlxZNW7vYpUtp-dU4iyRgS3GnVKjXx2seONwU_BtORtDoE8WbbrRp0-OohYI2NAM-j/pubhtml) on the compatibility list
 
 ## Features
-- TODO
-
-|           **Main interface**             |                **Groups**                 |
-|:----------------------------------------:|:-----------------------------------------:|
-| ![Main interface](images/main-view.png)<img width="1000" />  |      ![Groups](images/grouping.png)<img width="1000" />       |
-|               **Sorting**                |       **Working in steam overlay**        |
-|      ![Sorting](images/sorting.png)      |   ![Steam overlay](images/overlay.png)    |
-|           **Reverse sorting**            |      **Great grouping for many dlc**      |
-| ![Reverse sorting](images/reverse-sorting.png) | ![Many dlc grouping](images/many-dlc-grouping.png) |
+- TODO: proper description some information is wrong
 
 
 ## Installation

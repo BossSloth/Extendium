@@ -1,10 +1,12 @@
-import { ConfirmModal, showModal, TextField } from '@steambrew/client';
-import React from 'react';
+/* eslint-disable react/no-multi-comp */
+import { ConfirmModal, showModal, ShowModalResult, Spinner, TextField } from '@steambrew/client';
+import React, { useEffect } from 'react';
 import { mainWindow } from 'shared';
 import { downloadExtensionFromUrl } from './Downloader/download-manager';
 
-export function InstallExtensionModal({ closeModal }: { closeModal(): void; }): React.ReactNode {
+export function InstallExtensionModal({ modal }: { readonly modal: ShowModalResult | null; }): React.ReactNode {
   const [url, setUrl] = React.useState('');
+  const [loading, setLoading] = React.useState(false);
 
   return (
     <ConfirmModal
@@ -23,21 +25,35 @@ export function InstallExtensionModal({ closeModal }: { closeModal(): void; }): 
         </>
       )}
       bHideCloseIcon
-      onOK={() => {
-        downloadExtensionFromUrl(url);
-        closeModal();
+      onOK={async () => {
+        setLoading(true);
+        await downloadExtensionFromUrl(url);
+        setLoading(false);
+        modal?.Close();
       }}
       onCancel={() => {
-        closeModal();
+        modal?.Close();
       }}
-      strOKButtonText="Install"
+      strOKButtonText={loading ? <><Spinner style={{ marginRight: '5px', marginBottom: '-6px' }} />Installing...</> : 'Install'}
     />
   );
 }
 
 export function showInstallExtensionModal(): void {
-  const modal = showModal(
-    <InstallExtensionModal closeModal={() => { modal.Close(); }} />,
+  let modal: ShowModalResult | null = null;
+
+  function WrappedModal(): React.ReactNode {
+    const [modalInstance, setModalInstance] = React.useState<ShowModalResult | null>(null);
+
+    useEffect(() => {
+      setModalInstance(modal);
+    }, []);
+
+    return <InstallExtensionModal modal={modalInstance} />;
+  }
+
+  modal = showModal(
+    <WrappedModal />,
     mainWindow,
     {
       // popupHeight: mainWindow.innerHeight / 2,
