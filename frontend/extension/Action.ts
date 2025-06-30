@@ -19,7 +19,7 @@ export class Action {
   }
 
   public getTitle(): string | undefined {
-    return this.extension.manifest.action?.default_title ?? this.extension.manifest.name;
+    return this.extension.manifest.action?.default_title ?? this.extension.getName();
   }
 
   // #region icon

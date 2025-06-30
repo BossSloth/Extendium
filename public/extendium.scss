@@ -1,5 +1,7 @@
 // Variables
 $button-hover-background: rgba(255, 255, 255, 0.2);
+$primary-text-color: rgba(255, 255, 255, 0.9);
+$secondary-text-color: rgba(255, 255, 255, 0.6);
 
 // Mixins
 @mixin flex-between {
@@ -11,6 +13,12 @@ $button-hover-background: rgba(255, 255, 255, 0.2);
 @mixin flex-gap($gap) {
   display: flex;
   gap: $gap;
+}
+
+@mixin button {
+  background: none;
+  border: none;
+  cursor: pointer;
 }
 
 .extensions-bar-container {
@@ -33,11 +41,10 @@ $button-hover-background: rgba(255, 255, 255, 0.2);
   }
 
   .extension-button {
+    @include button;
+
     width: 31px;
     height: 31px;
-    border: none;
-    background: none;
-    cursor: pointer;
     padding: 7px;
     border-radius: 50%;
     transition: background 0.2s ease;
@@ -164,4 +171,82 @@ $grid-gutter: 12px;
     margin-left: 60px;
   }
 }
+
+.extension-detail-info {
+  width: 680px;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+  margin: auto;
+
+  .page-header {
+    display: flex;
+    align-items: center;
+    height: 40px;
+    margin-bottom: 12px;
+    padding: 8px 12px 0px;
+    color: $primary-text-color;
+
+    & > button {
+      @include button;
+
+      color: #FFF;
+      font-size: 20px;
+      cursor: pointer;
+      transition: background 0.2s ease;
+      display: flex;
+      border-radius: 100px;
+      width: 32px;
+      height: 32px;
+
+      &:hover {
+        background: $button-hover-background;
+      }
+
+      svg {
+        margin: auto;
+      }
+    }
+
+    & > img {
+      margin-inline: 16px 12px;
+      height: 24px;
+      width: 24px;
+    }
+
+    & > span {
+      flex-grow: 1;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      font-size: 107%;
+      font-weight: 500;
+    }
+  }
+
+  .section {
+    padding: 12px 20px;
+
+    .heading {
+
+    }
+
+    .content {
+      color: $secondary-text-color;
+    }
+  }
+
+  ul {
+    margin: 0px;
+    padding-inline-start: 20px;
+  }
+
+  a {
+    color: rgb(168, 199, 250);
+    font-size: 85%;
+  }
+
+}
+
+.hr {
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
 //#endregion

@@ -5,7 +5,7 @@ import { showRemoveModal } from './RemoveModal';
 
 const ToggleExtension = callable<[{ name: string; enabled: boolean; }], void>('ToggleExtension');
 
-export function ExtensionManagerComponent({ extension }: { readonly extension: Extension; }): React.ReactNode {
+export function ExtensionManagerComponent({ extension, setExtensionDetailRoute }: { readonly extension: Extension; setExtensionDetailRoute(route: string | null): void; }): React.ReactNode {
   function handleToggleChange(value: boolean): void {
     ToggleExtension({ name: extension.folderName, enabled: value });
     // TODO: make work
@@ -29,7 +29,7 @@ export function ExtensionManagerComponent({ extension }: { readonly extension: E
         </div>
       </div>
       <div className="extension-buttons">
-        <DialogButton>Details</DialogButton>
+        <DialogButton onClick={() => { setExtensionDetailRoute(extension.manifest.name); }}>Details</DialogButton>
         <DialogButton onClick={() => { showRemoveModal(extension); }}>Remove</DialogButton>
         <Toggle onChange={handleToggleChange} value />
       </div>

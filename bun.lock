@@ -27,6 +27,7 @@
         "@types/react": "^18.3.23",
         "@types/react-dom": "^18.3.7",
         "@types/webpack": "^5.28.5",
+        "devtools-protocol": "^0.0.1479623",
         "eslint": "^9.30.0",
         "eslint-plugin-perfectionist": "^4.15.0",
         "eslint-plugin-react": "^7.37.5",
@@ -682,6 +683,8 @@
     "define-properties": ["define-properties@1.2.1", "", { "dependencies": { "define-data-property": "^1.0.1", "has-property-descriptors": "^1.0.0", "object-keys": "^1.1.1" } }, "sha512-8QmQKqEASLd5nx0U1B1okLElbUuuttJ/AnYmRXbbbGDWh6uS208EjD4Xqq/I9wK7u0v6O08XhTWnt5XtEbR6Dg=="],
 
     "detect-libc": ["detect-libc@1.0.3", "", { "bin": { "detect-libc": "./bin/detect-libc.js" } }, "sha512-pGjwhsmsp4kL2RTz08wcOlGN83otlqHeD/Z5T8GXZB+/YcpQ/dgo+lbU8ZsGxV0HIvqqxo9l7mqYwyYMD9bKDg=="],
+
+    "devtools-protocol": ["devtools-protocol@0.0.1479623", "", {}, "sha512-qIB7dfmcQrrSMvKHFL+VgLsmpXPyiqEPbtHZK0WzWZFi8Pf6bpUHZkNCOPEyaXRh5pm4gGCSq1ROrUrytkao1g=="],
 
     "dir-glob": ["dir-glob@3.0.1", "", { "dependencies": { "path-type": "^4.0.0" } }, "sha512-WkrWp9GR4KXfKGYzOLmTuGVi1UWFfws377n9cc55/tb6DuqyF6pcQ5AbiHEshaDpY9v6oaSr2XCDidGmMwdzIA=="],
 

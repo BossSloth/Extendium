@@ -1,27 +1,19 @@
-import { callable, DialogButton, routerHook } from '@steambrew/client';
+import { routerHook } from '@steambrew/client';
 import { EUIMode } from '@steambrew/client/build/globals/steam-client/shared';
-import { DialogControlSectionClass, settingsClasses } from 'classes';
 import { SteamDialog } from 'components/SteamComponents';
 import { usePopupsOpenStore } from 'components/stores/popupsOpenStore';
 import { Styles } from 'components/Styles';
 import { default as React } from 'react';
-import { FaFolderOpen, FaStore } from 'react-icons/fa';
 import { mainWindow } from 'shared';
-import { ExtensionManagerComponent } from './ExtensionManagerComponent';
-import { showInstallExtensionModal } from './InstallExtensionModal';
-
-const GetExtensionsDir = callable<[], string>('GetExtensionsDir');
+import { ExtensionDetailInfo } from './ExtensionDetailInfo';
+import { ExtensionManagerRoot } from './ExtensionManagerRoot';
 
 export function ExtensionManagerPopup(): React.ReactNode {
   const { managerPopupOpen, setManagerPopupOpen } = usePopupsOpenStore();
+  const [extensionDetailRoute, setExtensionDetailRoute] = React.useState<string | null>(null);
 
   if (!managerPopupOpen) {
     return null;
-  }
-
-  async function openExtensionsFolder(): Promise<void> {
-    const extensionsDir = await GetExtensionsDir();
-    SteamClient.System.OpenLocalDirectoryInSystemExplorer(extensionsDir);
   }
 
   return (
@@ -33,33 +25,15 @@ export function ExtensionManagerPopup(): React.ReactNode {
       resizable
       saveDimensionsKey="extensionManagerPopup"
     >
+      <Styles />
       <div className="extension-manager-popup">
-        <Styles />
-        <div className={`${DialogControlSectionClass}`}>
-          {/* <DialogButton className={`span-icon ${settingsClasses.SettingsDialogButton}`}>
-            <FaSave />
-            Save
-          </DialogButton> */}
-          <DialogButton
-            onClick={showInstallExtensionModal}
-            className={`span-icon ${settingsClasses.SettingsDialogButton}`}
-          >
-            <FaStore />
-            Install extension
-          </DialogButton>
-          <DialogButton
-            onClick={openExtensionsFolder}
-            className={`span-icon ${settingsClasses.SettingsDialogButton}`}
-          >
-            <FaFolderOpen />
-            Browse local files
-          </DialogButton>
-        </div>
-        <div className="card-container">
-          {[...extensions.values()].map(extension => (
-            <ExtensionManagerComponent key={extension.getName()} extension={extension} />
-          ))}
-        </div>
+        {extensionDetailRoute !== null
+          ? (
+              <ExtensionDetailInfo extension={extensions.get(extensionDetailRoute)} setExtensionDetailRoute={setExtensionDetailRoute} />
+            )
+          : (
+              <ExtensionManagerRoot setExtensionDetailRoute={setExtensionDetailRoute} />
+            )}
       </div>
     </SteamDialog>
   );

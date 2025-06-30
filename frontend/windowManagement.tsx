@@ -14,7 +14,7 @@ export function createWindow(extension: Extension, title: string, baseHref: stri
   }
   backgroundWindow.SteamClient.Window.HideWindow();
 
-  backgroundWindow.document.title = `${extension.manifest.name} - ${title}`;
+  backgroundWindow.document.title = `${extension.getName()} - ${title}`;
 
   // Add base tag
   const base = document.createElement('base');
