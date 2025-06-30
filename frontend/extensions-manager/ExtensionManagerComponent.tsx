@@ -1,8 +1,16 @@
 import { Extension } from '@extension/Extension';
-import { DialogButton, Toggle } from '@steambrew/client';
+import { callable, DialogButton, Toggle } from '@steambrew/client';
 import React from 'react';
+import { showRemoveModal } from './RemoveModal';
+
+const ToggleExtension = callable<[{ name: string; enabled: boolean; }], void>('ToggleExtension');
 
 export function ExtensionManagerComponent({ extension }: { readonly extension: Extension; }): React.ReactNode {
+  function handleToggleChange(value: boolean): void {
+    ToggleExtension({ name: extension.folderName, enabled: value });
+    // TODO: make work
+  }
+
   return (
     <div className="extension-card">
       <div className="extension-main">
@@ -22,8 +30,8 @@ export function ExtensionManagerComponent({ extension }: { readonly extension: E
       </div>
       <div className="extension-buttons">
         <DialogButton>Details</DialogButton>
-        <DialogButton>Remove</DialogButton>
-        <Toggle value />
+        <DialogButton onClick={() => { showRemoveModal(extension); }}>Remove</DialogButton>
+        <Toggle onChange={handleToggleChange} value />
       </div>
     </div>
   );

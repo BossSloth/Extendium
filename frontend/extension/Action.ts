@@ -91,7 +91,7 @@ export class Action {
   }
 
   public getDefaultIconUrl(): string | undefined {
-    const icons = this.extension.manifest.action?.default_icon ?? this.extension.manifest.icons;
+    const icons = this.extension.manifest.icons ?? this.extension.manifest.action?.default_icon;
     if (icons === undefined) {
       return undefined;
     }

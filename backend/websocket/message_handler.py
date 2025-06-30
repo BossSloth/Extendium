@@ -124,7 +124,7 @@ class MessageHandler:
             # Clean up the pending request
             self._request_handler.remove_request(request_id)
         else:
-            logger.error(f"Received response for unknown request: {request_id}")
+            # logger.error(f"Received response for unknown request: {request_id}")
             self._send_error(client, request_id, f"Unknown request: {request_id}")
 
     def _handle_error(self, client: Dict[str, Any], data: Dict[str, Any]) -> None:

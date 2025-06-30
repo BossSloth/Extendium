@@ -5,7 +5,7 @@ import { SteamDialog } from 'components/SteamComponents';
 import { usePopupsOpenStore } from 'components/stores/popupsOpenStore';
 import { Styles } from 'components/Styles';
 import { default as React } from 'react';
-import { FaFolderOpen, FaSave, FaStore } from 'react-icons/fa';
+import { FaFolderOpen, FaStore } from 'react-icons/fa';
 import { mainWindow } from 'shared';
 import { ExtensionManagerComponent } from './ExtensionManagerComponent';
 import { showInstallExtensionModal } from './InstallExtensionModal';
@@ -36,10 +36,10 @@ export function ExtensionManagerPopup(): React.ReactNode {
       <div className="extension-manager-popup">
         <Styles />
         <div className={`${DialogControlSectionClass}`}>
-          <DialogButton className={`span-icon ${settingsClasses.SettingsDialogButton}`}>
+          {/* <DialogButton className={`span-icon ${settingsClasses.SettingsDialogButton}`}>
             <FaSave />
             Save
-          </DialogButton>
+          </DialogButton> */}
           <DialogButton
             onClick={showInstallExtensionModal}
             className={`span-icon ${settingsClasses.SettingsDialogButton}`}

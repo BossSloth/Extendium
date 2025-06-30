@@ -3,6 +3,7 @@ import { ConfirmModal, showModal, ShowModalResult, Spinner, TextField } from '@s
 import React, { useEffect } from 'react';
 import { mainWindow } from 'shared';
 import { downloadExtensionFromUrl } from './Downloader/download-manager';
+import { showRestartModal } from './RestartModal';
 
 export function InstallExtensionModal({ modal }: { readonly modal: ShowModalResult | null; }): React.ReactNode {
   const [url, setUrl] = React.useState('');
@@ -28,6 +29,7 @@ export function InstallExtensionModal({ modal }: { readonly modal: ShowModalResu
       onOK={async () => {
         setLoading(true);
         await downloadExtensionFromUrl(url);
+        showRestartModal();
         setLoading(false);
         modal?.Close();
       }}
@@ -53,7 +55,15 @@ export function showInstallExtensionModal(): void {
   }
 
   modal = showModal(
-    <WrappedModal />,
+    <>
+      <style>{/* css */`
+      .DialogBodyText {
+        overflow-wrap: anywhere;
+      }
+    `}
+      </style>
+      <WrappedModal />
+    </>,
     mainWindow,
     {
       // popupHeight: mainWindow.innerHeight / 2,

@@ -14,7 +14,11 @@ let extensionsDir: string;
 
 let userInfo: UserInfo;
 
-const global = { webkit: new WebkitWrapper(), getUserInfo: (): string => JSON.stringify(userInfo) };
+const global = {
+  webkit: new WebkitWrapper(),
+  getUserInfo: (): string => JSON.stringify(userInfo),
+  removeExtension: (name: string): void => { extensions.delete(name); },
+};
 // @ts-expect-error ignore
 Millennium.exposeObj(global);
 
@@ -27,7 +31,7 @@ export default async function PluginMain(): Promise<void> {
   extensionsDir = infos.extensionsDir.replaceAll('\\', '/');
   const extensionsUrl = `https://js.millennium.app/${extensionsDir}`;
   for (const [folderName, manifest] of Object.entries(manifests)) {
-    extensions.set(manifest.name, new Extension(manifest, `${extensionsUrl}/${folderName}`));
+    extensions.set(manifest.name, new Extension(manifest, `${extensionsUrl}/${folderName}`, folderName));
   }
 
   await Promise.all([...extensions.values()].map(async (extension) => {

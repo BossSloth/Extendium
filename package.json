@@ -39,7 +39,7 @@
     "@steambrew/api": "^5.4.3",
     "@steambrew/client": "^5.4.3",
     "@steambrew/ttc": "2.5.3",
-    "@steambrew/webkit": "^5.4.3",
+    "@steambrew/webkit": "5.2.24",
     "escape-string-regexp": "^5.0.0",
     "react-icons": "^5.5.0",
     "sass-embedded": "^1.89.2",

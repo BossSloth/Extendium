@@ -40,7 +40,7 @@ export default async function WebkitMain(): Promise<void> {
   performance.measure('[Extendium] WebkitMain extensions loading', startMark.name, endMark.name);
   const extensionsUrl = `https://js.millennium.app/${extensionsDir}`;
   for (const [folderName, manifest] of Object.entries(manifests)) {
-    const extension = new Extension(manifest, `${extensionsUrl}/${folderName}`);
+    const extension = new Extension(manifest, `${extensionsUrl}/${folderName}`, folderName);
     const chrome = createChrome('content', extension);
     extensions.set(manifest.name, new ExtensionWrapper(extension, chrome));
   }

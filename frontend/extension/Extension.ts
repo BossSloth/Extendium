@@ -11,7 +11,7 @@ export class Extension {
   public readonly locale: Locale;
   public readonly storageOnChanged = new ChromeEvent<(changes: Record<string, chrome.storage.StorageChange>, areaName: chrome.storage.AreaName) => void>();
 
-  constructor(readonly manifest: chrome.runtime.ManifestV3, readonly url: string) {
+  constructor(readonly manifest: chrome.runtime.ManifestV3, readonly url: string, readonly folderName: string) {
     this.action = new Action(this);
     this.runtimeEmulator = new RuntimeEmulator(this);
     this.contexts = new Contexts();

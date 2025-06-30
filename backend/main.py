@@ -50,6 +50,13 @@ def GetExtensionsInfos():
         'manifests': GetExtensionManifests()
     })
 
+def RemoveExtension(name: str):
+    extensions_dir = GetExtensionsDir()
+    ext_dir = os.path.join(extensions_dir, name)
+    if os.path.exists(ext_dir):
+        shutil.rmtree(ext_dir)
+    Millennium.call_frontend_method('removeExtension', name)
+
 USER_INFO = None
 
 def GetUserInfo():
