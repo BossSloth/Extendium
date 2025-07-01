@@ -7,7 +7,7 @@ import { showInstallExtensionModal } from './InstallExtensionModal';
 
 const GetExtensionsDir = callable<[], string>('GetExtensionsDir');
 
-export function ExtensionManagerRoot({ setExtensionDetailRoute }: { setExtensionDetailRoute(route: string | null): void; }): React.ReactNode {
+export function ExtensionManagerRoot(): React.ReactNode {
   async function openExtensionsFolder(): Promise<void> {
     const extensionsDir = await GetExtensionsDir();
     SteamClient.System.OpenLocalDirectoryInSystemExplorer(extensionsDir);
@@ -37,7 +37,7 @@ export function ExtensionManagerRoot({ setExtensionDetailRoute }: { setExtension
       </div>
       <div className="card-container">
         {[...extensions.values()].map(extension => (
-          <ExtensionManagerComponent key={extension.getName()} extension={extension} setExtensionDetailRoute={setExtensionDetailRoute} />
+          <ExtensionManagerComponent key={extension.getName()} extension={extension} />
         ))}
       </div>
     </>

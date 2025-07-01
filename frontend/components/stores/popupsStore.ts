@@ -2,12 +2,17 @@
 /* eslint-disable @typescript-eslint/member-ordering */
 import { create } from 'zustand';
 
-interface PopupsOpenStore {
-  managerPopupOpen: boolean;
-  setManagerPopupOpen(open: boolean): void;
+interface PopupsStore {
+  managerPopup: ManagerPopupProps;
+  setManagerPopup(popup: Partial<ManagerPopupProps>): void;
 
   settingsPopup: SettingsPopupProps;
   setSettingsPopup(popup: Partial<SettingsPopupProps>): void;
+}
+
+interface ManagerPopupProps {
+  open: boolean;
+  route: string | null;
 }
 
 interface SettingsPopupProps {
@@ -16,10 +21,15 @@ interface SettingsPopupProps {
   title: string;
 }
 
-export const usePopupsOpenStore = create<PopupsOpenStore>()(set =>
+export const usePopupsStore = create<PopupsStore>()(set =>
   ({
-    managerPopupOpen: false,
-    setManagerPopupOpen: (open): void => { set({ managerPopupOpen: open }); },
+    managerPopup: {
+      open: false,
+      route: null,
+    },
+    setManagerPopup: (popup): void => {
+      set(state => ({ managerPopup: { ...state.managerPopup, ...popup } }));
+    },
 
     settingsPopup: {
       open: false,

@@ -1,5 +1,5 @@
 import { Extension } from '@extension/Extension';
-import { Menu, MenuItem } from '@steambrew/client';
+import { Menu, MenuItem, showContextMenu } from '@steambrew/client';
 import { openExtensionManagerPopup } from 'extensions-manager/ExtensionManagerPopup';
 import React, { JSX } from 'react';
 import { createOptionsWindow } from '../../windowManagement';
@@ -33,8 +33,25 @@ export function ExtensionContextMenu({ extension }: { readonly extension: Extens
         {hasOptions && <MenuItem onClick={() => { createOptionsWindow(extension); }}>Options</MenuItem>}
         <MenuItem onClick={unpin}>Unpin</MenuItem>
         <Separator />
-        <MenuItem onClick={openExtensionManagerPopup}>Manage</MenuItem>
+        <MenuItem onClick={() => { openExtensionManagerPopup(extension.getName()); }}>Manage</MenuItem>
       </Menu>
     </div>
+  );
+}
+
+export function showExtensionContextMenu(extension: Extension, targetElement: Element): void {
+  showContextMenu(
+    <ExtensionContextMenu extension={extension} />,
+    targetElement,
+    {
+      bOverlapHorizontal: true,
+      bGrowToElementWidth: true,
+      bForcePopup: true,
+      bDisableMouseOverlay: true,
+      bCreateHidden: false,
+      bRetainOnHide: false,
+      bNoFocusWhenShown: undefined,
+      title: `${extension.action.getTitle()} - Context Menu`,
+    },
   );
 }

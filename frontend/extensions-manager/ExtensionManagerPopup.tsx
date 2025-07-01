@@ -1,7 +1,7 @@
 import { routerHook } from '@steambrew/client';
 import { EUIMode } from '@steambrew/client/build/globals/steam-client/shared';
 import { SteamDialog } from 'components/SteamComponents';
-import { usePopupsOpenStore } from 'components/stores/popupsOpenStore';
+import { usePopupsStore } from 'components/stores/popupsStore';
 import { Styles } from 'components/Styles';
 import { default as React } from 'react';
 import { mainWindow } from 'shared';
@@ -9,17 +9,17 @@ import { ExtensionDetailInfo } from './ExtensionDetailInfo';
 import { ExtensionManagerRoot } from './ExtensionManagerRoot';
 
 export function ExtensionManagerPopup(): React.ReactNode {
-  const { managerPopupOpen, setManagerPopupOpen } = usePopupsOpenStore();
-  const [extensionDetailRoute, setExtensionDetailRoute] = React.useState<string | null>(null);
+  const { managerPopup, setManagerPopup } = usePopupsStore();
+  // const [extensionDetailRoute, setExtensionDetailRoute] = React.useState<string | null>(null);
 
-  if (!managerPopupOpen) {
+  if (!managerPopup.open) {
     return null;
   }
 
   return (
     <SteamDialog
       strTitle="Extensions"
-      onDismiss={() => { setManagerPopupOpen(false); }}
+      onDismiss={() => { setManagerPopup({ open: false }); }}
       popupWidth={mainWindow.innerWidth * 0.75}
       popupHeight={mainWindow.innerHeight * 0.65}
       minWidth={880}
@@ -29,12 +29,12 @@ export function ExtensionManagerPopup(): React.ReactNode {
     >
       <Styles />
       <div className="extension-manager-popup">
-        {extensionDetailRoute !== null
+        {managerPopup.route !== null
           ? (
-              <ExtensionDetailInfo extension={extensions.get(extensionDetailRoute)} setExtensionDetailRoute={setExtensionDetailRoute} />
+              <ExtensionDetailInfo extension={extensions.get(managerPopup.route)} />
             )
           : (
-              <ExtensionManagerRoot setExtensionDetailRoute={setExtensionDetailRoute} />
+              <ExtensionManagerRoot />
             )}
       </div>
     </SteamDialog>
@@ -43,11 +43,11 @@ export function ExtensionManagerPopup(): React.ReactNode {
 
 routerHook.addGlobalComponent('ExtensionManagerPopup', () => <ExtensionManagerPopup />, EUIMode.Desktop);
 
-export function openExtensionManagerPopup(): void {
-  const state = usePopupsOpenStore.getState();
+export function openExtensionManagerPopup(route: string | null = null): void {
+  const state = usePopupsStore.getState();
 
-  state.setManagerPopupOpen(false);
+  state.setManagerPopup({ open: false });
   setTimeout(() => {
-    state.setManagerPopupOpen(true);
+    state.setManagerPopup({ open: true, route });
   }, 1);
 }

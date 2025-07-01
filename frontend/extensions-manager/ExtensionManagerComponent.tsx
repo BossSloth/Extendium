@@ -1,11 +1,14 @@
 import { Extension } from '@extension/Extension';
 import { callable, DialogButton, Toggle } from '@steambrew/client';
+import { usePopupsStore } from 'components/stores/popupsStore';
 import React from 'react';
 import { showRemoveModal } from './RemoveModal';
 
 const ToggleExtension = callable<[{ name: string; enabled: boolean; }], void>('ToggleExtension');
 
-export function ExtensionManagerComponent({ extension, setExtensionDetailRoute }: { readonly extension: Extension; setExtensionDetailRoute(route: string | null): void; }): React.ReactNode {
+export function ExtensionManagerComponent({ extension }: { readonly extension: Extension; }): React.ReactNode {
+  const { setManagerPopup } = usePopupsStore();
+
   function handleToggleChange(value: boolean): void {
     ToggleExtension({ name: extension.folderName, enabled: value });
     // TODO: make work
@@ -29,7 +32,7 @@ export function ExtensionManagerComponent({ extension, setExtensionDetailRoute }
         </div>
       </div>
       <div className="extension-buttons">
-        <DialogButton onClick={() => { setExtensionDetailRoute(extension.manifest.name); }}>Details</DialogButton>
+        <DialogButton onClick={() => { setManagerPopup({ route: extension.getName() }); }}>Details</DialogButton>
         <DialogButton onClick={() => { showRemoveModal(extension); }}>Remove</DialogButton>
         {/* @ts-expect-error style does not exist */}
         <Toggle onChange={handleToggleChange} style={{ display: 'none' }} value />

@@ -1,18 +1,20 @@
 import { Extension } from '@extension/Extension';
 import { ChromeDevToolsProtocol } from '@steambrew/client';
+import { usePopupsStore } from 'components/stores/popupsStore';
 import type { Protocol } from 'devtools-protocol';
 import React from 'react';
 import { FaArrowLeft, FaExclamationCircle } from 'react-icons/fa';
 import { mainWindow } from 'shared';
 
-export function ExtensionDetailInfo({ extension, setExtensionDetailRoute }: { readonly extension: Extension | undefined; setExtensionDetailRoute(route: string | null): void; }): React.ReactNode {
+export function ExtensionDetailInfo({ extension }: { readonly extension: Extension | undefined; }): React.ReactNode {
   const [views, setViews] = React.useState<Protocol.Target.TargetInfo[]>([]);
+  const { setManagerPopup } = usePopupsStore();
 
   if (!extension) {
     return (
       <div className="extension-detail-info">
         <div className="page-header">
-          <button onClick={() => { setExtensionDetailRoute(null); }} type="button">
+          <button onClick={() => { setManagerPopup({ route: null }); }} type="button">
             <FaArrowLeft />
           </button>
           Error in extension
@@ -43,7 +45,7 @@ export function ExtensionDetailInfo({ extension, setExtensionDetailRoute }: { re
   return (
     <div className="extension-detail-info">
       <div className="page-header">
-        <button onClick={() => { setExtensionDetailRoute(null); }} type="button">
+        <button onClick={() => { setManagerPopup({ route: null }); }} type="button">
           <FaArrowLeft />
         </button>
         <img src={extension.action.getDefaultIconUrl(48)} />

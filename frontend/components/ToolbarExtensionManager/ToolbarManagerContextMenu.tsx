@@ -36,7 +36,7 @@ export function ToolbarManagerContextMenu(): React.JSX.Element {
           unpinExtension={unpinExtension}
         />
       ))}
-      <Field icon={<FaCog />} label="Manage extensions" onClick={openExtensionManagerPopup} />
+      <Field icon={<FaCog />} label="Manage extensions" onClick={() => { openExtensionManagerPopup(); }} />
     </div>
   );
 }

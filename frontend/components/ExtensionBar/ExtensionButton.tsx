@@ -6,7 +6,7 @@ import { showContextMenu } from '@steambrew/client';
 import React, { CSSProperties, JSX, MouseEvent, useEffect, useRef, useState } from 'react';
 import { ContextMenu } from '../../shared';
 import { ExtensionPopup } from '../ExtensionPopup';
-import { ExtensionContextMenu } from './ExtensionContextMenu';
+import { showExtensionContextMenu } from './ExtensionContextMenu';
 // TODO: figure out how to keep the popup open but reload the content on open
 const KEEP_OPEN = false;
 
@@ -88,21 +88,8 @@ export function ExtensionButton({ extension }: { readonly extension: Extension; 
   function onContextMenu(): void {
     if (!contextMenuWindow.current) return;
 
-    showContextMenu(
-      <ExtensionContextMenu extension={extension} />,
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      contextMenuWindow.current.document.activeElement!,
-      {
-        bOverlapHorizontal: true,
-        bGrowToElementWidth: true,
-        bForcePopup: true,
-        bDisableMouseOverlay: true,
-        bCreateHidden: false,
-        bRetainOnHide: false,
-        bNoFocusWhenShown: undefined,
-        title: `${extension.action.getTitle()} - Context Menu`,
-      },
-    );
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    showExtensionContextMenu(extension, contextMenuWindow.current.document.activeElement!);
   }
 
   return (
