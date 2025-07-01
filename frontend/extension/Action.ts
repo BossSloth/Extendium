@@ -29,11 +29,11 @@ export class Action {
    * @returns The path to the best icon for the current device, or undefined if not found.
    */
 
-  public static selectBestIconPath(icons: Record<string, string>): string | undefined {
+  public static selectBestIconPath(icons: Record<string, string>, preferredIconSize?: number): string | undefined {
     // Typical icon sizes in Chrome extensions: 16, 32, 48, 128
     // Chrome picks the closest size >= (16 * devicePixelRatio), or the largest available if none are big enough
     const dpr = window.devicePixelRatio;
-    const desiredSize = 16 * dpr;
+    const desiredSize = preferredIconSize ?? 16 * dpr;
     const sizes = Object.keys(icons)
       .map(Number)
       .filter(n => !isNaN(n))
@@ -90,7 +90,7 @@ export class Action {
     this.iconUrl = this.getDefaultIconUrl();
   }
 
-  public getDefaultIconUrl(): string | undefined {
+  public getDefaultIconUrl(preferredIconSize?: number): string | undefined {
     const icons = this.extension.manifest.icons ?? this.extension.manifest.action?.default_icon;
     if (icons === undefined) {
       return undefined;
@@ -101,7 +101,7 @@ export class Action {
     } else if (typeof icons === 'object') {
       // Use the new selection function for best icon
       // Ensure type compatibility: ManifestIcons may not be Record<string, string>, so cast safely
-      const bestIcon = Action.selectBestIconPath(icons as Record<string, string>);
+      const bestIcon = Action.selectBestIconPath(icons as Record<string, string>, preferredIconSize);
 
       return bestIcon !== undefined && bestIcon !== '' ? this.extension.getFileUrl(bestIcon) : undefined;
     }

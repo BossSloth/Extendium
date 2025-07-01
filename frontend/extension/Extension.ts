@@ -10,6 +10,7 @@ export class Extension {
   public readonly contexts: Contexts;
   public readonly locale: Locale;
   public readonly storageOnChanged = new ChromeEvent<(changes: Record<string, chrome.storage.StorageChange>, areaName: chrome.storage.AreaName) => void>();
+  public readonly errors: string[] = [];
 
   constructor(readonly manifest: chrome.runtime.ManifestV3, readonly url: string, readonly folderName: string) {
     this.action = new Action(this);

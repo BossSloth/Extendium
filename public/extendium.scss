@@ -225,7 +225,9 @@ $grid-gutter: 12px;
     padding: 12px 20px;
 
     .heading {
-
+      display: flex;
+      align-items: center;
+      gap: 8px;
     }
 
     .content {

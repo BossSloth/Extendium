@@ -18,6 +18,8 @@ export function injectBrowser(context: string, window: Window, extension: Extens
   window.onerror = function (this: WindowEventHandlers, ...args: unknown[]): boolean {
     console.error(`Error in ${extension.manifest.name} - ${context}`, ...args);
 
+    extension.errors.push(`Error in "${extension.manifest.name} - ${context}": ${args.join(' ')}`);
+
     // @ts-expect-error ignore
     return originalOnError?.call(this, ...args);
   };
@@ -27,6 +29,8 @@ export function injectBrowser(context: string, window: Window, extension: Extens
   window.onunhandledrejection = function (this: WindowEventHandlers, event): unknown {
     console.error(`Error in ${extension.manifest.name} - ${context}`, event);
 
+    extension.errors.push(`Error in "${extension.manifest.name} - ${context}": ${event.reason}`);
+
     return originalOnUnhandledRejection?.call(this, event);
   };
 
@@ -34,7 +38,10 @@ export function injectBrowser(context: string, window: Window, extension: Extens
 
   window.console.error = function (...args: unknown[]): void {
     originalConsoleError(...args);
+
     console.error(`Error in ${extension.manifest.name} - ${context}`, ...args);
+
+    extension.errors.push(`Error in "${extension.manifest.name} - ${context}": ${args.join(' ')}`);
   };
 
   window.importScripts = (...urls: string[]): void => {

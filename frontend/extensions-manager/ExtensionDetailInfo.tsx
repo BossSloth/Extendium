@@ -2,7 +2,7 @@ import { Extension } from '@extension/Extension';
 import { ChromeDevToolsProtocol } from '@steambrew/client';
 import type { Protocol } from 'devtools-protocol';
 import React from 'react';
-import { FaArrowLeft } from 'react-icons/fa';
+import { FaArrowLeft, FaExclamationCircle } from 'react-icons/fa';
 import { mainWindow } from 'shared';
 
 export function ExtensionDetailInfo({ extension, setExtensionDetailRoute }: { readonly extension: Extension | undefined; setExtensionDetailRoute(route: string | null): void; }): React.ReactNode {
@@ -46,7 +46,7 @@ export function ExtensionDetailInfo({ extension, setExtensionDetailRoute }: { re
         <button onClick={() => { setExtensionDetailRoute(null); }} type="button">
           <FaArrowLeft />
         </button>
-        <img src={extension.action.getDefaultIconUrl()} />
+        <img src={extension.action.getDefaultIconUrl(48)} />
         <span>{extension.getName()}</span>
       </div>
 
@@ -68,14 +68,31 @@ export function ExtensionDetailInfo({ extension, setExtensionDetailRoute }: { re
               {views.map(view => (
                 <li key={view.title}>
                   <a
-                    href={`http://localhost:8080/devtools/inspector.html?ws=localhost:8080/devtools/page/${view.targetId}`}
+                    href={`http://localhost:8080/devtools/inspector.html?ws=localhost:8080/devtools/page/${view.targetId}&panel=console`}
                     onClick={(e) => {
                       e.preventDefault();
-                      SteamClient.System.OpenInSystemBrowser(`http://localhost:8080/devtools/inspector.html?ws=localhost:8080/devtools/page/${view.targetId}`);
+                      SteamClient.System.OpenInSystemBrowser(`http://localhost:8080/devtools/inspector.html?ws=localhost:8080/devtools/page/${view.targetId}&panel=console`);
                     }}
                   >{view.title}
                   </a>
                 </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      )}
+
+      {extension.errors.length > 0 && (
+        <div className="section hr">
+          <div className="heading">
+            <FaExclamationCircle color="red" />
+            Errors
+          </div>
+          <div className="content">
+            <span>Open steam with -dev and open specified view to see error in console</span>
+            <ul>
+              {extension.errors.map(error => (
+                <li key={error}>{error}</li>
               ))}
             </ul>
           </div>

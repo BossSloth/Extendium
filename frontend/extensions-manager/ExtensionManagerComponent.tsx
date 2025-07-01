@@ -15,7 +15,7 @@ export function ExtensionManagerComponent({ extension, setExtensionDetailRoute }
     <div className="extension-card">
       <div className="extension-main">
         <div className="icon">
-          <img src={extension.action.getDefaultIconUrl()} />
+          <img src={extension.action.getDefaultIconUrl(48)} />
         </div>
 
         <div className="content">
@@ -31,7 +31,8 @@ export function ExtensionManagerComponent({ extension, setExtensionDetailRoute }
       <div className="extension-buttons">
         <DialogButton onClick={() => { setExtensionDetailRoute(extension.manifest.name); }}>Details</DialogButton>
         <DialogButton onClick={() => { showRemoveModal(extension); }}>Remove</DialogButton>
-        <Toggle onChange={handleToggleChange} value />
+        {/* @ts-expect-error style does not exist */}
+        <Toggle onChange={handleToggleChange} style={{ display: 'none' }} value />
       </div>
     </div>
   );
