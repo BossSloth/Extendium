@@ -89,7 +89,7 @@ export function ExtensionDetailInfo({ extension, setExtensionDetailRoute }: { re
             Errors
           </div>
           <div className="content">
-            <span>Open steam with -dev and open specified view to see error in console</span>
+            <span style={{ marginBottom: '1rem' }}>For detailed error information, launch Steam with the <code>-dev</code> parameter and check the console in the specified view</span>
             <ul>
               {extension.errors.map(error => (
                 <li key={error}>{error}</li>

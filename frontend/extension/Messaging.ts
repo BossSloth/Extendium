@@ -10,7 +10,7 @@ export class RuntimeEmulator {
 
   constructor(readonly extension: Extension) {}
 
-  async sendMessage(_context: string, message: unknown, responseCallback?: (response?: unknown) => void): Promise<unknown> {
+  async sendMessage(message: unknown, responseCallback?: (response?: unknown) => void): Promise<unknown> {
     const sender: chrome.runtime.MessageSender = {
       id: '12345',
       // TODO: figure out how to get the actual URL and id

@@ -2,12 +2,11 @@
 import { ConfirmModal, showModal } from '@steambrew/client';
 import React from 'react';
 import { Extension } from '../extension/Extension';
-import { createOffscreen } from '../windowManagement';
 import { patchFetch } from './corsFetch';
 import { createChrome } from './createChrome';
 
-export function injectBrowser(context: string, window: Window, extension: Extension, deps: { createOffscreen: typeof createOffscreen; }): void {
-  window.chrome = createChrome(context, extension, deps);
+export function injectBrowser(context: string, window: Window, extension: Extension): void {
+  window.chrome = createChrome(context, extension);
 
   window.clients = {
     matchAll: async (): Promise<unknown[]> => Promise.resolve([]),

@@ -1,3 +1,4 @@
+/* eslint-disable max-classes-per-file */
 /* eslint-disable @typescript-eslint/class-methods-use-this */
 /* eslint-disable @typescript-eslint/no-dynamic-delete */
 import { ChromeEvent } from './ChromeEvent';
@@ -174,3 +175,17 @@ export class Storage implements chrome.storage.StorageArea {
 }
 
 type NoInferX<T> = T[][T extends unknown ? 0 : never];
+
+export class SyncStorage extends Storage implements chrome.storage.SyncStorageArea {
+  // Fake values
+  public readonly QUOTA_BYTES_PER_ITEM = 8192;
+  public readonly MAX_ITEMS = 512;
+  public readonly MAX_WRITE_OPERATIONS_PER_HOUR = 10000;
+  public readonly MAX_WRITE_OPERATIONS_PER_MINUTE = 200;
+  public readonly MAX_SUSTAINED_WRITE_OPERATIONS_PER_MINUTE = 10;
+  public readonly MAX_SUSTAINED_READ_OPERATIONS_PER_MINUTE = 10;
+
+  constructor(extension: Extension, logger: Logger) {
+    super(extension, 'sync', logger);
+  }
+}

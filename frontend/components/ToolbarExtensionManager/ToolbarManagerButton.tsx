@@ -7,10 +7,11 @@ export function ToolbarManagerButton(): React.JSX.Element {
   const buttonRef = React.useRef<HTMLButtonElement>(null);
 
   function openExtensionsContextMenu(): void {
+    if (!buttonRef.current) return;
+
     showContextMenu(
       <ToolbarManagerContextMenu />,
       buttonRef.current,
-      // @ts-expect-error wrong type
       {
         bOverlapHorizontal: true,
         bGrowToElementWidth: true,

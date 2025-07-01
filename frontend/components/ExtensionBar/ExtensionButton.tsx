@@ -51,12 +51,10 @@ export function ExtensionButton({ extension }: { readonly extension: Extension; 
     const keepOpen = clickEvent !== undefined && clickEvent.ctrlKey && clickEvent.altKey;
 
     popupContextMenuRef.current = (
-      // @ts-expect-error wrong type
-      // eslint-disable-next-line @typescript-eslint/no-confusing-void-expression
       showContextMenu(
         <ExtensionPopup extension={extension} popupContentUrl={extension.action.getPopupUrl() ?? ''} baseDir={extension.action.getPopupDir() ?? ''} />,
-        targetElement,
-        // @ts-expect-error wrong type
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        targetElement!,
         {
           bOverlapHorizontal: true,
           bGrowToElementWidth: true,
@@ -88,10 +86,12 @@ export function ExtensionButton({ extension }: { readonly extension: Extension; 
   }
 
   function onContextMenu(): void {
+    if (!contextMenuWindow.current) return;
+
     showContextMenu(
       <ExtensionContextMenu extension={extension} />,
-      contextMenuWindow.current?.document.activeElement,
-      // @ts-expect-error wrong type
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      contextMenuWindow.current.document.activeElement!,
       {
         bOverlapHorizontal: true,
         bGrowToElementWidth: true,

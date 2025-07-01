@@ -22,6 +22,8 @@ export function ExtensionManagerPopup(): React.ReactNode {
       onDismiss={() => { setManagerPopupOpen(false); }}
       popupWidth={mainWindow.innerWidth * 0.75}
       popupHeight={mainWindow.innerHeight * 0.65}
+      minWidth={880}
+      minHeight={370}
       resizable
       saveDimensionsKey="extensionManagerPopup"
     >
@@ -44,5 +46,8 @@ routerHook.addGlobalComponent('ExtensionManagerPopup', () => <ExtensionManagerPo
 export function openExtensionManagerPopup(): void {
   const state = usePopupsOpenStore.getState();
 
-  state.setManagerPopupOpen(true);
+  state.setManagerPopupOpen(false);
+  setTimeout(() => {
+    state.setManagerPopupOpen(true);
+  }, 1);
 }

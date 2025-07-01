@@ -232,6 +232,8 @@ $grid-gutter: 12px;
 
     .content {
       color: $secondary-text-color;
+      display: flex;
+      flex-direction: column;
     }
   }
 

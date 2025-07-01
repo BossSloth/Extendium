@@ -1,5 +1,6 @@
 import { Extension } from '@extension/Extension';
 import { Menu, MenuItem } from '@steambrew/client';
+import { openExtensionManagerPopup } from 'extensions-manager/ExtensionManagerPopup';
 import React, { JSX } from 'react';
 import { createOptionsWindow } from '../../windowManagement';
 import { Separator } from '../Separator';
@@ -32,7 +33,7 @@ export function ExtensionContextMenu({ extension }: { readonly extension: Extens
         {hasOptions && <MenuItem onClick={() => { createOptionsWindow(extension); }}>Options</MenuItem>}
         <MenuItem onClick={unpin}>Unpin</MenuItem>
         <Separator />
-        <MenuItem>Manage</MenuItem>
+        <MenuItem onClick={openExtensionManagerPopup}>Manage</MenuItem>
       </Menu>
     </div>
   );

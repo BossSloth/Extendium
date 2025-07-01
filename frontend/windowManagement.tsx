@@ -22,7 +22,7 @@ export function createWindow(extension: Extension, title: string, baseHref: stri
   backgroundWindow.document.head.appendChild(base);
 
   // const backgroundWindow = backgroundPopup.m_popupContextMenu.m_popup;
-  injectBrowser(title, backgroundWindow, extension, { createOffscreen });
+  injectBrowser(title, backgroundWindow, extension);
 
   return backgroundWindow;
 }
@@ -74,7 +74,7 @@ export async function injectHtml(html: string, popupWindow: Window, extension: E
   }
 
   // Inject the chrome variable
-  injectBrowser('popup', popupWindow, extension, { createOffscreen });
+  injectBrowser('popup', popupWindow, extension);
 
   // Get the script tags and add them to the head
   const domParser = new DOMParser();
