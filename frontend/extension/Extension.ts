@@ -91,4 +91,8 @@ export class Extension {
   public getVersion(): string {
     return this.manifest.version;
   }
+
+  public hasOptions(): boolean {
+    return this.manifest.options_ui?.page !== undefined;
+  }
 }

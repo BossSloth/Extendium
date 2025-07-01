@@ -21,6 +21,18 @@ $secondary-text-color: rgba(255, 255, 255, 0.6);
   cursor: pointer;
 }
 
+@mixin icon-button {
+  @include button;
+
+  display: flex;
+  color: white;
+  font-size: 20px;
+
+  & > svg {
+    margin: auto;
+  }
+}
+
 .extensions-bar-container {
   margin-left: auto;
   margin-right: 0.5rem;
@@ -186,23 +198,15 @@ $grid-gutter: 12px;
     color: $primary-text-color;
 
     & > button {
-      @include button;
+      @include icon-button;
 
-      color: #FFF;
-      font-size: 20px;
-      cursor: pointer;
       transition: background 0.2s ease;
-      display: flex;
       border-radius: 100px;
       width: 32px;
       height: 32px;
 
       &:hover {
         background: $button-hover-background;
-      }
-
-      svg {
-        margin: auto;
       }
     }
 
@@ -245,6 +249,20 @@ $grid-gutter: 12px;
   a {
     color: rgb(168, 199, 250);
     font-size: 85%;
+  }
+
+  .clickable-row {
+    @include flex-between;
+    cursor: pointer;
+    transition: background 0.2s ease;
+
+    &:hover {
+      background: $button-hover-background;
+    }
+
+    & > button {
+      @include icon-button;
+    }
   }
 
 }

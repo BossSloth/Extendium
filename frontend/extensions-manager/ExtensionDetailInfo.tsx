@@ -3,8 +3,10 @@ import { ChromeDevToolsProtocol } from '@steambrew/client';
 import { usePopupsStore } from 'components/stores/popupsStore';
 import type { Protocol } from 'devtools-protocol';
 import React from 'react';
-import { FaArrowLeft, FaExclamationCircle } from 'react-icons/fa';
+import { FaExclamationCircle } from 'react-icons/fa';
+import { MdArrowBack, MdOpenInNew } from 'react-icons/md';
 import { mainWindow } from 'shared';
+import { createOptionsWindow } from 'windowManagement';
 
 export function ExtensionDetailInfo({ extension }: { readonly extension: Extension | undefined; }): React.ReactNode {
   const [views, setViews] = React.useState<Protocol.Target.TargetInfo[]>([]);
@@ -15,7 +17,7 @@ export function ExtensionDetailInfo({ extension }: { readonly extension: Extensi
       <div className="extension-detail-info">
         <div className="page-header">
           <button onClick={() => { setManagerPopup({ route: null }); }} type="button">
-            <FaArrowLeft />
+            <MdArrowBack />
           </button>
           Error in extension
         </div>
@@ -46,7 +48,7 @@ export function ExtensionDetailInfo({ extension }: { readonly extension: Extensi
     <div className="extension-detail-info">
       <div className="page-header">
         <button onClick={() => { setManagerPopup({ route: null }); }} type="button">
-          <FaArrowLeft />
+          <MdArrowBack />
         </button>
         <img src={extension.action.getDefaultIconUrl(48)} />
         <span>{extension.getName()}</span>
@@ -98,6 +100,13 @@ export function ExtensionDetailInfo({ extension }: { readonly extension: Extensi
               ))}
             </ul>
           </div>
+        </div>
+      )}
+
+      {extension.hasOptions() && (
+        <div className="section hr clickable-row" onClick={() => { createOptionsWindow(extension); }}>
+          <span>Extension options</span>
+          <button type="button"><MdOpenInNew /></button>
         </div>
       )}
     </div>

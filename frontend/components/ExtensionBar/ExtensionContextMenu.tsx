@@ -9,8 +9,6 @@ import { useExtensionsBarStore } from '../stores/extensionsBarStore';
 export function ExtensionContextMenu({ extension }: { readonly extension: Extension; }): JSX.Element {
   const { setExtensionsOrder } = useExtensionsBarStore();
 
-  const hasOptions = extension.manifest.options_ui?.page !== undefined;
-
   function openHomepage(): void {
     if (extension.manifest.homepage_url !== undefined) {
       SteamClient.System.OpenInSystemBrowser(extension.manifest.homepage_url);
@@ -30,7 +28,7 @@ export function ExtensionContextMenu({ extension }: { readonly extension: Extens
           {extension.getName()}
         </MenuItem>
         <Separator />
-        {hasOptions && <MenuItem onClick={() => { createOptionsWindow(extension); }}>Options</MenuItem>}
+        {extension.hasOptions() && <MenuItem onClick={() => { createOptionsWindow(extension); }}>Options</MenuItem>}
         <MenuItem onClick={unpin}>Unpin</MenuItem>
         <Separator />
         <MenuItem onClick={() => { openExtensionManagerPopup(extension.getName()); }}>Manage</MenuItem>

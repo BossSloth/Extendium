@@ -25,7 +25,7 @@ export function ToolbarManagerContextMenu(): React.JSX.Element {
   }
 
   return (
-    <div style={{ padding: '1rem', width: '15rem' }}>
+    <div style={{ padding: '1rem', width: '18rem' }}>
       <DialogHeader>Extensions</DialogHeader>
       {[...extensions.values()].map(extension => (
         <ManagerExtensionItem
