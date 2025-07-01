@@ -5,6 +5,6 @@
   "description": "A plugin for Millennium that adds chrome extensions support to the client",
   "version": "1.0.0",
   "include": [
-    "public/achievements.css"
+    "public/extendium.css"
   ]
 }

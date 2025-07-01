@@ -22,7 +22,7 @@ export function ExtensionManagerPopup(): React.ReactNode {
       onDismiss={() => { setManagerPopup({ open: false }); }}
       popupWidth={mainWindow.innerWidth * 0.75}
       popupHeight={mainWindow.innerHeight * 0.65}
-      minWidth={880}
+      minWidth={1280}
       minHeight={370}
       resizable
       saveDimensionsKey="extensionManagerPopup"

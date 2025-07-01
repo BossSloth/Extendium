@@ -58,7 +58,7 @@ def create_zip():
         print("Error: RELEASE_VERSION environment variable is required")
         return False
 
-    zip_name = f"Achievement-Groups-plugin-{version}.zip"
+    zip_name = f"Extendium-plugin-{version}.zip"
 
     # Root and output directories
     root_dir = Path(__file__).parent.parent
@@ -83,13 +83,13 @@ def create_zip():
                     for file in files:
                         file_path = Path(root) / file
                         rel_path = file_path.relative_to(root_dir)
-                        zip_path_with_root = Path('Achievement-Groups-plugin') / rel_path
+                        zip_path_with_root = Path('Extendium-plugin') / rel_path
                         print(f"Adding: {zip_path_with_root}")
                         zipf.write(file_path, str(zip_path_with_root))
             # If it's a file, directly add it
             elif folder_path.is_file():
                 rel_path = folder_path.relative_to(root_dir)
-                zip_path_with_root = Path('Achievement-Groups-plugin') / rel_path
+                zip_path_with_root = Path('Extendium-plugin') / rel_path
                 if '.scss' in zip_path_with_root.as_posix():
                     print(f"Skipping: {zip_path_with_root}")
                     continue
