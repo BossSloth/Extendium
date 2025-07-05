@@ -36,6 +36,7 @@ function createRuntimeType(extension: Extension, logger: Logger): typeof chrome.
       return extension.runtimeEmulator.sendMessage(message, callback);
     },
     onMessage: extension.runtimeEmulator.onMessage,
+    onMessageExternal: extension.runtimeEmulator.onMessage,
     setUninstallURL: (): void => {},
     getURL: (path: string): string => extension.getFileUrl(path) ?? '',
     getManifest: (): chrome.runtime.Manifest => extension.manifest,
@@ -140,6 +141,9 @@ function createAlarmsType(extension: Extension, logger: Logger): typeof chrome.a
       console.error('alarms.create not implemented', args);
 
       return Promise.resolve();
+    },
+    get: async (..._args: unknown[]): Promise<chrome.alarms.Alarm> => {
+      return Promise.resolve({} as chrome.alarms.Alarm);
     },
   };
 }

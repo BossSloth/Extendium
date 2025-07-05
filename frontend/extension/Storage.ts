@@ -34,11 +34,15 @@ export class Storage implements chrome.storage.StorageArea {
     let keysToRetrieve: string[] = [];
 
     if (storedData === null) {
-      if (callback) {
-        callback(keys as T);
+      if (keys !== null && typeof keys === 'object') {
+        result = keys as Record<string, unknown>;
       }
 
-      return Promise.resolve(keys as T);
+      if (callback) {
+        callback(result as T);
+      }
+
+      return Promise.resolve(result as T);
     }
 
     const data = JSON.parse(storedData) as Record<string, unknown>;

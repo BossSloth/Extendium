@@ -25,7 +25,7 @@ export function patchFetch(window: Window): void {
       .replace('http://', '')
       .split('/')[0] ?? 'error';
 
-    if (init?.credentials === 'include' || (baseUrl === 'store.steampowered.com' && input.toString().includes('user'))) {
+    if ((init?.credentials === 'include' && (baseUrl.includes('steampowered.com') || baseUrl.includes('steamcommunity.com'))) || (baseUrl === 'store.steampowered.com' && input.toString().includes('user'))) {
       return credentialsFetch(input, init);
     }
 
@@ -96,7 +96,7 @@ function getCredentialsUrl(inputUrl: string): string {
     return 'https://steamcommunity.com/stats';
   }
 
-  return inputUrl;
+  return new URL(inputUrl).origin;
 }
 
 export function resolvePendingRequest(responseContent: SteamRequestResponseContent): void {

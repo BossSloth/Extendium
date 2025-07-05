@@ -33,6 +33,10 @@ export async function createContentScripts(extension: Extension): Promise<void> 
 }
 
 async function mutateScripts(urls: Map<string, ScriptInfo>, extension: Extension): Promise<void> {
+  if (urls.size === 0) {
+    return;
+  }
+
   const promises = Array.from(urls).map(async ([url, script]) => {
     const content = await (await fetch(url)).text();
 
@@ -67,7 +71,12 @@ async function mutateScripts(urls: Map<string, ScriptInfo>, extension: Extension
 }
 
 function urlToRegex(url: string): string {
-  return `^${escapeStringRegexp(url).replace(/\\\*/g, '.*').replace(/\//g, '\\/')}$`;
+  return `^${escapeStringRegexp(url)
+    .replace(/\\\*/g, '.*')
+    .replace(/\//g, '\\/')
+    // Handles cases like `*://*.steamcommunity` where the //*. only matches subdomains
+    .replace(':\\/\\/.*\\.', ':\\/\\/.*\\.?')
+  }$`;
 }
 
 function hrefMatches(href: string, contentScript: {

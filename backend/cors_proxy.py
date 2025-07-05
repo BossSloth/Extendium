@@ -5,10 +5,18 @@ import socketserver
 import threading
 import time
 from urllib.error import HTTPError, URLError
-from urllib.request import Request, urlopen
+from urllib.request import (HTTPErrorProcessor, HTTPHandler, Request,
+                            build_opener)
 
 from logger import logger
 
+
+class NoExceptionErrorProcessor(HTTPErrorProcessor):
+    def http_response(self, request, response):
+        return response
+
+    def https_response(self, request, response):
+        return response
 
 # Proxy request handler
 class ProxyHandler(http.server.BaseHTTPRequestHandler):
@@ -69,8 +77,11 @@ class ProxyHandler(http.server.BaseHTTPRequestHandler):
                 req = Request(target_url, data=body, headers=headers, method=self.command)
 
                 try:
+                    # Create a custom opener that doesn't raise exceptions for HTTP error codes
+                    opener = build_opener(NoExceptionErrorProcessor())
+
                     # Forward the request and get the response
-                    response = urlopen(req)
+                    response = opener.open(req)
 
                     # Send the response status code
                     self.send_response(response.status)
@@ -95,13 +106,6 @@ class ProxyHandler(http.server.BaseHTTPRequestHandler):
                     # Send the response body
                     self.wfile.write(response_data)
 
-                except HTTPError as e:
-                    self.send_response(e.code)
-                    self._send_cors_headers()
-                    error_message = str(e).encode()
-                    self.send_header('Content-Length', str(len(error_message)))
-                    self.end_headers()
-                    self.wfile.write(error_message)
                 except URLError as e:
                     self.send_response(500)
                     self._send_cors_headers()

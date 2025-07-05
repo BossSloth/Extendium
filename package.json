@@ -1,6 +1,6 @@
 {
   "scripts": {
-    "dev": "millennium-ttc --build dev",
+    "dev": "millennium-ttc --build dev --no-update",
     "sass": "sass ./public/extendium.scss:./public/extendium.css --style compressed --embed-sources --embed-source-map",
     "watch": "nodemon --watch webkit --watch frontend --watch public/extendium.scss --ext ts,tsx,js,jsx --exec \"npm run sass && npm run dev\"",
     "build": "npm run sass && millennium-ttc --build prod"
@@ -39,7 +39,7 @@
     "@dnd-kit/sortable": "^10.0.0",
     "@steambrew/api": "^5.4.3",
     "@steambrew/client": "^5.4.3",
-    "@steambrew/ttc": "2.5.3",
+    "@steambrew/ttc": "^2.6.3",
     "@steambrew/webkit": "5.2.24",
     "escape-string-regexp": "^5.0.0",
     "react-icons": "^5.5.0",

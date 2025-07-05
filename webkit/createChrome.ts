@@ -16,25 +16,36 @@ export function createChrome(context: string, extension: Extension): typeof wind
   const syncStorage = new WebkitStorage(extensionName, 'sync');
   const localStorage = new WebkitStorage(extensionName, 'local');
 
+  async function sendMessageNormal(message: unknown, responseCallback?: (response?: unknown) => void): Promise<unknown> {
+    logger.log('runtime.sendMessage', message);
+
+    try {
+      const response = await webSocketClient.sendMessage(message, WebkitRequestType.SendMessage, extensionName);
+
+      if (responseCallback) {
+        responseCallback(response);
+      }
+
+      return response;
+    } catch (error) {
+      logger.log('Error in runtime.sendMessage:', error);
+      throw error;
+    }
+  }
+
+  async function sendMessageWithExtensionId(_extensionId: string, message: unknown, responseCallback?: (response?: unknown) => void): Promise<unknown> {
+    return sendMessageNormal(message, responseCallback);
+  }
+
   return {
     i18n: extension.locale,
     runtime: {
-      // @ts-expect-error Ignore
-      sendMessage: async (message: unknown, responseCallback?: (response?: unknown) => void): Promise<unknown> => {
-        logger.log('runtime.sendMessage', message);
-
-        try {
-          const response = await webSocketClient.sendMessage(message, WebkitRequestType.SendMessage, extensionName);
-
-          if (responseCallback) {
-            responseCallback(response);
-          }
-
-          return response;
-        } catch (error) {
-          logger.log('Error in runtime.sendMessage:', error);
-          throw error;
+      sendMessage: async (arg1: unknown, arg2?: unknown, arg3?: unknown): Promise<unknown> => {
+        if (arg3 !== undefined) {
+          return sendMessageWithExtensionId(arg1 as string, arg2, arg3 as (response?: unknown) => void);
         }
+
+        return sendMessageNormal(arg1, arg2 as (response?: unknown) => void);
       },
       id: '1234',
       onMessage: new ChromeEvent<(message: unknown, sender: chrome.runtime.MessageSender, sendResponse: (response?: unknown) => void) => void>(),
