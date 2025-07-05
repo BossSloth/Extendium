@@ -250,6 +250,11 @@ function createExtensionType(extension: Extension, logger: Logger): typeof chrom
 function createContextMenusType(extension: Extension, logger: Logger): typeof chrome.contextMenus {
   // TODO: implement
   return {
+    create: (...args: unknown[]): string | number => {
+      console.error('contextMenus.create not implemented', args);
+
+      return -1;
+    },
     onClicked: new ChromeEvent<(info: chrome.contextMenus.OnClickData, tab?: chrome.tabs.Tab) => void>(),
   };
 }
