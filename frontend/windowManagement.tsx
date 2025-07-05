@@ -64,7 +64,7 @@ export async function closeOffscreen(extension: Extension): Promise<void> {
   popupWindow.close();
 }
 
-export async function injectHtml(html: string, popupWindow: Window, extension: Extension, addToBody = true, removeSteamCss = true): Promise<void> {
+export async function injectHtml(html: string, popupWindow: Window, extension: Extension, addToBody = true, removeSteamCss = true, baseUrl?: string): Promise<void> {
   const popupDocument = popupWindow.document;
   // Remove all steam css
   if (removeSteamCss) {
@@ -80,6 +80,12 @@ export async function injectHtml(html: string, popupWindow: Window, extension: E
   const domParser = new DOMParser();
   const doc = domParser.parseFromString(html, 'text/html');
 
+  if (baseUrl !== undefined) {
+    const docBase = doc.createElement('base');
+    docBase.setAttribute('href', baseUrl);
+    doc.head.appendChild(docBase);
+  }
+
   // Get all head children and append them to the current document
   const headElements = doc.head.querySelectorAll('*');
   for (const head of headElements) {
@@ -89,6 +95,25 @@ export async function injectHtml(html: string, popupWindow: Window, extension: E
 
       continue;
     }
+
+    if (head.tagName === 'LINK' && head.getAttribute('rel') === 'stylesheet') {
+      // eslint-disable-next-line no-await-in-loop
+      await loadStyle((head as HTMLLinkElement).href, popupDocument);
+
+      // Delete copied style
+      popupDocument.body.querySelector(`link[href="${head.getAttribute('href')}"]`)?.remove();
+
+      continue;
+    }
+
+    if (head.tagName === 'STYLE') {
+      if (head.textContent === null) {
+        continue;
+      }
+
+      head.textContent = replaceBodyStyle(head.textContent);
+    }
+
     popupDocument.head.appendChild(head);
   }
 
@@ -162,4 +187,34 @@ const customModalStyle = /* css */`
 .__ContextMenuPosition__:has(.extendium-popup) {
   outline: none !important;
 }
+.TitleBar {
+  height: 32px !important;
+}
+*:has(>.extendium-popup) {
+  min-height: unset !important;
+}
+.DialogContent {
+  padding: 0 !important;
+}
+body {
+  margin: 0 !important;
+  padding: 0 !important;
+}
 `;
+
+async function loadStyle(src: string, document: Document): Promise<void> {
+  let content = await fetch(src).then(async r => r.text());
+  content = replaceBodyStyle(content);
+  content += `\n//# sourceURL=${src}`;
+
+  const style = document.createElement('style');
+  style.textContent = content;
+  style.setAttribute('original-src', src);
+  document.head.appendChild(style);
+}
+
+function replaceBodyStyle(content: string): string {
+  return content
+    .replace(/(\b|\\n)(?:body) *\{/gm, '$1.extendium-popup { font-size: 75%; font-family: "Segoe UI", Tahoma, sans-serif;')
+    .replace(/(\b|\\n)(?:html) *\{/gm, '$1html,.extendium-popup {');
+}

@@ -37,26 +37,33 @@ async function mutateScripts(urls: Map<string, ScriptInfo>, extension: Extension
     return;
   }
 
+  const documentEndScripts: string[] = [];
+  const immediateScripts: string[] = [];
+
   const promises = Array.from(urls).map(async ([url, script]) => {
     const content = await (await fetch(url)).text();
-
     const comment = `// ${url}`;
 
+    const scriptContent = `${comment}\n${content}`;
     if ((script.run_at ?? 'document_end') === 'document_end') {
-      return `${comment}\nonDomFullyReady(() => {\n${content}\n});`;
+      documentEndScripts.push(scriptContent);
+    } else {
+      immediateScripts.push(scriptContent);
     }
-
-    return `${comment}\n${content}`;
   });
 
   // Also load the extension's locale
-  promises.unshift(extension.init().then(() => ''));
+  promises.unshift(extension.init());
 
   const startMark = performance.mark(`[Extendium][${extension.getName()}] mutateScripts start`);
-  const results = await Promise.all(promises);
+  await Promise.all(promises);
   const endMark = performance.mark(`[Extendium][${extension.getName()}] mutateScripts end`);
   performance.measure(`[Extendium][${extension.getName()}] mutateScripts`, startMark.name, endMark.name);
-  let content = results.join('');
+
+  let content = immediateScripts.join('\n\n');
+  if (documentEndScripts.length > 0) {
+    content += `\n\nonDomFullyReady(() => {\n${documentEndScripts.join('\n\n')}\n});`;
+  }
 
   const combinedUrl = extension.getFileUrl(`${extension.getName().toLowerCase().replace(/\s/g, '_')}_content.js`) ?? '';
 

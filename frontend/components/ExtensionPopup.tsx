@@ -44,7 +44,7 @@ export function ExtensionPopup({
       const popupDocument = container.current?.ownerDocument;
       if (!popupDocument || !popupDocument.defaultView) return;
 
-      await injectHtml(popupContent, popupDocument.defaultView, extension, false, removeSteamCss);
+      await injectHtml(popupContent, popupDocument.defaultView, extension, false, removeSteamCss, baseDir);
 
       // extension.contexts.addContext(popupDocument.defaultView, 'POPUP', extension.action.getPopupUrl() ?? '');
 

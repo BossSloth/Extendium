@@ -1,7 +1,11 @@
+import { ChromeEvent } from '../extension/ChromeEvent';
 import { StorageClearContent, StorageGetSetContent, StorageRemoveContent, WebkitRequestType } from '../extension/websocket/MessageTypes';
 import { webSocketClient } from '../shared';
 
 export class WebkitStorage implements chrome.storage.StorageArea {
+  // TODO: implement onChanged
+  public readonly onChanged = new ChromeEvent<(changes: Record<string, chrome.storage.StorageChange>, areaName: chrome.storage.AreaName) => void>();
+
   constructor(private readonly extensionName: string, private readonly area: chrome.storage.AreaName) {}
 
   async get<T extends Record<string, unknown>>(

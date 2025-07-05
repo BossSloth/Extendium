@@ -3,9 +3,9 @@
  */
 export enum MessageType {
   Identify = 'identify',
+  Error = 'error',
   WebkitMessage = 'webkit_message',
   FrontendResponse = 'frontend_response',
-  Error = 'error',
 }
 
 export enum WebkitRequestType {

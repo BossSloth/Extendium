@@ -55,6 +55,8 @@ export function createChrome(context: string, extension: Extension): typeof wind
     storage: {
       sync: syncStorage,
       local: localStorage,
+      // TODO: implement
+      onChanged: new ChromeEvent<(changes: Record<string, chrome.storage.StorageChange>, areaName: chrome.storage.AreaName) => void>(),
     },
   };
 }

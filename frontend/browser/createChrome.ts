@@ -24,9 +24,13 @@ export function createChrome(context: string, extension: Extension): typeof wind
     permissions: createPermissionsType(extension, logger),
     extension: createExtensionType(extension, logger),
     contextMenus: createContextMenusType(extension, logger),
+    commands: createCommandsType(extension, logger),
   };
 }
 
+/**
+ * @see https://developer.chrome.com/docs/extensions/reference/api/runtime
+ */
 function createRuntimeType(extension: Extension, logger: Logger): typeof chrome.runtime {
   return {
     // @ts-expect-error Ignore
@@ -54,6 +58,9 @@ function createRuntimeType(extension: Extension, logger: Logger): typeof chrome.
   };
 }
 
+/**
+ * @see https://developer.chrome.com/docs/extensions/reference/api/storage
+ */
 function createStorageType(extension: Extension, logger: Logger): typeof chrome.storage {
   return {
     local: new Storage(extension, 'local', logger),
@@ -66,6 +73,9 @@ function createStorageType(extension: Extension, logger: Logger): typeof chrome.
   };
 }
 
+/**
+ * @see https://developer.chrome.com/docs/extensions/reference/api/offscreen
+ */
 function createOffscreenType(extension: Extension, logger: Logger): typeof chrome.offscreen {
   return {
     createDocument: async (parameters: chrome.offscreen.CreateParameters): Promise<void> => {
@@ -88,6 +98,9 @@ function createOffscreenType(extension: Extension, logger: Logger): typeof chrom
   };
 }
 
+/**
+ * @see https://developer.chrome.com/docs/extensions/reference/api/action
+ */
 function createActionType(extension: Extension, logger: Logger): typeof chrome.action {
   // TODO: implement
   return {
@@ -106,6 +119,9 @@ function createActionType(extension: Extension, logger: Logger): typeof chrome.a
   };
 }
 
+/**
+ * @see https://developer.chrome.com/docs/extensions/reference/api/tabs
+ */
 function createTabsType(extension: Extension, logger: Logger): typeof chrome.tabs {
   // TODO: implement
   return {
@@ -122,6 +138,9 @@ function createTabsType(extension: Extension, logger: Logger): typeof chrome.tab
   };
 }
 
+/**
+ * @see https://developer.chrome.com/docs/extensions/reference/api/windows
+ */
 function createWindowsType(extension: Extension, logger: Logger): typeof chrome.windows {
   // TODO: implement
   return {
@@ -133,6 +152,9 @@ function createWindowsType(extension: Extension, logger: Logger): typeof chrome.
   };
 }
 
+/**
+ * @see https://developer.chrome.com/docs/extensions/reference/api/alarms
+ */
 function createAlarmsType(extension: Extension, logger: Logger): typeof chrome.alarms {
   // TODO: implement
   return {
@@ -148,6 +170,9 @@ function createAlarmsType(extension: Extension, logger: Logger): typeof chrome.a
   };
 }
 
+/**
+ * @see https://developer.chrome.com/docs/extensions/reference/api/permissions
+ */
 function createPermissionsType(extension: Extension, logger: Logger): typeof chrome.permissions {
   // TODO: implement
   return {
@@ -161,6 +186,9 @@ function createPermissionsType(extension: Extension, logger: Logger): typeof chr
   };
 }
 
+/**
+ * @see https://developer.chrome.com/docs/extensions/reference/api/extension
+ */
 function createExtensionType(extension: Extension, logger: Logger): typeof chrome.extension {
   // TODO: implement
   return {
@@ -169,17 +197,35 @@ function createExtensionType(extension: Extension, logger: Logger): typeof chrom
 
       return Promise.resolve(false);
     },
+    isAllowedIncognitoAccess: async (callback?: (result: boolean) => void): Promise<boolean> => {
+      callback?.(false);
+
+      return Promise.resolve(false);
+    },
   };
 }
 
+/**
+ * @see https://developer.chrome.com/docs/extensions/reference/api/contextMenus
+ */
 function createContextMenusType(extension: Extension, logger: Logger): typeof chrome.contextMenus {
   // TODO: implement
   return {
-    onClicked: {
-      addListener: () => {},
-      hasListener: () => false,
-      removeListener: () => {},
-      hasListeners: () => false,
+    onClicked: new ChromeEvent<(info: chrome.contextMenus.OnClickData, tab?: chrome.tabs.Tab) => void>(),
+  };
+}
+
+/**
+ * @see https://developer.chrome.com/docs/extensions/reference/api/commands
+ */
+function createCommandsType(extension: Extension, logger: Logger): typeof chrome.commands {
+  // TODO: implement
+  return {
+    onCommand: new ChromeEvent<(command: string) => void>(),
+    getAll: async (): Promise<chrome.commands.Command[]> => {
+      logger.log('commands.getAll');
+
+      return Promise.resolve([]);
     },
   };
 }
