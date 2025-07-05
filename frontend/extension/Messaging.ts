@@ -8,6 +8,8 @@ type Listener = (message: unknown, sender: chrome.runtime.MessageSender, sendRes
 export class RuntimeEmulator {
   public readonly onMessage = new ChromeEvent<Listener>();
 
+  private readonly timeout = 30000;
+
   constructor(readonly extension: Extension) {}
 
   async sendMessage(message: unknown, responseCallback?: (response?: unknown) => void): Promise<unknown> {
@@ -84,7 +86,7 @@ export class RuntimeEmulator {
             console.error('[Runtime] No response sent for message, Timed out:', message);
             resolve(undefined);
           }
-        }, 10000);
+        }, this.timeout);
       }
       // Otherwise, the promise is either already resolving (sync sendResponse)
       // or waiting for an async sendResponse call.
