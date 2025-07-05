@@ -37,6 +37,11 @@ def GetExtensionManifests():
                 try:
                     with open(manifest_path, 'r', encoding='utf-8') as f:
                         manifest_data = json.load(f)
+                        # Check for manifest version
+                        if manifest_data.get('manifest_version') != 3:
+                            logger.error(f"Extension {ext_folder} has an invalid manifest version: {manifest_data.get('manifest_version')}. Only manifest version 3 is supported.")
+                            continue
+
                         manifests[ext_folder] = manifest_data
                 except Exception as e:
                     logger.error(f"Error reading manifest {manifest_path}: {str(e)}")
