@@ -8,11 +8,13 @@ import { closeOffscreen, createOffscreen, createOptionsWindow } from '../windowM
 
 const VERBOSE = true;
 
+let chromeObj: typeof window.chrome;
+
 // Note we use dependency injection to prevent circular dependencies
 export function createChrome(context: string, extension: Extension): typeof window.chrome {
   const logger = new Logger(extension, VERBOSE, context);
 
-  return {
+  chromeObj = {
     i18n: extension.locale,
     storage: createStorageType(extension, logger),
     runtime: createRuntimeType(extension, logger),
@@ -26,6 +28,8 @@ export function createChrome(context: string, extension: Extension): typeof wind
     contextMenus: createContextMenusType(extension, logger),
     commands: createCommandsType(extension, logger),
   };
+
+  return chromeObj;
 }
 
 /**
@@ -34,7 +38,7 @@ export function createChrome(context: string, extension: Extension): typeof wind
 function createRuntimeType(extension: Extension, logger: Logger): typeof chrome.runtime {
   return {
     // @ts-expect-error Ignore
-    sendMessage: async (message: unknown, callback: (response: unknown) => void): Promise<unknown> => {
+    sendMessage: async (message: unknown, callback?: (response: unknown) => void): Promise<unknown> => {
       logger.log('runtime.sendMessage', message, callback);
 
       return extension.runtimeEmulator.sendMessage(message, callback);
@@ -55,6 +59,37 @@ function createRuntimeType(extension: Extension, logger: Logger): typeof chrome.
     onStartup: new ChromeEvent(),
     onInstalled: new ChromeEvent<() => void>(),
     id: '1234',
+    connect: (arg1?: chrome.runtime.ConnectInfo | string, arg2?: chrome.runtime.ConnectInfo): chrome.runtime.Port => {
+      let extensionId: string | undefined;
+      let connectInfo: chrome.runtime.ConnectInfo;
+      if (arg2 !== undefined) {
+        extensionId = arg1 as string;
+        connectInfo = arg2;
+      } else {
+        connectInfo = arg1 as chrome.runtime.ConnectInfo;
+      }
+
+      logger.log('runtime.connect', connectInfo, extensionId);
+
+      const onDisconnectEvent = new ChromeEvent<(port: chrome.runtime.Port) => void>();
+      const onMessageEvent = new ChromeEvent<(message: unknown, port: chrome.runtime.Port) => void>();
+
+      const port: chrome.runtime.Port = {
+        postMessage: (message: unknown): void => {
+          chromeObj.runtime.sendMessage(message).then((response) => {
+            onMessageEvent.emit(response, port);
+          });
+        },
+        disconnect: (): void => {
+          onDisconnectEvent.emit(port);
+        },
+        onDisconnect: onDisconnectEvent,
+        onMessage: onMessageEvent,
+        name: 'test',
+      };
+
+      return port;
+    },
   };
 }
 
@@ -134,6 +169,7 @@ function createTabsType(extension: Extension, logger: Logger): typeof chrome.tab
     },
     onRemoved: new ChromeEvent<(tabId: number) => void>(),
     onUpdated: new ChromeEvent<(tabId: number, changeInfo: chrome.tabs.TabChangeInfo, tab: chrome.tabs.Tab) => void>(),
+    onActivated: new ChromeEvent<(activeInfo: chrome.tabs.TabActiveInfo) => void>(),
     query: queryTabs,
   };
 }
@@ -166,6 +202,9 @@ function createAlarmsType(extension: Extension, logger: Logger): typeof chrome.a
     },
     get: async (..._args: unknown[]): Promise<chrome.alarms.Alarm> => {
       return Promise.resolve({} as chrome.alarms.Alarm);
+    },
+    getAll: async (): Promise<chrome.alarms.Alarm[]> => {
+      return Promise.resolve([]);
     },
   };
 }

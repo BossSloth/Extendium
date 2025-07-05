@@ -30,12 +30,14 @@ export default async function PluginMain(): Promise<void> {
   initPluginDir(infos.pluginDir);
   extensionsDir = infos.extensionsDir.replaceAll('\\', '/');
   const extensionsUrl = `https://js.millennium.app/${extensionsDir}`;
+  const extensionObjects = [];
   for (const [folderName, manifest] of Object.entries(manifests)) {
-    extensions.set(manifest.name, new Extension(manifest, `${extensionsUrl}/${folderName}`, folderName));
+    extensionObjects.push(new Extension(manifest, `${extensionsUrl}/${folderName}`, folderName));
   }
 
-  await Promise.all([...extensions.values()].map(async (extension) => {
+  await Promise.all(extensionObjects.map(async (extension) => {
     await extension.init();
+    extensions.set(extension.getName(), extension);
   }));
 
   global.webkit.init(extensions);

@@ -33,7 +33,7 @@ export class Locale {
     }
 
     if (this.messages === undefined) {
-      throw new Error('Locale not initialized, missing manifest.default_locale?');
+      throw new Error(`[${this.extension.getName()}] Locale not initialized, missing manifest.default_locale?`);
     }
 
     if (typeof substitutions === 'string') {

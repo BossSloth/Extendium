@@ -4,9 +4,10 @@ import { usePopupsStore } from 'components/stores/popupsStore';
 import type { Protocol } from 'devtools-protocol';
 import React from 'react';
 import { FaExclamationCircle } from 'react-icons/fa';
-import { MdArrowBack, MdOpenInNew } from 'react-icons/md';
+import { MdArrowBack, MdArrowForward, MdOpenInNew } from 'react-icons/md';
 import { mainWindow } from 'shared';
 import { createOptionsWindow } from 'windowManagement';
+import { showRemoveModal } from './RemoveModal';
 
 export function ExtensionDetailInfo({ extension }: { readonly extension: Extension | undefined; }): React.ReactNode {
   const [views, setViews] = React.useState<Protocol.Target.TargetInfo[]>([]);
@@ -109,6 +110,11 @@ export function ExtensionDetailInfo({ extension }: { readonly extension: Extensi
           <button type="button"><MdOpenInNew /></button>
         </div>
       )}
+
+      <div className="section hr clickable-row" onClick={() => { showRemoveModal(extension); }}>
+        <span>Remove extension</span>
+        <button type="button"><MdArrowForward /></button>
+      </div>
     </div>
   );
 }

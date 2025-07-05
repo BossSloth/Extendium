@@ -6,7 +6,7 @@ export class Logger {
 
   public log(type: string, ...args: unknown[]): void {
     if (this.VERBOSE) {
-      console.debug(`[${this.parent.manifest.name}][${this.context}][${type}]:`, ...args);
+      console.debug(`[${this.parent.getName()}][${this.context}][${type}]:`, ...args);
     }
   }
 }
