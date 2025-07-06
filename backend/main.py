@@ -1,6 +1,7 @@
 # pylint: disable=invalid-name
 import json
 import os
+import re
 import shutil
 import struct
 import tempfile
@@ -158,15 +159,16 @@ def PrepareExtensionFiles():
                     # Define file processing rules
                     processing_rules = {
                         '.css': [
-                            ("url('/", f"url('{extension_url}/{ext_folder}/"),
-                            ("url(chrome-extension://__MSG_@@extension_id__/", f"url({extension_url}/{ext_folder}/"),
+                            {'pattern': r'url\((?!")chrome-extension:\/\/__MSG_@@extension_id__\/(.+?)\)', 'replacement': f"url(\"{extension_url}/{ext_folder}/\\g<1>\")", 'is_regex': True},
+                            {'pattern': "url('/", 'replacement': f"url('{extension_url}/{ext_folder}/"},
+                            {'pattern': "url(\"chrome-extension://__MSG_@@extension_id__/", 'replacement': f"url(\"{extension_url}/{ext_folder}/"},
                         ],
                         '.html': [
-                            ("href=\"/", f"href=\"{extension_url}/{ext_folder}/"),
-                            ("src=\"/", f"src=\"{extension_url}/{ext_folder}/"),
+                            {'pattern': "href=\"/", 'replacement': f"href=\"{extension_url}/{ext_folder}/"},
+                            {'pattern': "src=\"/", 'replacement': f"src=\"{extension_url}/{ext_folder}/"},
                         ],
                         '.js': [
-                            ("globalThis.chrome", "chrome")
+                            {'pattern': "globalThis.chrome", 'replacement': "chrome"}
                         ]
                     }
 
@@ -174,7 +176,7 @@ def PrepareExtensionFiles():
                     if file_extension == '.js':
                         ext_root_folders = [d for d in os.listdir(ext_path) if os.path.isdir(os.path.join(ext_path, d))]
                         for dir_name in ext_root_folders:
-                            processing_rules['.js'].append((f"'/{dir_name}", f"'{extension_url}/{ext_folder}/{dir_name}"))
+                            processing_rules['.js'].append({'pattern': f"'/{dir_name}", 'replacement': f"'{extension_url}/{ext_folder}/{dir_name}"})
 
 
                     # Process file if we have rules for its extension
@@ -184,8 +186,15 @@ def PrepareExtensionFiles():
                                 content = f.read()
 
                             modified_content = content
-                            for find_pattern, replace_pattern in processing_rules[file_extension]:
-                                modified_content = modified_content.replace(find_pattern, replace_pattern)
+                            for rule in processing_rules[file_extension]:
+                                find_pattern = rule['pattern']
+                                replace_pattern = rule['replacement']
+                                is_regex = rule.get('is_regex', False)
+
+                                if is_regex:
+                                    modified_content = re.sub(find_pattern, replace_pattern, modified_content)
+                                else:
+                                    modified_content = modified_content.replace(find_pattern, replace_pattern)
 
                             if content != modified_content:
                                 with open(file_path, 'w', encoding='utf-8') as f:
