@@ -45,7 +45,7 @@ export async function loadScript(src: string, document: Document): Promise<void>
     });
 
     script.addEventListener('error', () => {
-      reject(new Error('Failed to load script'));
+      reject(new Error(`Failed to load script "${src}" for document "${document.title}"`));
     });
 
     document.head.appendChild(script);

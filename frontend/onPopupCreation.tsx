@@ -70,7 +70,13 @@ async function addStyles(popup: Popup): Promise<void> {
 }
 
 async function setupBackground(extension: Extension): Promise<void> {
-  const backgroundWindow = await createWindowWithScript(extension.manifest.background?.service_worker ?? '', extension, 'Background');
+  const backgroundScriptUrl = extension.manifest.background?.service_worker;
+
+  if (backgroundScriptUrl === undefined) {
+    return;
+  }
+
+  const backgroundWindow = await createWindowWithScript(backgroundScriptUrl, extension, 'Background');
   extension.contexts.addContext(backgroundWindow, 'BACKGROUND', extension.getBackgroundUrl());
 }
 

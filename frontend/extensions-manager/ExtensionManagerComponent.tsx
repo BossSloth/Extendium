@@ -2,6 +2,7 @@ import { Extension } from '@extension/Extension';
 import { callable, DialogButton, Toggle } from '@steambrew/client';
 import { usePopupsStore } from 'components/stores/popupsStore';
 import React from 'react';
+import { FaExclamationCircle } from 'react-icons/fa';
 import { showRemoveModal } from './RemoveModal';
 
 const ToggleExtension = callable<[{ name: string; enabled: boolean; }], void>('ToggleExtension');
@@ -14,11 +15,16 @@ export function ExtensionManagerComponent({ extension }: { readonly extension: E
     // TODO: make work
   }
 
+  const extensionHasErrors = extension.logger.errors.length > 0;
+
   return (
     <div className="extension-card">
       <div className="extension-main">
         <div className="icon">
           <img src={extension.action.getDefaultIconUrl(48)} />
+          {extensionHasErrors && (
+            <FaExclamationCircle color="red" size={24} />
+          )}
         </div>
 
         <div className="content">

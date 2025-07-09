@@ -35,7 +35,11 @@ export async function createWindowWithScript(scriptPath: string, extension: Exte
 
   const backgroundWindow = createWindow(extension, title, extension.getFileDir(scriptPath));
 
-  await loadScript(script, backgroundWindow.document);
+  try {
+    await loadScript(script, backgroundWindow.document);
+  } catch (error) {
+    extension.logger.error('createWindowWithScript', error);
+  }
 
   return backgroundWindow;
 }

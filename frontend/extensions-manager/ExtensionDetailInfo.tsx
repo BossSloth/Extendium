@@ -9,6 +9,7 @@ import { mainWindow } from 'shared';
 import { createOptionsWindow } from 'windowManagement';
 import { showRemoveModal } from './RemoveModal';
 
+// eslint-disable-next-line max-lines-per-function
 export function ExtensionDetailInfo({ extension }: { readonly extension: Extension | undefined; }): React.ReactNode {
   const [views, setViews] = React.useState<Protocol.Target.TargetInfo[]>([]);
   const { setManagerPopup } = usePopupsStore();
@@ -28,21 +29,23 @@ export function ExtensionDetailInfo({ extension }: { readonly extension: Extensi
 
   const isDev = mainWindow.document.evaluate('//div[text()="Console"]', mainWindow.document, null, XPathResult.FIRST_ORDERED_NODE_TYPE).singleNodeValue !== null;
 
-  React.useEffect(() => {
-    if (!isDev) {
-      return;
-    }
-
+  function initializeViews(): void {
     ChromeDevToolsProtocol.send('Target.getTargets').then((result) => {
       const response = result as Protocol.Target.GetTargetsResponse;
       const ourViews: Protocol.Target.TargetInfo[] = [];
       for (const targetInfo of response.targetInfos) {
-        if (targetInfo.title.startsWith(`${extension.getName()} - `)) {
+        if (targetInfo.title.startsWith(`${extension?.getName()} - `) || targetInfo.title === 'SharedJSContext') {
           ourViews.push(targetInfo);
         }
       }
       setViews(ourViews);
     });
+  }
+
+  React.useEffect(() => {
+    if (isDev) {
+      initializeViews();
+    }
   }, []);
 
   return (
@@ -65,7 +68,7 @@ export function ExtensionDetailInfo({ extension }: { readonly extension: Extensi
         <div className="content">{extension.getVersion()}</div>
       </div>
 
-      {isDev && (
+      {views.length > 0 && (
         <div className="section hr">
           <div className="heading">Inspect views</div>
           <div className="content">
@@ -73,6 +76,7 @@ export function ExtensionDetailInfo({ extension }: { readonly extension: Extensi
               {views.map(view => (
                 <li key={view.title}>
                   <a
+                    className="fs-85"
                     href={`http://localhost:8080/devtools/inspector.html?ws=localhost:8080/devtools/page/${view.targetId}&panel=console`}
                     onClick={(e) => {
                       e.preventDefault();
@@ -87,17 +91,17 @@ export function ExtensionDetailInfo({ extension }: { readonly extension: Extensi
         </div>
       )}
 
-      {extension.errors.length > 0 && (
-        <div className="section hr">
+      {extension.logger.errors.length > 0 && (
+        <div className="section hr" id="errors">
           <div className="heading">
             <FaExclamationCircle color="red" />
             Errors
           </div>
           <div className="content">
-            <span style={{ marginBottom: '1rem' }}>For detailed error information, launch Steam with the <code>-dev</code> parameter and check the console in the specified view</span>
+            <span style={{ marginBottom: '1rem' }}>For detailed error information, <a href="steam://devmode/enable" onClick={() => { initializeViews(); }}>enable dev mode</a> and open the console of the specified view in the list above</span>
             <ul>
-              {extension.errors.map(error => (
-                <li key={error}>{error}</li>
+              {extension.logger.errors.map(error => (
+                <li key={error}><code>{error}</code></li>
               ))}
             </ul>
           </div>

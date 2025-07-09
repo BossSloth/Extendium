@@ -83,6 +83,7 @@ $grid-gutter: 12px;
 
 .extension-manager-popup {
   margin-top: 3rem;
+  user-select: text;
 }
 
 .span-icon {
@@ -120,10 +121,16 @@ $grid-gutter: 12px;
     display: flex;
     padding: 6px;
     position: relative;
+    flex-direction: column;
+    gap: 8px;
 
     img {
       height: 36px;
       width: 36px;
+    }
+
+    svg {
+      margin: auto;
     }
   }
 
@@ -147,6 +154,12 @@ $grid-gutter: 12px;
       text-overflow: ellipsis;
       height: 100%;
     }
+  }
+}
+
+#errors {
+  li {
+    font-size: 75%;
   }
 }
 
@@ -248,6 +261,9 @@ $grid-gutter: 12px;
 
   a {
     color: rgb(168, 199, 250);
+  }
+
+  .fs-85 {
     font-size: 85%;
   }
 

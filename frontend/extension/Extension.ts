@@ -2,6 +2,7 @@ import { Action } from './Action';
 import { ChromeEvent } from './ChromeEvent';
 import { Contexts } from './Contexts';
 import { Locale } from './Locale';
+import { Logger } from './Logger';
 import { RuntimeEmulator } from './Messaging';
 
 export class Extension {
@@ -10,13 +11,14 @@ export class Extension {
   public readonly contexts: Contexts;
   public readonly locale: Locale;
   public readonly storageOnChanged = new ChromeEvent<(changes: Record<string, chrome.storage.StorageChange>, areaName: chrome.storage.AreaName) => void>();
-  public readonly errors: string[] = [];
+  public readonly logger: Logger;
 
   constructor(readonly manifest: chrome.runtime.ManifestV3, readonly url: string, readonly folderName: string) {
     this.action = new Action(this);
     this.runtimeEmulator = new RuntimeEmulator(this);
     this.contexts = new Contexts();
     this.locale = new Locale(this);
+    this.logger = new Logger(this, false, 'Extension');
   }
 
   public async init(): Promise<void> {
