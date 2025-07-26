@@ -2,7 +2,7 @@
     "compilerOptions": {
       "outDir": ".millennium/Dist",
       "module": "ESNext",
-      "target": "ES2021",
+      "target": "ES2022",
       "jsx": "react",
       "declaration": false,
       "moduleResolution": "node",

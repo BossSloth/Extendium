@@ -16,7 +16,7 @@ export function ExtensionButton({ extension }: { readonly extension: Extension; 
   const popupContextMenuRef = useRef<ContextMenu | undefined>(undefined);
 
   const { attributes, listeners, setNodeRef, transform, transition, isDragging }
-    = useSortable({ id: extension.manifest.name });
+    = useSortable({ id: extension.getName() });
 
   const style: CSSProperties = {
     transform: CSS.Transform.toString(transform),
@@ -113,7 +113,7 @@ export function ExtensionButton({ extension }: { readonly extension: Extension; 
       {...attributes}
       {...listeners}
     >
-      <img src={iconUrl ?? ''} alt={extension.manifest.name} />
+      <img src={iconUrl ?? ''} alt={extension.getName()} />
     </button>
   );
 }

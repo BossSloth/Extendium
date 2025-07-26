@@ -9,7 +9,6 @@ import { mainWindow } from 'shared';
 import { createOptionsWindow } from 'windowManagement';
 import { showRemoveModal } from './RemoveModal';
 
-// eslint-disable-next-line max-lines-per-function
 export function ExtensionDetailInfo({ extension }: { readonly extension: Extension | undefined; }): React.ReactNode {
   const [views, setViews] = React.useState<Protocol.Target.TargetInfo[]>([]);
   const { setManagerPopup } = usePopupsStore();
@@ -30,8 +29,7 @@ export function ExtensionDetailInfo({ extension }: { readonly extension: Extensi
   const isDev = mainWindow.document.evaluate('//div[text()="Console"]', mainWindow.document, null, XPathResult.FIRST_ORDERED_NODE_TYPE).singleNodeValue !== null;
 
   function initializeViews(): void {
-    ChromeDevToolsProtocol.send('Target.getTargets').then((result) => {
-      const response = result as Protocol.Target.GetTargetsResponse;
+    ChromeDevToolsProtocol.send('Target.getTargets').then((response) => {
       const ourViews: Protocol.Target.TargetInfo[] = [];
       for (const targetInfo of response.targetInfos) {
         if (targetInfo.title.startsWith(`${extension?.getName()} - `) || targetInfo.title === 'SharedJSContext') {

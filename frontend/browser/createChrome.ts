@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-function-type */
 /* eslint-disable @typescript-eslint/no-empty-function */
 import { ChromeEvent } from '../extension/ChromeEvent';
 import { Extension } from '../extension/Extension';
@@ -27,6 +28,9 @@ export function createChrome(context: string, extension: Extension): typeof wind
     extension: createExtensionType(extension, logger),
     contextMenus: createContextMenusType(extension, logger),
     commands: createCommandsType(extension, logger),
+    notifications: createNotificationsType(extension, logger),
+    webRequest: createWebRequestType(extension, logger),
+    declarativeNetRequest: createDeclarativeNetRequestType(extension, logger),
   };
 
   return chromeObj;
@@ -90,6 +94,8 @@ function createRuntimeType(extension: Extension, logger: Logger): typeof chrome.
 
       return port;
     },
+    onConnect: new ChromeEvent<(port: chrome.runtime.Port) => void>(),
+    onConnectExternal: new ChromeEvent<(port: chrome.runtime.Port) => void>(),
   };
 }
 
@@ -185,6 +191,7 @@ function createWindowsType(extension: Extension, logger: Logger): typeof chrome.
 
       return Promise.resolve([]);
     },
+    onBoundsChanged: new ChromeEvent<(window: chrome.windows.Window) => void>(),
   };
 }
 
@@ -270,6 +277,60 @@ function createCommandsType(extension: Extension, logger: Logger): typeof chrome
       logger.log('commands.getAll');
 
       return Promise.resolve([]);
+    },
+  };
+}
+
+/**
+ * @see https://developer.chrome.com/docs/extensions/reference/api/notifications
+ */
+function createNotificationsType(extension: Extension, logger: Logger): typeof chrome.notifications {
+  // TODO: implement
+  return {
+    create: (...args: unknown[]): string | number => {
+      console.error('notifications.create not implemented', args);
+
+      return -1;
+    },
+    onClosed: new ChromeEvent<(notificationId: string) => void>(),
+    onButtonClicked: new ChromeEvent<(notificationId: string) => void>(),
+    onClicked: new ChromeEvent<(notificationId: string) => void>(),
+  };
+}
+
+/**
+ * @see https://developer.chrome.com/docs/extensions/reference/api/webRequest
+ */
+function createWebRequestType(extension: Extension, logger: Logger): typeof chrome.webRequest {
+  // TODO: implement
+  return {
+    onBeforeRequest: new ChromeEvent<(details: chrome.webRequest.WebRequestDetails) => void>(),
+    onBeforeSendHeaders: new ChromeEvent<(details: chrome.webRequest.WebRequestDetails) => void>(),
+    onHeadersReceived: new ChromeEvent<(details: chrome.webRequest.WebRequestDetails) => void>(),
+    onCompleted: new ChromeEvent<(details: chrome.webRequest.WebRequestDetails) => void>(),
+    onErrorOccurred: new ChromeEvent<(details: chrome.webRequest.WebRequestDetails) => void>(),
+  };
+}
+
+/**
+ * @see https://developer.chrome.com/docs/extensions/reference/api/declarativeNetRequest
+ */
+function createDeclarativeNetRequestType(extension: Extension, logger: Logger): typeof chrome.declarativeNetRequest {
+  // TODO: implement
+  return {
+    getDynamicRules: async (callback?: (rules: chrome.declarativeNetRequest.Rule[]) => void): Promise<chrome.declarativeNetRequest.Rule[]> => {
+      logger.log('declarativeNetRequest.getDynamicRules');
+
+      callback?.([]);
+
+      return Promise.resolve([]);
+    },
+    updateDynamicRules: async (_options: chrome.declarativeNetRequest.UpdateRuleOptions, callback?: Function): Promise<void> => {
+      logger.log('declarativeNetRequest.updateDynamicRules');
+
+      callback?.();
+
+      return Promise.resolve();
     },
   };
 }

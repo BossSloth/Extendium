@@ -1,14 +1,20 @@
 /* eslint-disable @typescript-eslint/class-methods-use-this */
+import { EnumerableMethods } from './EnumerableMethods';
 import { Extension } from './Extension';
 
-export class Locale {
-  private messages: Record<string, LanguageRecord> | undefined;
+type chromeLocale = typeof chrome.i18n;
 
-  constructor(readonly extension: Extension) {
+@EnumerableMethods
+export class Locale implements chromeLocale {
+  private messages: Record<string, LanguageRecord> | undefined;
+  readonly #extension: Extension;
+
+  constructor(extension: Extension) {
+    this.#extension = extension;
   }
 
   async initLocale(): Promise<void> {
-    const defaultLocale = this.extension.manifest.default_locale;
+    const defaultLocale = this.#extension.manifest.default_locale;
     if (defaultLocale === undefined) {
       // This extension does not have locales
       return;
@@ -17,11 +23,11 @@ export class Locale {
     const language = navigator.language.split('-')[0];
     let content;
     try {
-      content = await fetch(this.extension.getFileUrl(`/_locales/${language}/messages.json`) ?? '').then(async r => r.text());
+      content = await fetch(this.#extension.getFileUrl(`/_locales/${language}/messages.json`) ?? '').then(async r => r.text());
     } catch {
-      console.debug(`[${this.extension.getName()}] Locale ${language} not found, falling back to default locale (${defaultLocale})`);
+      console.debug(`[${this.#extension.getName()}] Locale ${language} not found, falling back to default locale (${defaultLocale})`);
       // Fallback to default locale (en) if the requested locale doesn't exist
-      content = await fetch(this.extension.getFileUrl(`/_locales/${defaultLocale}/messages.json`) ?? '').then(async r => r.text());
+      content = await fetch(this.#extension.getFileUrl(`/_locales/${defaultLocale}/messages.json`) ?? '').then(async r => r.text());
     }
     this.messages = JSON.parse(content) as Record<string, LanguageRecord>;
   }
@@ -33,7 +39,7 @@ export class Locale {
     }
 
     if (this.messages === undefined) {
-      throw new Error(`[${this.extension.getName()}] Locale not initialized, missing manifest.default_locale?`);
+      throw new Error(`[${this.#extension.getName()}] Locale not initialized, missing manifest.default_locale?`);
     }
 
     if (typeof substitutions === 'string') {

@@ -2,9 +2,11 @@
 /* eslint-disable @typescript-eslint/class-methods-use-this */
 /* eslint-disable @typescript-eslint/no-dynamic-delete */
 import { ChromeEvent } from './ChromeEvent';
+import { EnumerableMethods } from './EnumerableMethods';
 import { Extension } from './Extension';
 import { Logger } from './Logger';
 
+@EnumerableMethods
 export class Storage implements chrome.storage.StorageArea {
   public readonly QUOTA_BYTES: number; // Example: local = 5MB, sync = 100KB
 
@@ -12,8 +14,14 @@ export class Storage implements chrome.storage.StorageArea {
 
   private readonly STORAGE_KEY: string;
 
-  constructor(readonly extension: Extension, readonly area: chrome.storage.AreaName, readonly logger: Logger) {
-    this.STORAGE_KEY = `${this.extension.manifest.name}::${this.area}`;
+  readonly #extension: Extension;
+
+  readonly #logger: Logger;
+
+  constructor(extension: Extension, readonly area: chrome.storage.AreaName, logger: Logger) {
+    this.#extension = extension;
+    this.#logger = logger;
+    this.STORAGE_KEY = `${this.#extension.manifest.name}::${this.area}`;
 
     if (this.area === 'local') {
       this.QUOTA_BYTES = 5 * 1024 * 1024; // 5MB
@@ -28,7 +36,7 @@ export class Storage implements chrome.storage.StorageArea {
     keys: NoInferX<keyof T> | NoInferX<keyof T>[] | Partial<NoInferX<T>> | null | ((items: T) => void),
     callback?: (items: T) => void,
   ): Promise<T> {
-    this.logger.log(`storage.${this.area}.get`, keys, callback);
+    this.#logger.log(`storage.${this.area}.get`, keys, callback);
     const storedData = localStorage.getItem(this.STORAGE_KEY);
     let result: Record<string, unknown> = {};
     let keysToRetrieve: string[] = [];
@@ -78,7 +86,7 @@ export class Storage implements chrome.storage.StorageArea {
   }
 
   async set(items: Record<string, unknown>, callback?: () => void): Promise<void> {
-    this.logger.log(`storage.${this.area}.set`, items, callback);
+    this.#logger.log(`storage.${this.area}.set`, items, callback);
     const storedData = localStorage.getItem(this.STORAGE_KEY);
     const data = storedData !== null ? JSON.parse(storedData) as Record<string, unknown> : {};
 
@@ -101,14 +109,14 @@ export class Storage implements chrome.storage.StorageArea {
       };
     }
 
-    this.extension.storageOnChanged.emit(changes, this.area);
+    this.#extension.storageOnChanged.emit(changes, this.area);
     this.onChanged.emit(changes, this.area);
 
     return Promise.resolve();
   }
 
   async remove(keys: string | string[], callback?: () => void): Promise<void> {
-    this.logger.log(`storage.${this.area}.remove`, keys, callback);
+    this.#logger.log(`storage.${this.area}.remove`, keys, callback);
     const storedData = localStorage.getItem(this.STORAGE_KEY);
     const data = storedData !== null ? JSON.parse(storedData) as Record<string, unknown> : {};
 
@@ -137,14 +145,14 @@ export class Storage implements chrome.storage.StorageArea {
       };
     }
 
-    this.extension.storageOnChanged.emit(changes, this.area);
+    this.#extension.storageOnChanged.emit(changes, this.area);
     this.onChanged.emit(changes, this.area);
 
     return Promise.resolve();
   }
 
   async clear(callback?: () => void): Promise<void> {
-    this.logger.log(`storage.${this.area}.clear`, callback);
+    this.#logger.log(`storage.${this.area}.clear`, callback);
     localStorage.removeItem(this.STORAGE_KEY);
 
     if (callback) {

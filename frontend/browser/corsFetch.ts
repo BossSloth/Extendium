@@ -18,8 +18,6 @@ export function patchFetch(window: Window): void {
   const oldFetch = window.fetch;
 
   window.fetch = async (input: RequestInfo | URL, init?: RequestInit): Promise<Response> => {
-    const corsCache = JSON.parse(localStorage.getItem(corsCacheKey) ?? '[]') as string[];
-
     const baseUrl = input.toString()
       .replace('https://', '')
       .replace('http://', '')
@@ -28,6 +26,8 @@ export function patchFetch(window: Window): void {
     if ((init?.credentials === 'include' && (baseUrl.includes('steampowered.com') || baseUrl.includes('steamcommunity.com'))) || (baseUrl === 'store.steampowered.com' && input.toString().includes('user'))) {
       return credentialsFetch(input, init);
     }
+
+    const corsCache = JSON.parse(localStorage.getItem(corsCacheKey) ?? '[]') as string[];
 
     if (corsCache.includes(baseUrl)) {
       return corsFetch(oldFetch, input, init);

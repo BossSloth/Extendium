@@ -1,6 +1,7 @@
 /* eslint-disable func-names */
 import { ConfirmModal, showModal } from '@steambrew/client';
 import React from 'react';
+import { loadScript } from 'shared';
 import { Extension } from '../extension/Extension';
 import { patchFetch } from './corsFetch';
 import { createChrome } from './createChrome';
@@ -17,7 +18,7 @@ export function injectBrowser(context: string, window: Window, extension: Extens
   window.onerror = function (this: WindowEventHandlers, ...args: unknown[]): boolean {
     console.error(`Error in ${extension.manifest.name} - ${context}`, ...args);
 
-    extension.errors.push(`Error in "${extension.manifest.name} - ${context}": ${args.join(' ')}`);
+    extension.logger.errors.push(`Error in "${extension.manifest.name} - ${context}": ${args.join(' ')}`);
 
     // @ts-expect-error ignore
     return originalOnError?.call(this, ...args);
@@ -28,7 +29,7 @@ export function injectBrowser(context: string, window: Window, extension: Extens
   window.onunhandledrejection = function (this: WindowEventHandlers, event): unknown {
     console.error(`Error in ${extension.manifest.name} - ${context}`, event);
 
-    extension.errors.push(`Error in "${extension.manifest.name} - ${context}": ${event.reason}`);
+    extension.logger.errors.push(`Error in "${extension.manifest.name} - ${context}": ${event.reason}`);
 
     return originalOnUnhandledRejection?.call(this, event);
   };
@@ -40,15 +41,18 @@ export function injectBrowser(context: string, window: Window, extension: Extens
 
     console.error(`Error in ${extension.manifest.name} - ${context}`, ...args);
 
-    extension.errors.push(`Error in "${extension.manifest.name} - ${context}": ${args.join(' ')}`);
+    extension.logger.errors.push(`Error in "${extension.manifest.name} - ${context}": ${args.join(' ')}`);
   };
 
   window.importScripts = (...urls: string[]): void => {
-    for (const url of urls) {
-      const script = window.document.createElement('script');
-      script.src = extension.getFileUrl(url) ?? '';
-      window.document.head.appendChild(script);
+    async function asyncLoadScripts(): Promise<void> {
+      for (const url of urls) {
+        // eslint-disable-next-line no-await-in-loop
+        await loadScript(extension.getFileUrl(url) ?? '', window.document);
+      }
     }
+
+    asyncLoadScripts();
   };
 
   patchFetch(window);
@@ -56,7 +60,7 @@ export function injectBrowser(context: string, window: Window, extension: Extens
   window.confirm = (message?: string): boolean => {
     const description = (
       <>
-        <p>Oops looks like the extension {extension.manifest.name} tried to open a confirmation dialog. Sadly, this is not supported.</p>
+        <p>Oops looks like the extension {extension.getName()} tried to open a confirmation dialog. Sadly, this is not supported.</p>
         <p>Original confirmation message was: <strong>{message}</strong></p>
       </>
     );

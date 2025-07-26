@@ -24,6 +24,14 @@ Want to know if your favorite chrome extension is compatible with Extendium? Che
 
 Once installed it should just work out of the box.
 
+## Known features that are currently not supported
+- context menus
+- alarms
+- notifications
+- permission control
+- global keyboard shortcuts
+- anything to do with tabs
+
 ## Contributing
 
 Contributions are welcome! Please feel free to submit a Pull Request.

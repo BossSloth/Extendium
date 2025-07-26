@@ -1,7 +1,9 @@
 import { ChromeEvent } from '../extension/ChromeEvent';
+import { EnumerableMethods } from '../extension/EnumerableMethods';
 import { StorageClearContent, StorageGetSetContent, StorageRemoveContent, WebkitRequestType } from '../extension/websocket/MessageTypes';
 import { webSocketClient } from '../shared';
 
+@EnumerableMethods
 export class WebkitStorage implements chrome.storage.StorageArea {
   // TODO: implement onChanged
   public readonly onChanged = new ChromeEvent<(changes: Record<string, chrome.storage.StorageChange>, areaName: chrome.storage.AreaName) => void>();

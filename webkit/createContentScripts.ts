@@ -1,3 +1,4 @@
+import { constSysfsExpr } from '@steambrew/webkit';
 import escapeStringRegexp from 'escape-string-regexp';
 import { Extension } from './extension/Extension';
 import { loadScriptWithContent, loadStyle } from './shared';
@@ -31,6 +32,8 @@ export async function createContentScripts(extension: Extension): Promise<void> 
 
   await mutateScripts(scripts, extension);
 }
+
+const chromeInjectionContent = constSysfsExpr('chromeInjectionContent.js', { basePath: './' }).content;
 
 async function mutateScripts(urls: Map<string, ScriptInfo>, extension: Extension): Promise<void> {
   if (urls.size === 0) {
@@ -67,9 +70,9 @@ async function mutateScripts(urls: Map<string, ScriptInfo>, extension: Extension
 
   const combinedUrl = extension.getFileUrl(`${extension.getName().toLowerCase().replace(/\s/g, '_')}_content.js`) ?? '';
 
-  const chromeFunctionString = `const chrome = window.extensions.get('${extension.getName().replace(/'/g, "\\'")}')?.chrome;`;
+  // chromeFunctionString += `const window = {...globalThis, chrome: extensions.get('${extension.getName().replace(/'/g, "\\'")}')?.chrome}`;
   // Wrap the script in a function to make it self-contained
-  content = `(function() {\n${chromeFunctionString}\n\n${content}\n})();`;
+  content = `(function() {\nconst extensionName = '${extension.getName().replace(/'/g, "\\'")}'\n${chromeInjectionContent}\n${content}\n})();`;
   content += `\n//# sourceURL=${combinedUrl}`;
   content = content.replaceAll('sourceMappingURL=', '');
 

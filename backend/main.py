@@ -150,34 +150,35 @@ def PrepareExtensionFiles():
     for ext_folder in os.listdir(extensions_dir):
         ext_path = os.path.join(extensions_dir, ext_folder)
         if os.path.isdir(ext_path):
+            ext_folder = ext_folder.replace('\\', '/')
+            full_dir_path = f"{extension_url}/{ext_folder}"
+            # Define file processing rules
+            processing_rules = {
+                '.css': [
+                    {'pattern': r'url\((?!")chrome-extension:\/\/__MSG_@@extension_id__\/(.+?)\)', 'replacement': f"url(\"{full_dir_path}/\\g<1>\")", 'is_regex': True},
+                    {'pattern': "url('/", 'replacement': f"url('{full_dir_path}/"},
+                    {'pattern': r"url\((['\"])chrome-extension://__MSG_@@extension_id__/", 'replacement': f"url(\g<1>{full_dir_path}/", 'is_regex': True},
+                ],
+                '.html': [
+                    {'pattern': "href=\"/", 'replacement': f"href=\"{full_dir_path}/"},
+                    {'pattern': "src=\"/", 'replacement': f"src=\"{full_dir_path}/"},
+                ],
+                '.js': [
+                    {'pattern': "globalThis.chrome", 'replacement': "chrome"},
+                ]
+            }
+
+            # Handle root folder references in JS files
+            ext_root_folders = [d for d in os.listdir(ext_path) if os.path.isdir(os.path.join(ext_path, d))]
+            for dir_name in ext_root_folders:
+                processing_rules['.js'].append({'pattern': f"(['\"])\/{re.escape(dir_name)}", 'replacement': f"\\g<1>{full_dir_path}/{dir_name}", 'is_regex': True})
+                processing_rules['.css'].append({'pattern': f"url\((['\"])\/{re.escape(dir_name)}", 'replacement': f"url(\\g<1>{full_dir_path}/{dir_name}", 'is_regex': True})
+                processing_rules['.css'].append({'pattern': f"url\((/{re.escape(dir_name)}/.+?)\)", 'replacement': f"url(\"{full_dir_path}\\g<1>\")", 'is_regex': True})
+
             for root, _, files in os.walk(ext_path):
                 for file in files:
                     file_extension = os.path.splitext(file)[1].lower()
                     file_path = os.path.join(root, file)
-                    ext_folder = ext_folder.replace('\\', '/')
-
-                    # Define file processing rules
-                    processing_rules = {
-                        '.css': [
-                            {'pattern': r'url\((?!")chrome-extension:\/\/__MSG_@@extension_id__\/(.+?)\)', 'replacement': f"url(\"{extension_url}/{ext_folder}/\\g<1>\")", 'is_regex': True},
-                            {'pattern': "url('/", 'replacement': f"url('{extension_url}/{ext_folder}/"},
-                            {'pattern': "url(\"chrome-extension://__MSG_@@extension_id__/", 'replacement': f"url(\"{extension_url}/{ext_folder}/"},
-                        ],
-                        '.html': [
-                            {'pattern': "href=\"/", 'replacement': f"href=\"{extension_url}/{ext_folder}/"},
-                            {'pattern': "src=\"/", 'replacement': f"src=\"{extension_url}/{ext_folder}/"},
-                        ],
-                        '.js': [
-                            {'pattern': "globalThis.chrome", 'replacement': "chrome"}
-                        ]
-                    }
-
-                    # Handle root folder references in JS files
-                    if file_extension == '.js':
-                        ext_root_folders = [d for d in os.listdir(ext_path) if os.path.isdir(os.path.join(ext_path, d))]
-                        for dir_name in ext_root_folders:
-                            processing_rules['.js'].append({'pattern': f"'/{dir_name}", 'replacement': f"'{extension_url}/{ext_folder}/{dir_name}"})
-
 
                     # Process file if we have rules for its extension
                     if file_extension in processing_rules:
