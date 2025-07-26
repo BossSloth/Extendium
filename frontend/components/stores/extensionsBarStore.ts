@@ -6,7 +6,7 @@ interface ExtensionsBarStore {
   extensionsOrder: string[];
 }
 
-const storageKey = 'extendium_extensionsBarStore';
+export const extensionBarStorageKey = 'extendium_extensionsBarStore';
 
 export const useExtensionsBarStore = create<ExtensionsBarStore>()(persist(
   set =>
@@ -19,6 +19,6 @@ export const useExtensionsBarStore = create<ExtensionsBarStore>()(persist(
       },
     }),
   {
-    name: storageKey,
+    name: extensionBarStorageKey,
   },
 ));

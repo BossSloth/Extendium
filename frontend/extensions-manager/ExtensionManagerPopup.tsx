@@ -7,6 +7,7 @@ import { default as React } from 'react';
 import { mainWindow } from 'shared';
 import { ExtensionDetailInfo } from './ExtensionDetailInfo';
 import { ExtensionManagerRoot } from './ExtensionManagerRoot';
+import { StorageManager } from './Storage/StorageManager';
 
 export function ExtensionManagerPopup(): React.ReactNode {
   const { managerPopup, setManagerPopup } = usePopupsStore();
@@ -14,6 +15,16 @@ export function ExtensionManagerPopup(): React.ReactNode {
 
   if (!managerPopup.open) {
     return null;
+  }
+
+  let content: React.ReactNode = null;
+
+  if (managerPopup.route === null) {
+    content = <ExtensionManagerRoot />;
+  } else if (managerPopup.route.startsWith('info/')) {
+    content = <ExtensionDetailInfo extension={extensions.get(managerPopup.route.split('/').pop() ?? '')} />;
+  } else if (managerPopup.route.startsWith('storage')) {
+    content = <StorageManager />;
   }
 
   return (
@@ -29,13 +40,7 @@ export function ExtensionManagerPopup(): React.ReactNode {
     >
       <Styles />
       <div className="extension-manager-popup">
-        {managerPopup.route !== null
-          ? (
-              <ExtensionDetailInfo extension={extensions.get(managerPopup.route)} />
-            )
-          : (
-              <ExtensionManagerRoot />
-            )}
+        {content}
       </div>
     </SteamDialog>
   );

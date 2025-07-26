@@ -1,13 +1,16 @@
 import { callable, DialogButton } from '@steambrew/client';
 import { DialogControlSectionClass, settingsClasses } from 'classes';
+import { usePopupsStore } from 'components/stores/popupsStore';
 import React from 'react';
-import { FaFolderOpen, FaStore } from 'react-icons/fa';
+import { FaDatabase, FaFolderOpen, FaStore } from 'react-icons/fa';
 import { ExtensionManagerComponent } from './ExtensionManagerComponent';
 import { showInstallExtensionModal } from './InstallExtensionModal';
 
 const GetExtensionsDir = callable<[], string>('GetExtensionsDir');
 
 export function ExtensionManagerRoot(): React.ReactNode {
+  const { setManagerPopup } = usePopupsStore();
+
   async function openExtensionsFolder(): Promise<void> {
     const extensionsDir = await GetExtensionsDir();
     SteamClient.System.OpenLocalDirectoryInSystemExplorer(extensionsDir);
@@ -20,6 +23,13 @@ export function ExtensionManagerRoot(): React.ReactNode {
             <FaSave />
             Save
           </DialogButton> */}
+        <DialogButton
+          onClick={() => { setManagerPopup({ route: 'storage' }); }}
+          className={`span-icon ${settingsClasses.SettingsDialogButton}`}
+        >
+          <FaDatabase />
+          Manage storage
+        </DialogButton>
         <DialogButton
           onClick={showInstallExtensionModal}
           className={`span-icon ${settingsClasses.SettingsDialogButton}`}

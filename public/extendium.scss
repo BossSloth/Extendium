@@ -198,6 +198,19 @@ $grid-gutter: 12px;
   }
 }
 
+.md-button {
+  @include icon-button;
+
+  transition: background 0.2s ease;
+  border-radius: 100px;
+  width: 32px;
+  height: 32px;
+
+  &:hover {
+    background: $button-hover-background;
+  }
+}
+
 .extension-detail-info {
   width: 680px;
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
@@ -210,19 +223,6 @@ $grid-gutter: 12px;
     margin-bottom: 12px;
     padding: 8px 12px 0px;
     color: $primary-text-color;
-
-    & > button {
-      @include icon-button;
-
-      transition: background 0.2s ease;
-      border-radius: 100px;
-      width: 32px;
-      height: 32px;
-
-      &:hover {
-        background: $button-hover-background;
-      }
-    }
 
     & > img {
       margin-inline: 16px 12px;
@@ -289,3 +289,41 @@ $grid-gutter: 12px;
 }
 
 //#endregion
+
+.storage-manager {
+  color: $primary-text-color;
+  .storage-manager-row {
+    @include flex-between;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+
+    button {
+      @include icon-button;
+      cursor: pointer;
+      align-self: flex-start;
+      height: 34px;
+      width: 34px;
+      padding: 5px;
+    }
+  }
+
+  .storage-manager-item {
+    width: 100%;
+    padding: 5px 0;
+
+    &:not(:has(> details[open])) {
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+  }
+
+  .header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    color: white;
+
+    h1 {
+      margin: 0;
+    }
+  }
+
+}

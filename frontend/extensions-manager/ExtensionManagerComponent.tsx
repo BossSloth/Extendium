@@ -38,7 +38,7 @@ export function ExtensionManagerComponent({ extension }: { readonly extension: E
         </div>
       </div>
       <div className="extension-buttons">
-        <DialogButton onClick={() => { setManagerPopup({ route: extension.getName() }); }}>Details</DialogButton>
+        <DialogButton onClick={() => { setManagerPopup({ route: `info/${extension.getName()}` }); }}>Details</DialogButton>
         <DialogButton onClick={() => { showRemoveModal(extension); }}>Remove</DialogButton>
         {/* @ts-expect-error style does not exist */}
         <Toggle onChange={handleToggleChange} style={{ display: 'none' }} value />

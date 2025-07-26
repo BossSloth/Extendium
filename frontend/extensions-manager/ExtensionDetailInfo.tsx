@@ -49,7 +49,7 @@ export function ExtensionDetailInfo({ extension }: { readonly extension: Extensi
   return (
     <div className="extension-detail-info">
       <div className="page-header">
-        <button onClick={() => { setManagerPopup({ route: null }); }} type="button">
+        <button onClick={() => { setManagerPopup({ route: null }); }} type="button" className="md-button">
           <MdArrowBack />
         </button>
         <img src={extension.action.getDefaultIconUrl(48)} />

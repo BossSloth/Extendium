@@ -4,7 +4,7 @@ import { SteamRequestResponseContent } from '../extension/websocket/MessageTypes
 import { mainWindow } from '../shared';
 
 /* eslint-disable @typescript-eslint/no-base-to-string */
-const corsCacheKey = 'extendium-cors-cache';
+const corsCacheKey = 'extendium_cors_cache';
 const proxyUrl = 'http://127.0.0.1:8792/proxy/';
 
 const pendingRequests = new Map<string, PendingRequest>();
