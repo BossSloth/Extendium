@@ -11,13 +11,12 @@ import { StorageManager } from './Storage/StorageManager';
 
 export function ExtensionManagerPopup(): React.ReactNode {
   const { managerPopup, setManagerPopup } = usePopupsStore();
-  // const [extensionDetailRoute, setExtensionDetailRoute] = React.useState<string | null>(null);
 
   if (!managerPopup.open) {
     return null;
   }
 
-  let content: React.ReactNode = null;
+  let content: React.ReactNode;
 
   if (managerPopup.route === null) {
     content = <ExtensionManagerRoot />;
@@ -25,6 +24,8 @@ export function ExtensionManagerPopup(): React.ReactNode {
     content = <ExtensionDetailInfo extension={extensions.get(managerPopup.route.split('/').pop() ?? '')} />;
   } else if (managerPopup.route.startsWith('storage')) {
     content = <StorageManager />;
+  } else {
+    content = <p>Error you somehow got to an undefined route please report this with this route &quot;<code>{managerPopup.route}</code>&quot;</p>;
   }
 
   return (

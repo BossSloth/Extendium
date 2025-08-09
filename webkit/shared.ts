@@ -31,7 +31,7 @@ declare global {
 }
 
 export function isSteamPage(): boolean {
-  return window.location.href.includes('https://store.steampowered.com') || window.location.href.includes('https://steamcommunity.com');
+  return window.location.href.match('^https://store.steampowered.com') !== null || window.location.href.match('^https://steamcommunity.com') !== null;
 }
 
 export function onDomReady(callback: () => void): void {

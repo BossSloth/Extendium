@@ -46,7 +46,7 @@ async function createFakeSteamHeader(userInfo: UserInfo): Promise<void> {
     pageContent.insertAdjacentHTML('afterbegin', html);
   } else {
     const html = replaceKeys(legacyFakeHeader, userInfo);
-    pageContent = document.querySelector('.responsive_page_content') ?? document.querySelector('.headerOverride');
+    pageContent = document.querySelector('.responsive_page_content') ?? document.querySelector('.headerOverride') ?? document.querySelector<HTMLElement>('center');
     pageContent?.insertAdjacentHTML('afterbegin', html);
   }
 

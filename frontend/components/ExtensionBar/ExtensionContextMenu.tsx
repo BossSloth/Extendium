@@ -31,7 +31,7 @@ export function ExtensionContextMenu({ extension }: { readonly extension: Extens
         {extension.hasOptions() && <MenuItem onClick={() => { createOptionsWindow(extension); }}>Options</MenuItem>}
         <MenuItem onClick={unpin}>Unpin</MenuItem>
         <Separator />
-        <MenuItem onClick={() => { openExtensionManagerPopup(extension.getName()); }}>Manage</MenuItem>
+        <MenuItem onClick={() => { openExtensionManagerPopup(`info/${extension.getName()}`); }}>Manage</MenuItem>
       </Menu>
     </div>
   );
