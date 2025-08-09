@@ -68,6 +68,8 @@ export function injectBrowser(context: string, window: Window, extension: Extens
 
     return false;
   };
+
+  window.windowProxy = window;
 }
 
 declare global {
@@ -75,5 +77,6 @@ declare global {
     importScripts(...urls: string[]): void;
     clients: { matchAll(): Promise<unknown[]>; };
     console: typeof console;
+    windowProxy: Window;
   }
 }

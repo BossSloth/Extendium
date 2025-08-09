@@ -1,6 +1,7 @@
 import { ChromeEvent } from './extension/ChromeEvent';
 import { Extension } from './extension/Extension';
 import { Logger } from './extension/Logger';
+import { parseRuntimeSendMessageArgs } from './extension/Messaging';
 import { WebkitRequestType } from './extension/websocket/MessageTypes';
 import { webSocketClient } from './shared';
 import { WebkitStorage } from './webkit-extension/WebkitStorage';
@@ -28,24 +29,26 @@ export function createChrome(context: string, extension: Extension): typeof wind
 
       return response;
     } catch (error) {
-      logger.log('Error in runtime.sendMessage:', error);
+      logger.error('Error in runtime.sendMessage:', error);
       throw error;
     }
-  }
-
-  async function sendMessageWithExtensionId(_extensionId: string, message: unknown, responseCallback?: (response?: unknown) => void): Promise<unknown> {
-    return sendMessageNormal(message, responseCallback);
   }
 
   return {
     i18n: extension.locale,
     runtime: {
-      sendMessage: async (arg1: unknown, arg2?: unknown, arg3?: unknown): Promise<unknown> => {
-        if (arg3 !== undefined) {
-          return sendMessageWithExtensionId(arg1 as string, arg2, arg3 as (response?: unknown) => void);
+      sendMessage: async (...args: unknown[]): Promise<unknown> => {
+        const parsedArgs = parseRuntimeSendMessageArgs(args);
+
+        if (parsedArgs.options !== undefined) {
+          logger.error('runtime.sendMessage with options is not supported yet, options:', parsedArgs.options);
         }
 
-        return sendMessageNormal(arg1, arg2 as (response?: unknown) => void);
+        if (parsedArgs.extensionId !== undefined && parsedArgs.extensionId !== '1234') {
+          logger.error('runtime.sendMessage with extensionId other then our own is not supported yet, extensionId:', parsedArgs.extensionId);
+        }
+
+        return sendMessageNormal(parsedArgs.message, parsedArgs.callback);
       },
       id: '1234',
       onMessage: new ChromeEvent<(message: unknown, sender: chrome.runtime.MessageSender, sendResponse: (response?: unknown) => void) => void>(),

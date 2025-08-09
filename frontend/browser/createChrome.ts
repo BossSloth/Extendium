@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unsafe-function-type */
 /* eslint-disable @typescript-eslint/no-empty-function */
+import { parseRuntimeSendMessageArgs } from '@extension/Messaging';
 import { ChromeEvent } from '../extension/ChromeEvent';
 import { Extension } from '../extension/Extension';
 import { Logger } from '../extension/Logger';
@@ -41,11 +42,20 @@ export function createChrome(context: string, extension: Extension): typeof wind
  */
 function createRuntimeType(extension: Extension, logger: Logger): typeof chrome.runtime {
   return {
-    // @ts-expect-error Ignore
-    sendMessage: async (message: unknown, callback?: (response: unknown) => void): Promise<unknown> => {
-      logger.log('runtime.sendMessage', message, callback);
+    sendMessage: async (...args: unknown[]): Promise<unknown> => {
+      const parsedArgs = parseRuntimeSendMessageArgs(args);
 
-      return extension.runtimeEmulator.sendMessage(message, callback);
+      if (parsedArgs.options !== undefined) {
+        logger.error('runtime.sendMessage', 'runtime.sendMessage with options is not supported yet, options:', parsedArgs.options);
+      }
+
+      if (parsedArgs.extensionId !== undefined && parsedArgs.extensionId !== '1234') {
+        logger.error('runtime.sendMessage', 'runtime.sendMessage with extensionId other then our own is not supported yet, extensionId:', parsedArgs.extensionId);
+      }
+
+      logger.log('runtime.sendMessage', parsedArgs);
+
+      return extension.runtimeEmulator.sendMessage(parsedArgs.message, parsedArgs.callback);
     },
     onMessage: extension.runtimeEmulator.onMessage,
     onMessageExternal: extension.runtimeEmulator.onMessage,
@@ -96,6 +106,7 @@ function createRuntimeType(extension: Extension, logger: Logger): typeof chrome.
     },
     onConnect: new ChromeEvent<(port: chrome.runtime.Port) => void>(),
     onConnectExternal: new ChromeEvent<(port: chrome.runtime.Port) => void>(),
+    onUpdateAvailable: new ChromeEvent<(details: chrome.runtime.UpdateAvailableDetails) => void>(),
   };
 }
 
@@ -203,7 +214,7 @@ function createAlarmsType(extension: Extension, logger: Logger): typeof chrome.a
   return {
     onAlarm: new ChromeEvent<(alarm: chrome.alarms.Alarm) => void>(),
     create: async (...args: unknown[]): Promise<void> => {
-      console.error('alarms.create not implemented', args);
+      logger.error('alarms.create', 'alarms.create not implemented', args);
 
       return Promise.resolve();
     },
@@ -258,7 +269,7 @@ function createContextMenusType(extension: Extension, logger: Logger): typeof ch
   // TODO: implement
   return {
     create: (...args: unknown[]): string | number => {
-      console.error('contextMenus.create not implemented', args);
+      logger.error('contextMenus.create', 'contextMenus.create not implemented', args);
 
       return -1;
     },
@@ -288,7 +299,7 @@ function createNotificationsType(extension: Extension, logger: Logger): typeof c
   // TODO: implement
   return {
     create: (...args: unknown[]): string | number => {
-      console.error('notifications.create not implemented', args);
+      logger.error('notifications.create', 'notifications.create not implemented', args);
 
       return -1;
     },

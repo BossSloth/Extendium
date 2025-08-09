@@ -17,13 +17,17 @@ interface PendingRequest {
 export function patchFetch(window: Window): void {
   const oldFetch = window.fetch;
 
-  window.fetch = async (input: RequestInfo | URL, init?: RequestInit): Promise<Response> => {
+  window.fetch = async (input: RequestInfo | URL, init?: RequestInit & { xhrFields?: { withCredentials: boolean; }; }): Promise<Response> => {
     const baseUrl = input.toString()
       .replace('https://', '')
       .replace('http://', '')
       .split('/')[0] ?? 'error';
 
-    if ((init?.credentials === 'include' && (baseUrl.includes('steampowered.com') || baseUrl.includes('steamcommunity.com'))) || (baseUrl === 'store.steampowered.com' && input.toString().includes('user'))) {
+    if (init?.xhrFields?.withCredentials === true) {
+      init.credentials = 'include';
+    }
+
+    if (shouldDoCredentialsFetch(baseUrl, input, init)) {
       return credentialsFetch(input, init);
     }
 
@@ -56,6 +60,22 @@ async function corsFetch(oldFetch: typeof window.fetch, input: RequestInfo | URL
   const response = await oldFetch(proxyUrl + requestUrl, init);
 
   return response;
+}
+
+function shouldDoCredentialsFetch(baseUrl: string, input: RequestInfo | URL, init?: RequestInit): boolean {
+  if (init?.credentials === 'include' && (baseUrl.includes('steampowered.com') || baseUrl.includes('steamcommunity.com'))) {
+    return true;
+  }
+
+  if (baseUrl === 'store.steampowered.com' && input.toString().includes('user')) {
+    return true;
+  }
+
+  if (baseUrl === 'steamcommunity.com' && input.toString().includes('/my')) {
+    return true;
+  }
+
+  return false;
 }
 
 async function credentialsFetch(input: RequestInfo | URL, init?: RequestInit): Promise<Response> {

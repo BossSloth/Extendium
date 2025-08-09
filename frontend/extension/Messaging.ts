@@ -111,3 +111,63 @@ export class RuntimeEmulator {
     return promise;
   }
 }
+
+export function parseRuntimeSendMessageArgs(argsUnknown: IArguments | unknown[]): SendMessageParsed {
+  const args = Array.from(argsUnknown);
+  const argsLength = args.length;
+
+  function isCallback(x: unknown): x is (res?: unknown) => void {
+    return typeof x === 'function';
+  }
+  // eslint-disable-next-line no-eq-null, eqeqeq
+  const hasExtensionId = argsLength >= 2 && (typeof args[0] === 'string' || args[0] == null);
+
+  if (hasExtensionId) {
+    const extensionId = args[0] as string | null;
+    const message = args[1];
+
+    if (argsLength === 2) {
+      // sendMessage(extensionId, message): Promise
+      return { extensionId, message };
+    }
+    if (argsLength === 3) {
+      // sendMessage(extensionId, message, responseCallback) OR sendMessage(extensionId, message, options)
+      return isCallback(args[2])
+        ? { extensionId, message, callback: args[2] }
+        : { extensionId, message, options: args[2] as chrome.runtime.MessageOptions };
+    }
+
+    // argsLength >= 4: sendMessage(extensionId, message, options, responseCb)
+    return {
+      extensionId,
+      message,
+      options: args[2] as chrome.runtime.MessageOptions,
+      callback: args[3] as (r?: unknown) => void,
+    };
+  }
+  const message = args[0];
+  if (argsLength === 1) {
+    // sendMessage(message): Promise
+    return { message };
+  }
+  if (argsLength === 2) {
+    // sendMessage(message, responseCallback) OR sendMessage(message, options)
+    return isCallback(args[1])
+      ? { message, callback: args[1] as (r?: unknown) => void }
+      : { message, options: args[1] as chrome.runtime.MessageOptions };
+  }
+
+  // argLength >= 3: sendMessage(message, options, responseCallback)
+  return {
+    message,
+    options: args[1] as chrome.runtime.MessageOptions,
+    callback: args[2] as (r?: unknown) => void,
+  };
+}
+
+export interface SendMessageParsed {
+  callback?(response?: unknown): void;
+  extensionId?: string | null;
+  message: unknown;
+  options?: chrome.runtime.MessageOptions;
+}

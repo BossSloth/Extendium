@@ -4,19 +4,34 @@ import http.server
 import socketserver
 import threading
 import time
-from urllib.error import HTTPError, URLError
-from urllib.request import (HTTPErrorProcessor, HTTPHandler, Request,
-                            build_opener)
+from urllib.error import URLError
+from urllib.request import HTTPErrorProcessor, Request, build_opener
 
 from logger import logger
 
 
 class NoExceptionErrorProcessor(HTTPErrorProcessor):
     def http_response(self, request, response):
+        # Allow redirects (3xx) to be processed by the default redirect handler,
+        # but do not raise exceptions for 4xx/5xx — return the raw response instead.
+        try:
+            code = getattr(response, 'status', None)
+            if code is None:
+                code = response.getcode()
+        except Exception:
+            code = None
+
+        # Is the code in the 300 range
+        if code is not None and 300 <= code < 400:
+            # Delegate to the parent to trigger HTTPRedirectHandler
+            return HTTPErrorProcessor.http_response(self, request, response)
+
+        # For non-redirects (incl. 2xx, 4xx, 5xx), just return the response without raising
         return response
 
     def https_response(self, request, response):
-        return response
+        # Apply the same logic for HTTPS
+        return self.http_response(request, response)
 
 # Proxy request handler
 class ProxyHandler(http.server.BaseHTTPRequestHandler):
@@ -61,7 +76,7 @@ class ProxyHandler(http.server.BaseHTTPRequestHandler):
 
                 # Create a request with the same headers
                 headers = {key: val for key, val in self.headers.items()
-                          if key.lower() not in ('host', 'connection', 'transfer-encoding')}
+                          if key.lower() not in ('host', 'connection', 'transfer-encoding', 'origin')}
 
                 # Add security headers
                 headers['Sec-Fetch-Site'] = 'cross-site'

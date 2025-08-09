@@ -33,7 +33,7 @@ export class Storage implements chrome.storage.StorageArea {
   }
 
   async get<T = Record<string, unknown>>(
-    keys: NoInferX<keyof T> | NoInferX<keyof T>[] | Partial<NoInferX<T>> | null | ((items: T) => void),
+    keys?: NoInferX<keyof T> | NoInferX<keyof T>[] | Partial<NoInferX<T>> | null | ((items: T) => void),
     callback?: (items: T) => void,
   ): Promise<T> {
     this.#logger.log(`storage.${this.area}.get`, keys, callback);
@@ -60,7 +60,7 @@ export class Storage implements chrome.storage.StorageArea {
       keys = null;
     }
 
-    if (keys === null) {
+    if (keys === null || keys === undefined) {
       result = { ...data };
     } else if (typeof keys === 'string') {
       keysToRetrieve = [keys];

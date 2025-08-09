@@ -165,6 +165,7 @@ def PrepareExtensionFiles():
                 ],
                 '.js': [
                     {'pattern': "globalThis.chrome", 'replacement': "chrome"},
+                    {'pattern': ".bind(null,this)", 'replacement': ".bind(null,windowProxy)"},
                 ]
             }
 
@@ -179,6 +180,7 @@ def PrepareExtensionFiles():
                 for file in files:
                     file_extension = os.path.splitext(file)[1].lower()
                     file_path = os.path.join(root, file)
+                    relative_path = EXTENSIONS_DIR + '/' + os.path.relpath(file_path, extensions_dir)
 
                     # Process file if we have rules for its extension
                     if file_extension in processing_rules:
@@ -187,6 +189,9 @@ def PrepareExtensionFiles():
                                 content = f.read()
 
                             modified_content = content
+                            previous_content = content
+
+                            processed_patterns = []
                             for rule in processing_rules[file_extension]:
                                 find_pattern = rule['pattern']
                                 replace_pattern = rule['replacement']
@@ -197,12 +202,17 @@ def PrepareExtensionFiles():
                                 else:
                                     modified_content = modified_content.replace(find_pattern, replace_pattern)
 
+                                if previous_content != modified_content:
+                                    processed_patterns.append(find_pattern)
+
+                                previous_content = modified_content
+
                             if content != modified_content:
                                 with open(file_path, 'w', encoding='utf-8') as f:
                                     f.write(modified_content)
-                                logger.log(f"Updated {file_extension} file: {file_path}")
+                                logger.log(f"Updated {file_extension} file: {relative_path} with patterns: {processed_patterns}")
                         except Exception as e:
-                            logger.error(f"Error processing {file_extension} file {file_path}: {str(e)}")
+                            logger.error(f"Error processing {file_extension} file {relative_path}: {str(e)}")
 
 class Plugin:
     def _front_end_loaded(self):
