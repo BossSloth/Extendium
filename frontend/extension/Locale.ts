@@ -20,16 +20,31 @@ export class Locale implements chromeLocale {
       return;
     }
 
-    const language = navigator.language.split('-')[0];
+    const language = this.getUILanguage();
     let content;
     try {
-      content = await fetch(this.#extension.getFileUrl(`/_locales/${language}/messages.json`) ?? '').then(async r => r.text());
+      content = await this.fetchLocale(language);
     } catch {
-      console.debug(`[${this.#extension.getName()}] Locale ${language} not found, falling back to default locale (${defaultLocale})`);
-      // Fallback to default locale (en) if the requested locale doesn't exist
-      content = await fetch(this.#extension.getFileUrl(`/_locales/${defaultLocale}/messages.json`) ?? '').then(async r => r.text());
+      const shortLanguage = navigator.language.split('-')[0] ?? '';
+      console.debug(`[${this.#extension.getName()}] Locale ${language} not found, falling back to short locale (${shortLanguage})`);
+      try {
+        content = await this.fetchLocale(shortLanguage);
+      } catch {
+        console.debug(`[${this.#extension.getName()}] Locale ${shortLanguage} not found, falling back to default locale (${defaultLocale})`);
+        // Fallback to default locale (en) if the requested locale doesn't exist
+        content = await this.fetchLocale(defaultLocale);
+      }
     }
     this.messages = JSON.parse(content) as Record<string, LanguageRecord>;
+  }
+
+  async fetchLocale(language: string): Promise<string> {
+    const response = await fetch(this.#extension.getFileUrl(`/_locales/${language}/messages.json`) ?? '');
+    if (!response.ok) {
+      throw new Error(`Failed to fetch locale ${language}`);
+    }
+
+    return response.text();
   }
 
   getMessage(messageKey: string, substitutions?: string[] | string): string {
@@ -70,22 +85,18 @@ export class Locale implements chromeLocale {
     return message;
   }
 
-  getUILanguage(): string {
-    return navigator.language;
-  }
-
   async getAcceptLanguages(): Promise<string[]> {
-    return Promise.resolve([navigator.language]);
+    return Promise.resolve([...navigator.languages]);
   }
 
   async detectLanguage(): Promise<chrome.i18n.LanguageDetectionResult> {
-    return Promise.resolve({ language: navigator.language, isReliable: true, languages: [{ language: navigator.language, percentage: 100 }] });
+    return Promise.resolve({ language: this.getUILanguage(), isReliable: true, languages: [{ language: this.getUILanguage(), percentage: 100 }] });
   }
 
   getPredefinedMessage(key: string): string | undefined {
     switch (key) {
       case '@@extension_id': return '1234';
-      case '@@ui_locale': return navigator.language.split('-')[0];
+      case '@@ui_locale': return this.getUILanguage();
       case '@@bidi_dir': return document.body.dir;
       case '@@bidi_reversed_dir': return document.body.dir === 'ltr' ? 'rtl' : 'ltr';
       case '@@bidi_start_edge': return document.body.dir === 'ltr' ? 'left' : 'right';
@@ -96,6 +107,16 @@ export class Locale implements chromeLocale {
 
   getMSGKey(key: string): string {
     return key.replaceAll(/__MSG_(.+)__/g, '$1');
+  }
+
+  getUILanguage(): string {
+    const longRegionLocales = ['es-419', 'pt-BR', 'pt-PT', 'zh-CN', 'zh-TW'];
+    let language = navigator.language;
+    if (!longRegionLocales.includes(language)) {
+      language = language.split('-')[0] ?? '';
+    }
+
+    return language.replaceAll('-', '_');
   }
 }
 
