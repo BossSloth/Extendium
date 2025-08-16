@@ -52,7 +52,8 @@ class MessageAdapter:
         try:
             client.websocket.send(message)
         except ConnectionClosed:
-            logger.error("Failed to send message to client: connection closed")
+            # logger.error("Failed to send message to client: connection closed")
+            pass
         except Exception as e:
             logger.error(f"Error sending message: {e}")
 

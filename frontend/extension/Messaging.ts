@@ -69,7 +69,7 @@ export class RuntimeEmulator {
           }
           // If listener returns void/undefined/false/etc., and didn't call sendResponse sync, do nothing immediately.
         } catch (error) {
-          console.error('[Runtime] Error in message listener:', error);
+          this.extension.logger.error('Runtime', 'Error in message listener:', error);
           // Decide how to handle listener errors. Chrome usually just logs them.
           // We won't reject the promise here to mimic that behavior.
         }
