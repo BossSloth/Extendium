@@ -32,6 +32,7 @@ export function createChrome(context: string, extension: Extension): typeof wind
     notifications: createNotificationsType(extension, logger),
     webRequest: createWebRequestType(extension, logger),
     declarativeNetRequest: createDeclarativeNetRequestType(extension, logger),
+    management: createManagementType(extension, logger),
   };
 
   return chromeObj;
@@ -188,6 +189,22 @@ function createTabsType(extension: Extension, logger: Logger): typeof chrome.tab
     onUpdated: new ChromeEvent<(tabId: number, changeInfo: chrome.tabs.TabChangeInfo, tab: chrome.tabs.Tab) => void>(),
     onActivated: new ChromeEvent<(activeInfo: chrome.tabs.TabActiveInfo) => void>(),
     query: queryTabs,
+    detectLanguage: async (arg1?: number | ((language: string) => void), arg2?: (language: string) => void): Promise<string> => {
+      logger.log('tabs.detectLanguage', arg1, arg2);
+
+      let callback: ((language: string) => void) | undefined;
+      if (typeof arg1 === 'function') {
+        callback = arg1;
+      } else if (typeof arg2 === 'function') {
+        callback = arg2;
+      }
+
+      if (callback !== undefined) {
+        callback(extension.locale.getUILanguage());
+      }
+
+      return Promise.resolve(extension.locale.getUILanguage());
+    },
   };
 }
 
@@ -342,6 +359,19 @@ function createDeclarativeNetRequestType(extension: Extension, logger: Logger): 
       callback?.();
 
       return Promise.resolve();
+    },
+  };
+}
+
+function createManagementType(extension: Extension, logger: Logger): typeof chrome.management {
+  // TODO: implement
+  return {
+    getSelf: async (callback?: (info: chrome.management.ExtensionInfo) => void): Promise<chrome.management.ExtensionInfo> => {
+      logger.log('management.getSelf');
+
+      callback?.({});
+
+      return Promise.resolve({});
     },
   };
 }
