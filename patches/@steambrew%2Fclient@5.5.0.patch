@@ -1,0 +1,11 @@
+diff --git a/build/globals/SteamClient.d.ts b/build/globals/SteamClient.d.ts
+index db0ae5f77fd80cfc61cdf780f2da6aaab2531bc3..8b137891791fe96927ad78e64b0aad7bded08bdc 100644
+--- a/build/globals/SteamClient.d.ts
++++ b/build/globals/SteamClient.d.ts
+@@ -1,5 +1 @@
+-import { SteamClient } from './steam-client';
+-export * from './steam-client';
+-declare global {
+-    var SteamClient: SteamClient;
+-}
++

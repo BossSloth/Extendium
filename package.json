@@ -47,6 +47,6 @@
     "zustand": "^5.0.7"
   },
   "patchedDependencies": {
-    "@steambrew/client@4.2.1": "patches/@steambrew%2Fclient@4.2.1.patch"
+    "@steambrew/client@5.5.0": "patches/@steambrew%2Fclient@5.5.0.patch"
   }
 }

@@ -1,5 +1,6 @@
 import { callable, Millennium } from '@steambrew/client';
 import { startIntervalForUpdate as startIntervalForUpdates } from 'updates/updater';
+import { handleUrlScheme } from 'urlSchemeHandler';
 import { Extension } from './extension/Extension';
 import { ExtensionMetadata } from './extension/Metadata';
 import { UserInfo } from './extension/shared';
@@ -26,6 +27,7 @@ Millennium.exposeObj(global);
 
 // Entry point on the front end of your plugin
 export default async function PluginMain(): Promise<void> {
+  SteamClient.URL.RegisterForRunSteamURL('extendium', handleUrlScheme);
   userInfo = await getUserInfo();
   const infos = JSON.parse(await GetExtensionsInfos()) as { extensionsDir: string; pluginDir: string; manifests: Record<string, chrome.runtime.ManifestV3>; metadatas?: Record<string, ExtensionMetadata>; };
   const manifests = infos.manifests;
