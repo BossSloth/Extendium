@@ -70,7 +70,7 @@ export default tseslint.config(
       '@typescript-eslint/method-signature-style': ['error', 'method'],
       '@typescript-eslint/prefer-literal-enum-member': ['error', { allowBitwiseExpressions: true }],
       'func-style': ['error', 'declaration'],
-      'max-lines-per-function': ['error', { max: 100, skipBlankLines: true, skipComments: true }], // Higher than default for React components
+      'max-lines-per-function': 'off',
 
       '@typescript-eslint/consistent-type-exports': 'off',
       '@typescript-eslint/consistent-type-imports': 'off',

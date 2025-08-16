@@ -8,6 +8,19 @@ import { showRestartModal } from './RestartModal';
 export function InstallExtensionModal({ modal }: { readonly modal: ShowModalResult | null; }): React.ReactNode {
   const [url, setUrl] = React.useState('');
   const [loading, setLoading] = React.useState(false);
+  const [error, setError] = React.useState<string | null>(null);
+
+  async function onOk(): Promise<void> {
+    setLoading(true);
+    const success = await downloadExtensionFromUrl(url);
+    if (success) {
+      showRestartModal();
+      modal?.Close();
+    } else {
+      setError('Failed to download extension. Check logs for more information.');
+    }
+    setLoading(false);
+  }
 
   return (
     <ConfirmModal
@@ -23,16 +36,11 @@ export function InstallExtensionModal({ modal }: { readonly modal: ShowModalResu
             style={{ marginTop: '2rem' }}
             onChange={(e) => { setUrl(e.target.value); }}
           />
+          {error !== null && <p style={{ color: 'red' }}>{error}</p>}
         </>
       )}
       bHideCloseIcon
-      onOK={async () => {
-        setLoading(true);
-        await downloadExtensionFromUrl(url);
-        showRestartModal();
-        setLoading(false);
-        modal?.Close();
-      }}
+      onOK={onOk}
       onCancel={() => {
         modal?.Close();
       }}

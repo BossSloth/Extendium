@@ -5,7 +5,7 @@ import { mainWindow } from 'shared';
 
 export interface ConfirmationModalProps {
   onCancel?(): void;
-  onOK(): Promise<void> | void;
+  onOK?(): Promise<void> | void;
   readonly description: ReactNode;
   readonly hideCloseIcon?: boolean;
   readonly modal: ShowModalResult | null;
@@ -28,7 +28,7 @@ function ConfirmationModal({
       strDescription={description}
       bHideCloseIcon={hideCloseIcon}
       onOK={async () => {
-        await onOK();
+        await onOK?.();
       }}
       onCancel={() => {
         if (onCancel) {
@@ -43,7 +43,7 @@ function ConfirmationModal({
 
 export interface ShowConfirmationModalOptions {
   onCancel?(): void;
-  onOK(): Promise<void> | void;
+  onOK?(): Promise<void> | void;
   readonly bNeverPopOut?: boolean;
   readonly closeOnOK?: boolean;
   readonly description: ReactNode;
@@ -75,7 +75,7 @@ export function showConfirmationModal({
 
     async function handleOK(): Promise<void> {
       try {
-        await onOK();
+        await onOK?.();
       } finally {
         if (closeOnOK) {
           modal?.Close();

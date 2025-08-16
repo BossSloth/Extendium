@@ -1,5 +1,7 @@
 import { callable, Millennium } from '@steambrew/client';
+import { startIntervalForUpdate as startIntervalForUpdates } from 'updates/updater';
 import { Extension } from './extension/Extension';
+import { ExtensionMetadata } from './extension/Metadata';
 import { UserInfo } from './extension/shared';
 import { OnPopupCreation } from './onPopupCreation';
 import { getUserInfo, initPluginDir } from './shared';
@@ -25,14 +27,14 @@ Millennium.exposeObj(global);
 // Entry point on the front end of your plugin
 export default async function PluginMain(): Promise<void> {
   userInfo = await getUserInfo();
-  const infos = JSON.parse(await GetExtensionsInfos()) as { extensionsDir: string; pluginDir: string; manifests: Record<string, chrome.runtime.ManifestV3>; };
+  const infos = JSON.parse(await GetExtensionsInfos()) as { extensionsDir: string; pluginDir: string; manifests: Record<string, chrome.runtime.ManifestV3>; metadatas?: Record<string, ExtensionMetadata>; };
   const manifests = infos.manifests;
   initPluginDir(infos.pluginDir);
   extensionsDir = infos.extensionsDir.replaceAll('\\', '/');
   const extensionsUrl = `https://js.millennium.app/${extensionsDir}`;
   const extensionObjects = [];
   for (const [folderName, manifest] of Object.entries(manifests)) {
-    extensionObjects.push(new Extension(manifest, `${extensionsUrl}/${folderName}`, folderName));
+    extensionObjects.push(new Extension(manifest, `${extensionsUrl}/${folderName}`, folderName, infos.metadatas?.[folderName]));
   }
 
   await Promise.all(extensionObjects.map(async (extension) => {
@@ -41,6 +43,8 @@ export default async function PluginMain(): Promise<void> {
   }));
 
   global.webkit.init(extensions);
+
+  startIntervalForUpdates();
 
   const wnd = g_PopupManager.GetExistingPopup('SP Desktop_uid0');
   if (wnd) {

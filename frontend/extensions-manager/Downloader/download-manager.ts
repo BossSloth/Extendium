@@ -1,8 +1,10 @@
+import { ExtensionMetadata } from '@extension/Metadata';
+import { base64Encode } from '@extension/utils';
 import { callable } from '@steambrew/client';
 
-const chromeURLPattern = /^https?:\/\/chromewebstore.google.com\/detail\/(.+?)\/([a-z]{32})(?=[\/#?]|$)/;
+const chromeURLPattern = /^https?:\/\/chromewebstore.google.com\/detail\/(.+?)\/([a-z]{32})(?=[/#?]|$)/;
 
-const DownloadExtensionFromUrl = callable<[{ url: string; name: string; }], void>('DownloadExtensionFromUrl');
+const DownloadExtensionFromUrl = callable<[{ url: string; metadata: string; name: string; }], boolean>('DownloadExtensionFromUrl');
 
 function getChromeVersion(): { major?: number; minor?: number; build?: number; patch?: number; } {
   const pieces = navigator.userAgent.match(/Chrom(?:e|ium)\/([0-9]+)\.([0-9]+)\.([0-9]+)\.([0-9]+)/);
@@ -33,16 +35,29 @@ const currentVersion = getChromeVersion();
 const version = `${currentVersion.major}.${currentVersion.minor}.${currentVersion.build}.${currentVersion.patch}`;
 const naclArch = getNaclArch();
 
-export async function downloadExtensionFromUrl(url: string): Promise<void> {
+export async function downloadExtensionFromUrl(url: string): Promise<boolean> {
   const match = url.match(chromeURLPattern);
 
   if (match?.length !== 3) {
-    return;
+    return false;
   }
 
   const [, extensionName, extensionId] = match;
-  const downloadUrl = `https://clients2.google.com/service/update2/crx?response=redirect&prodversion=${version}&x=id%3D${extensionId}%26installsource%3Dondemand%26uc&nacl_arch=${naclArch}&acceptformat=crx2,crx3`;
 
-  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-  await DownloadExtensionFromUrl({ url: downloadUrl, name: extensionName! });
+  if (extensionName === undefined || extensionId === undefined) {
+    return false;
+  }
+
+  const metadata: ExtensionMetadata = {
+    extensionId,
+    url,
+  };
+
+  return downloadExtensionUpdate(extensionName, metadata);
+}
+
+export async function downloadExtensionUpdate(folderName: string, metadata: ExtensionMetadata): Promise<boolean> {
+  const downloadUrl = `https://clients2.google.com/service/update2/crx?response=redirect&prodversion=${version}&x=id%3D${metadata.extensionId}%26installsource%3Dondemand%26uc&nacl_arch=${naclArch}&acceptformat=crx2,crx3`;
+
+  return DownloadExtensionFromUrl({ url: downloadUrl, metadata: base64Encode(JSON.stringify(metadata)), name: folderName });
 }

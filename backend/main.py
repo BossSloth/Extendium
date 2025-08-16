@@ -1,4 +1,5 @@
 # pylint: disable=invalid-name
+import base64
 import json
 import os
 import re
@@ -49,11 +50,29 @@ def GetExtensionManifests():
 
     return manifests
 
+def GetExtensionMetadatas():
+    extensions_dir = GetExtensionsDir()
+    metadatas = {}
+
+    if os.path.exists(extensions_dir):
+        for ext_folder in os.listdir(extensions_dir):
+            metadata_path = os.path.join(extensions_dir, ext_folder, "metadata.json")
+            if os.path.isfile(metadata_path):
+                try:
+                    with open(metadata_path, 'r', encoding='utf-8') as f:
+                        metadata_data = json.load(f)
+                        metadatas[ext_folder] = metadata_data
+                except Exception as e:
+                    logger.error(f"Error reading metadata {metadata_path}: {str(e)}")
+
+    return metadatas
+
 def GetExtensionsInfos():
     return json.dumps({
         'extensionsDir': GetExtensionsDir(),
         'pluginDir': GetPluginDir(),
-        'manifests': GetExtensionManifests()
+        'manifests': GetExtensionManifests(),
+        'metadatas': GetExtensionMetadatas(),
     })
 
 def RemoveExtension(name: str):
@@ -70,6 +89,22 @@ def GetUserInfo():
     if USER_INFO is None:
         USER_INFO = Millennium.call_frontend_method('getUserInfo') # pylint: disable=assignment-from-no-return,no-value-for-parameter
     return USER_INFO
+
+def CheckForUpdates():
+    metadatas = GetExtensionMetadatas()
+    manifests = GetExtensionManifests()
+    foundUpdates = {}
+    for [name, metadata] in metadatas.items():
+        try:
+            page = requests.get(metadata['url'], timeout=30)
+            version = re.search(r'<div[^>]*>Version</div><div[^>]*>([^<]+)</div>', page.text)
+            if version:
+                if version.group(1) != manifests[name]['version']:
+                    foundUpdates[name] = metadata
+        except Exception as e:
+            logger.error(f"Error checking for updates for extension '{name}': {str(e)}")
+
+    return json.dumps(foundUpdates)
 
 def extract_zip_from_crx(crx_data: bytes) -> bytes:
     # Check magic number (first 4 bytes) == Cr24
@@ -91,7 +126,7 @@ def extract_zip_from_crx(crx_data: bytes) -> bytes:
     zip_data = crx_data[header_len:]
     return zip_data
 
-def DownloadExtensionFromUrl(url: str, name: str):
+def DownloadExtensionFromUrl(url: str, metadata: str, name: str):
     extensions_dir = GetExtensionsDir()
 
     if not os.path.exists(extensions_dir):
@@ -120,6 +155,10 @@ def DownloadExtensionFromUrl(url: str, name: str):
 
         with zipfile.ZipFile(temp_file_path, 'r') as zip_ref:
             zip_ref.extractall(ext_dir)
+
+        # Write metadata to the extension directory
+        with open(os.path.join(ext_dir, 'metadata.json'), 'w', encoding='utf-8') as f:
+            f.write(base64.b64decode(metadata).decode('utf-8'))
 
         # Clean up
         os.unlink(temp_file_path)

@@ -4,6 +4,7 @@ import { Contexts } from './Contexts';
 import { Locale } from './Locale';
 import { Logger } from './Logger';
 import { RuntimeEmulator } from './Messaging';
+import { ExtensionMetadata } from './Metadata';
 
 export class Extension {
   public readonly action: Action;
@@ -13,7 +14,7 @@ export class Extension {
   public readonly storageOnChanged = new ChromeEvent<(changes: Record<string, chrome.storage.StorageChange>, areaName: chrome.storage.AreaName) => void>();
   public readonly logger: Logger;
 
-  constructor(readonly manifest: chrome.runtime.ManifestV3, readonly url: string, readonly folderName: string) {
+  constructor(readonly manifest: chrome.runtime.ManifestV3, readonly url: string, readonly folderName: string, readonly metadata?: ExtensionMetadata) {
     this.action = new Action(this);
     this.runtimeEmulator = new RuntimeEmulator(this);
     this.contexts = new Contexts();
