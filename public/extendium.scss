@@ -38,6 +38,10 @@ $secondary-text-color: rgba(255, 255, 255, 0.6);
   margin-right: 0.5rem;
   -webkit-app-region: no-drag;
 
+  * {
+    -webkit-app-region: no-drag;
+  }
+
   .ModalDialogBody & {
     margin-right: 1rem;
   }

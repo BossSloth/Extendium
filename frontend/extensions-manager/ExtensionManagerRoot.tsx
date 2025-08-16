@@ -2,7 +2,7 @@ import { callable, DialogButton } from '@steambrew/client';
 import { DialogControlSectionClass, settingsClasses } from 'classes';
 import { usePopupsStore } from 'components/stores/popupsStore';
 import React from 'react';
-import { FaDatabase, FaFolderOpen, FaStore } from 'react-icons/fa';
+import { FaCog, FaDatabase, FaFolderOpen, FaStore } from 'react-icons/fa';
 import { ExtensionManagerComponent } from './ExtensionManagerComponent';
 import { showInstallExtensionModal } from './InstallExtensionModal';
 
@@ -43,6 +43,13 @@ export function ExtensionManagerRoot(): React.ReactNode {
         >
           <FaFolderOpen />
           Browse local files
+        </DialogButton>
+        <DialogButton
+          onClick={() => { setManagerPopup({ route: 'settings' }); }}
+          className={`span-icon ${settingsClasses.SettingsDialogButton}`}
+          style={{ width: 'min-content', minWidth: 'unset' }}
+        >
+          <FaCog />
         </DialogButton>
       </div>
       <div className="card-container">

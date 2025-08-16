@@ -7,6 +7,7 @@ import { default as React } from 'react';
 import { mainWindow } from 'shared';
 import { ExtensionDetailInfo } from './ExtensionDetailInfo';
 import { ExtensionManagerRoot } from './ExtensionManagerRoot';
+import { ExtendiumSettings } from './Settings/ExtendiumSettings';
 import { StorageManager } from './Storage/StorageManager';
 
 export function ExtensionManagerPopup(): React.ReactNode {
@@ -24,6 +25,8 @@ export function ExtensionManagerPopup(): React.ReactNode {
     content = <ExtensionDetailInfo extension={extensions.get(managerPopup.route.split('/').pop() ?? '')} />;
   } else if (managerPopup.route.startsWith('storage')) {
     content = <StorageManager />;
+  } else if (managerPopup.route.startsWith('settings')) {
+    content = <ExtendiumSettings />;
   } else {
     content = <p>Error you somehow got to an undefined route please report this with this route &quot;<code>{managerPopup.route}</code>&quot;</p>;
   }

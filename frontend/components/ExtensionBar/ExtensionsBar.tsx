@@ -3,12 +3,14 @@ import { restrictToHorizontalAxis, restrictToParentElement } from '@dnd-kit/modi
 import { arrayMove, horizontalListSortingStrategy, SortableContext } from '@dnd-kit/sortable';
 import { Extension } from '@extension/Extension';
 import React, { JSX, useEffect } from 'react';
+import { useSettingsStore } from '../../extensions-manager/Settings/settingsStore';
 import { ToolbarManagerButton } from '../ToolbarExtensionManager/ToolbarManagerButton';
 import { useExtensionsBarStore } from '../stores/extensionsBarStore';
 import { ExtensionButton } from './ExtensionButton';
 
 export function ExtensionsBar({ extensions }: { readonly extensions: Map<string, Extension>; }): JSX.Element {
   const { extensionsOrder, setExtensionsOrder } = useExtensionsBarStore();
+  const { barMarginLeft, barMarginRight } = useSettingsStore();
 
   const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 8 } }));
 
@@ -31,6 +33,20 @@ export function ExtensionsBar({ extensions }: { readonly extensions: Map<string,
     }
   }, []);
 
+  function getBarStyles(): React.CSSProperties {
+    const style: React.CSSProperties = {};
+
+    if (barMarginLeft !== 0) {
+      style.marginLeft = barMarginLeft;
+    }
+
+    if (barMarginRight !== 0) {
+      style.marginRight = barMarginRight;
+    }
+
+    return style;
+  }
+
   return (
     <DndContext
       sensors={sensors}
@@ -39,7 +55,7 @@ export function ExtensionsBar({ extensions }: { readonly extensions: Map<string,
       modifiers={[restrictToHorizontalAxis, restrictToParentElement]}
     >
       <SortableContext items={extensionsOrder} strategy={horizontalListSortingStrategy}>
-        <div className="extensions-bar">
+        <div className="extensions-bar" style={getBarStyles()}>
           {extensionsOrder.map(extensionId => (
             extensions.get(extensionId)?.action.getIconUrl() === undefined
               ? null

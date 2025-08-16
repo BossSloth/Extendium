@@ -61,7 +61,7 @@ def RemoveExtension(name: str):
     ext_dir = os.path.join(extensions_dir, name)
     if os.path.exists(ext_dir):
         shutil.rmtree(ext_dir)
-    Millennium.call_frontend_method('removeExtension', name)
+    Millennium.call_frontend_method('removeExtension', params=[name])
 
 USER_INFO = None
 
