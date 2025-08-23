@@ -6,5 +6,5 @@
       "@extension/*": ["../shared/extension/*"]
     }
   },
-  "include": ["."],
+  "include": [".", "../shared/extension/*"],
 }

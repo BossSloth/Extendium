@@ -4,7 +4,6 @@ export class Contexts {
   public addContext(popupWindow: Window, type: ContextType, documentUrl: string | undefined): void {
     this.contexts.push({
       contextId: popupWindow.document.title,
-      // @ts-expect-error contextType is not assignable
       contextType: type,
       documentId: '0',
       documentOrigin: '',

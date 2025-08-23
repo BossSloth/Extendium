@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/class-methods-use-this */
 
-export class ChromeEvent<T extends (...args: never) => unknown = () => void> implements chrome.events.Event<T> {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export class ChromeEvent<T extends (...args: any) => unknown = () => void> implements chrome.events.Event<T> {
   private listeners: T[] = [];
 
   addListener(callback: T): void {
@@ -39,7 +40,6 @@ export class ChromeEvent<T extends (...args: never) => unknown = () => void> imp
 
   emit(...args: Parameters<T>): void {
     for (const listener of this.listeners) {
-      // @ts-expect-error we can pass the args
       listener(...args);
     }
   }
