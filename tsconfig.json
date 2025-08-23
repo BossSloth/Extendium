@@ -18,7 +18,7 @@
       "strictNullChecks": true,
       "noUncheckedIndexedAccess": true,
       "strict": true,
-      "types": ["steam-types", "chrome"]
+      "types": ["steam-types", "chrome", "node"]
     },
     "exclude": ["node_modules"]
 }

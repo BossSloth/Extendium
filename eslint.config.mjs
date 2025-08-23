@@ -8,7 +8,7 @@ import tseslint from 'typescript-eslint';
 
 export default tseslint.config(
   { files: ['**/*.{js,mjs,cjs,ts}'] },
-  globalIgnores(['.millennium/', '.venv/', '._extensions/', 'webkit/chromeInjectionContent.js']),
+  globalIgnores(['.millennium/', '.venv/', '.extensions/', 'webkit/chromeInjectionContent.js']),
   {
     languageOptions: {
       globals: globals.browser,
@@ -42,7 +42,7 @@ export default tseslint.config(
   }),
   {
     plugins: {
-
+      '@stylistic': stylistic,
       perfectionist,
     },
     rules: {

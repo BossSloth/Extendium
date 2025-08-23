@@ -42,7 +42,7 @@ export function ExtensionPopup({
       if (popupContent === null) return;
 
       const popupDocument = container.current?.ownerDocument;
-      if (!popupDocument || !popupDocument.defaultView) return;
+      if (!popupDocument?.defaultView) return;
 
       await injectHtml(popupContent, popupDocument.defaultView, extension, false, removeSteamCss, baseDir);
 
@@ -59,6 +59,7 @@ export function ExtensionPopup({
 
   function resize(): void {
     const popupDocument = container.current?.ownerDocument;
+    // eslint-disable-next-line @typescript-eslint/prefer-optional-chain
     if (!popupDocument || !popupDocument.defaultView) return;
 
     const size = getDesiredSize(centerPopup ? container.current : popupDocument.body, popupDocument);
