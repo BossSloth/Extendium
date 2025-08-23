@@ -1,5 +1,4 @@
 import { constSysfsExpr } from '@steambrew/webkit';
-import escapeStringRegexp from 'escape-string-regexp';
 import { Extension } from './extension/Extension';
 import { loadScriptWithContent, loadStyle } from './shared';
 
@@ -7,11 +6,10 @@ type ScriptInfo = NonNullable<chrome.runtime.ManifestV3['content_scripts']>[numb
 
 export async function createContentScripts(extension: Extension): Promise<void> {
   const contentScripts = extension.manifest.content_scripts ?? [];
-  const currentHref = window.location.origin + window.location.pathname;
   const scripts: Map<string, ScriptInfo> = new Map<string, ScriptInfo>();
   const styles: Set<string> = new Set<string>();
   for (const contentScript of contentScripts) {
-    if (hrefMatches(currentHref, contentScript)) {
+    if (hrefMatches(location.href, contentScript)) {
       if (contentScript.js) {
         for (const script of contentScript.js) {
           scripts.set(extension.getFileUrl(script) ?? '', contentScript);
@@ -80,22 +78,46 @@ async function mutateScripts(urls: Map<string, ScriptInfo>, extension: Extension
   performance.mark(`[Extendium][${extension.getName()}] mutateScripts done`);
 }
 
-function urlToRegex(url: string): string {
-  return `^${escapeStringRegexp(url)
-    .replace(/\\\*/g, '.*')
-    .replace(/\//g, '\\/')
-    // Handles cases like `*://*.steamcommunity` where the //*. only matches subdomains
-    .replace(':\\/\\/.*\\.', ':\\/\\/.*\\.?')
-  }$`;
+function matchPatternToRegex(pattern: string): RegExp {
+  if (pattern === '<all_urls>') {
+    return /^(https?|ftp|file|chrome-extension):\/\/.*/;
+  }
+
+  const [, scheme, host, path] = pattern.match(/^(\*|http|https|file|ftp|chrome-extension):\/\/([^/]*)(\/.*)$/) ?? [];
+
+  if (scheme === undefined || host === undefined || path === undefined) {
+    throw new Error(`Invalid match pattern: ${pattern}`);
+  }
+
+  let regex = '^';
+
+  // Scheme
+  if (scheme === '*') {
+    regex += '(http|https)';
+  } else {
+    regex += scheme;
+  }
+  regex += ':\\/\\/';
+
+  // Host
+  if (host === '*') {
+    regex += '[^/]+';
+  } else if (host.startsWith('*.')) {
+    regex += `([^.]+\\.)?${host.slice(2).replace(/\./g, '\\.')}`;
+  } else {
+    regex += host.replace(/\./g, '\\.');
+  }
+
+  // Path
+  regex += path.replace(/\*/g, '.*');
+  regex += '$';
+
+  return new RegExp(regex);
 }
 
 function hrefMatches(href: string, contentScript: {
   matches?: string[] | undefined;
   exclude_matches?: string[] | undefined;
 }): boolean {
-  if (contentScript.matches?.some(match => match === '<all_urls>') ?? false) {
-    return true;
-  }
-
-  return (contentScript.matches?.some(match => href.match(urlToRegex(match)) !== null) ?? false) && (contentScript.exclude_matches?.every(match => href.match(urlToRegex(match)) === null) ?? true);
+  return (contentScript.matches?.some(match => matchPatternToRegex(match).test(href)) ?? false) && (contentScript.exclude_matches?.every(match => !matchPatternToRegex(match).test(href)) ?? true);
 }

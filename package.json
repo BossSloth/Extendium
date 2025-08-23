@@ -42,7 +42,6 @@
     "@steambrew/client": "^5.5.1",
     "@steambrew/ttc": "^2.7.3",
     "@steambrew/webkit": "5.5.1",
-    "escape-string-regexp": "^5.0.0",
     "react-icons": "^5.5.0",
     "sass-embedded": "^1.90.0",
     "zustand": "^5.0.8"
