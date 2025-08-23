@@ -106,7 +106,7 @@ export function ExtensionDetailInfo({ extension }: { readonly extension: Extensi
         </div>
       )}
 
-      {extension.hasOptions() && (
+      {extension.options.hasOptions() && (
         <div className="section hr clickable-row" onClick={() => { createOptionsWindow(extension); }}>
           <span>Extension options</span>
           <button type="button"><MdOpenInNew /></button>

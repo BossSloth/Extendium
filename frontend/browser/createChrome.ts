@@ -13,13 +13,13 @@ const VERBOSE = true;
 let chromeObj: typeof window.chrome;
 
 // Note we use dependency injection to prevent circular dependencies
-export function createChrome(context: string, extension: Extension): typeof window.chrome {
+export function createChrome(context: string, extension: Extension, senderUrl?: string): typeof window.chrome {
   const logger = new Logger(extension, VERBOSE, context);
 
   chromeObj = {
     i18n: extension.locale,
     storage: createStorageType(extension, logger),
-    runtime: createRuntimeType(extension, logger),
+    runtime: createRuntimeType(extension, logger, senderUrl),
     tabs: createTabsType(extension, logger),
     offscreen: createOffscreenType(extension, logger),
     windows: createWindowsType(extension, logger),
@@ -41,7 +41,7 @@ export function createChrome(context: string, extension: Extension): typeof wind
 /**
  * @see https://developer.chrome.com/docs/extensions/reference/api/runtime
  */
-function createRuntimeType(extension: Extension, logger: Logger): typeof chrome.runtime {
+function createRuntimeType(extension: Extension, logger: Logger, senderUrl?: string): typeof chrome.runtime {
   return {
     sendMessage: async (...args: unknown[]): Promise<unknown> => {
       const parsedArgs = parseRuntimeSendMessageArgs(args);
@@ -56,7 +56,7 @@ function createRuntimeType(extension: Extension, logger: Logger): typeof chrome.
 
       logger.log('runtime.sendMessage', parsedArgs);
 
-      return extension.runtimeEmulator.sendMessage(parsedArgs.message, parsedArgs.callback);
+      return extension.runtimeEmulator.sendMessage(parsedArgs.message, parsedArgs.callback, senderUrl);
     },
     onMessage: extension.runtimeEmulator.onMessage,
     onMessageExternal: extension.runtimeEmulator.onMessage,
@@ -205,6 +205,11 @@ function createTabsType(extension: Extension, logger: Logger): typeof chrome.tab
 
       return Promise.resolve(extension.locale.getUILanguage());
     },
+    sendMessage: async (...args: unknown[]): Promise<void> => {
+      logger.error('tabs.sendMessage', 'tabs.sendMessage not implemented', args);
+
+      return Promise.resolve();
+    },
   };
 }
 
@@ -301,8 +306,10 @@ function createCommandsType(extension: Extension, logger: Logger): typeof chrome
   // TODO: implement
   return {
     onCommand: new ChromeEvent<(command: string) => void>(),
-    getAll: async (): Promise<chrome.commands.Command[]> => {
-      logger.log('commands.getAll');
+    getAll: async (callback?: (commands: chrome.commands.Command[]) => void): Promise<chrome.commands.Command[]> => {
+      logger.log('commands.getAll', callback);
+
+      callback?.([]);
 
       return Promise.resolve([]);
     },

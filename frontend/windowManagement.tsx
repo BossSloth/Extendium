@@ -56,7 +56,6 @@ export async function createOffscreen(extension: Extension, title: string, initU
 }
 
 export async function closeOffscreen(extension: Extension): Promise<void> {
-  // @ts-expect-error contextType is wrong type
   const contexts = await extension.contexts.getContexts({ contextTypes: ['OFFSCREEN_DOCUMENT'] });
   const context = contexts[0];
   if (!context) {
@@ -68,7 +67,7 @@ export async function closeOffscreen(extension: Extension): Promise<void> {
   popupWindow.close();
 }
 
-export async function injectHtml(html: string, popupWindow: Window, extension: Extension, addToBody = true, removeSteamCss = true, baseUrl?: string): Promise<void> {
+export async function injectHtml(html: string, popupWindow: Window, extension: Extension, addToBody = true, removeSteamCss = true, baseUrl?: string, popupContentUrl?: string): Promise<void> {
   const popupDocument = popupWindow.document;
   // Remove all steam css
   if (removeSteamCss) {
@@ -78,7 +77,7 @@ export async function injectHtml(html: string, popupWindow: Window, extension: E
   }
 
   // Inject the chrome variable
-  injectBrowser('popup', popupWindow, extension);
+  injectBrowser('popup', popupWindow, extension, popupContentUrl);
 
   // Get the script tags and add them to the head
   const domParser = new DOMParser();
@@ -159,7 +158,7 @@ export async function injectHtml(html: string, popupWindow: Window, extension: E
 }
 
 export function createOptionsWindow(extension: Extension): void {
-  const url = extension.manifest.options_ui?.page ?? '';
+  const url = extension.options.getOptionsPageUrl() ?? '';
 
   openExtensionSettingsPopup(
     <ExtensionPopup

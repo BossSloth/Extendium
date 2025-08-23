@@ -12,14 +12,14 @@ export class RuntimeEmulator {
 
   constructor(readonly extension: Extension) {}
 
-  async sendMessage(message: unknown, responseCallback?: (response?: unknown) => void): Promise<unknown> {
+  async sendMessage(message: unknown, responseCallback?: (response?: unknown) => void, senderUrl?: string): Promise<unknown> {
     const sender: chrome.runtime.MessageSender = {
       id: '12345',
       // TODO: figure out how to get the actual URL and id
-      url: `chrome-extension://12345/${this.extension.manifest.background?.service_worker}`,
+      url: senderUrl ?? `chrome-extension://12345/${this.extension.manifest.background?.service_worker}`,
       tab: {
         id: 1,
-        url: `chrome-extension://12345/${this.extension.manifest.background?.service_worker}`,
+        url: senderUrl ?? `chrome-extension://12345/${this.extension.manifest.background?.service_worker}`,
       },
     };
     const listeners = this.onMessage.getListenersSnapshot();

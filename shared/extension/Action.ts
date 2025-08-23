@@ -18,8 +18,13 @@ export class Action {
     return this.extension.getFileDir(this.extension.manifest.action?.default_popup);
   }
 
-  public getTitle(): string | undefined {
-    return this.extension.manifest.action?.default_title ?? this.extension.getName();
+  public getTitle(): string {
+    const defaultTitle = this.extension.manifest.action?.default_title;
+    if (defaultTitle !== undefined) {
+      return this.extension.tryGetLocaleMessage(defaultTitle);
+    }
+
+    return this.extension.getName();
   }
 
   // #region icon

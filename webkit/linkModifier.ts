@@ -22,7 +22,7 @@ export function linkClickInterceptor(extensions: Map<string, ExtensionWrapper>):
 function getOptionLinks(extensions: Map<string, ExtensionWrapper>): Map<string, string> {
   return [...extensions.values()].map((extensionW) => {
     const extension = extensionW.extension;
-    const link = extension.getFileUrl(extension.manifest.options_ui?.page) ?? '';
+    const link = extension.options.getOptionsPageUrl() ?? '';
 
     return [link, extension.getName()];
   }).filter(link => link[0] !== '').reduce((map, [key, value]) => map.set(key ?? '', value ?? ''), new Map<string, string>());

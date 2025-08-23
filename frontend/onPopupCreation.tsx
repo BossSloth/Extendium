@@ -105,7 +105,7 @@ export function modifyLinks(document: Document): void {
 
 function getOptionLinks(): Map<string, Extension> {
   return [...extensions.values()].map((extension): [string, Extension] => {
-    const link = extension.getFileUrl(extension.manifest.options_ui?.page) ?? '';
+    const link = extension.getFileUrl(extension.options.getOptionsPageUrl()) ?? '';
 
     return [link, extension];
   }).filter(link => link[0] !== '').reduce((map, [key, value]) => map.set(key, value), new Map<string, Extension>());

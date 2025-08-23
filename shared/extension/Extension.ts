@@ -5,6 +5,7 @@ import { Locale } from './Locale';
 import { Logger } from './Logger';
 import { RuntimeEmulator } from './Messaging';
 import { ExtensionMetadata } from './Metadata';
+import { Options } from './Options';
 
 export class Extension {
   public readonly action: Action;
@@ -13,6 +14,7 @@ export class Extension {
   public readonly locale: Locale;
   public readonly storageOnChanged = new ChromeEvent<(changes: Record<string, chrome.storage.StorageChange>, areaName: chrome.storage.AreaName) => void>();
   public readonly logger: Logger;
+  public readonly options: Options;
 
   constructor(readonly manifest: chrome.runtime.ManifestV3, readonly url: string, readonly folderName: string, readonly metadata?: ExtensionMetadata) {
     this.action = new Action(this);
@@ -20,6 +22,7 @@ export class Extension {
     this.contexts = new Contexts();
     this.locale = new Locale(this);
     this.logger = new Logger(this, false, 'Extension');
+    this.options = new Options(this);
   }
 
   public async init(): Promise<void> {
@@ -74,18 +77,14 @@ export class Extension {
 
   public getName(): string {
     const name = this.manifest.name;
-    if (name.startsWith('__MSG_')) {
-      return this.locale.getMessage(this.locale.getMSGKey(name));
-    }
 
-    return name;
+    return this.tryGetLocaleMessage(name);
   }
 
   public getDescription(): string | undefined {
     const description = this.manifest.description;
-    if (description?.startsWith('__MSG_') ?? false) {
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      return this.locale.getMessage(this.locale.getMSGKey(description!));
+    if (description !== undefined) {
+      return this.tryGetLocaleMessage(description);
     }
 
     return description;
@@ -95,7 +94,11 @@ export class Extension {
     return this.manifest.version;
   }
 
-  public hasOptions(): boolean {
-    return this.manifest.options_ui?.page !== undefined;
+  public tryGetLocaleMessage(key: string): string {
+    if (key.startsWith('__MSG_')) {
+      return this.locale.getMessage(this.locale.getMSGKey(key));
+    }
+
+    return key;
   }
 }

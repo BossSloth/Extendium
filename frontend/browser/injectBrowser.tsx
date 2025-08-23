@@ -6,8 +6,8 @@ import { loadScript } from 'shared';
 import { patchFetch } from './corsFetch';
 import { createChrome } from './createChrome';
 
-export function injectBrowser(context: string, window: Window, extension: Extension): void {
-  window.chrome = createChrome(context, extension);
+export function injectBrowser(context: string, window: Window, extension: Extension, senderUrl?: string): void {
+  window.chrome = createChrome(context, extension, senderUrl);
 
   window.clients = {
     matchAll: async (): Promise<unknown[]> => Promise.resolve([]),

@@ -211,7 +211,7 @@ def PrepareExtensionFiles():
             # Handle root folder references in JS files
             ext_root_folders = [d for d in os.listdir(ext_path) if os.path.isdir(os.path.join(ext_path, d))]
             for dir_name in ext_root_folders:
-                processing_rules['.js'].append({'pattern': f"(['\"])\/{re.escape(dir_name)}", 'replacement': f"\\g<1>{full_dir_path}/{dir_name}", 'is_regex': True})
+                processing_rules['.js'].append({'pattern': f"(['\"])\/{re.escape(dir_name)}\/", 'replacement': f"\\g<1>{full_dir_path}/{dir_name}/", 'is_regex': True})
                 processing_rules['.css'].append({'pattern': f"url\((['\"])\/{re.escape(dir_name)}", 'replacement': f"url(\\g<1>{full_dir_path}/{dir_name}", 'is_regex': True})
                 processing_rules['.css'].append({'pattern': f"url\((/{re.escape(dir_name)}/.+?)\)", 'replacement': f"url(\"{full_dir_path}\\g<1>\")", 'is_regex': True})
 
