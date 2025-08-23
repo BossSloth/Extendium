@@ -2,7 +2,7 @@ import { WebkitRequestType } from './extension/websocket/MessageTypes';
 import { ExtensionWrapper } from './ExtensionWrapper';
 import { webSocketClient } from './shared';
 
-export function modifyLinks(extensions: Map<string, ExtensionWrapper>): void {
+export function linkClickInterceptor(extensions: Map<string, ExtensionWrapper>): void {
   const optionsLinks = getOptionLinks(extensions);
 
   document.addEventListener('click', (event) => {

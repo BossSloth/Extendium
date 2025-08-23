@@ -5,7 +5,7 @@ import { Extension } from './extension/Extension';
 import { steamRequestIDKey } from './extension/requests/crossRequestKeys';
 import { ExtensionWrapper } from './ExtensionWrapper';
 import { startCreateFakeSteamHeader } from './fake-header/fake-header';
-import { modifyLinks } from './linkModifier';
+import { linkClickInterceptor } from './linkModifier';
 import { initWebSocketClient, isSteamPage } from './shared';
 import { handleSteamRequests } from './steam-requests/handle-steam-requests';
 import { TabInject } from './TabInject';
@@ -45,7 +45,7 @@ export default async function WebkitMain(): Promise<void> {
     extensions.set(manifest.name, new ExtensionWrapper(extension, chrome));
   }
 
-  modifyLinks(extensions);
+  linkClickInterceptor(extensions);
 
   await Promise.all([...extensions.values()].map(async wrapper => createContentScripts(wrapper.extension)));
   performance.mark('[Extendium] WebkitMain content scripts created done');

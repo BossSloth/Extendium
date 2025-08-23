@@ -95,7 +95,7 @@ export async function injectHtml(html: string, popupWindow: Window, extension: E
   for (const head of headElements) {
     if (head.tagName === 'SCRIPT') {
       // eslint-disable-next-line no-await-in-loop
-      await loadScript(head.getAttribute('src') ?? '', popupDocument);
+      await loadScript(head.getAttribute('src') ?? '', popupDocument, head.attributes);
 
       continue;
     }
@@ -125,7 +125,7 @@ export async function injectHtml(html: string, popupWindow: Window, extension: E
   const bodyScripts = doc.body.querySelectorAll('script');
   for (const script of bodyScripts) {
     // eslint-disable-next-line no-await-in-loop
-    await loadScript(script.getAttribute('src') ?? '', popupDocument);
+    await loadScript(script.getAttribute('src') ?? '', popupDocument, script.attributes);
   }
 
   // Get all body children and append them to the current document
