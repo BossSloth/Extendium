@@ -1,6 +1,6 @@
-import { ChromeEvent } from '../extension/ChromeEvent';
-import { EnumerableMethods } from '../extension/EnumerableMethods';
-import { StorageClearContent, StorageGetSetContent, StorageRemoveContent, WebkitRequestType } from '../extension/websocket/MessageTypes';
+import { ChromeEvent } from '@extension/ChromeEvent';
+import { EnumerableMethods } from '@extension/EnumerableMethods';
+import { StorageClearContent, StorageGetSetContent, StorageRemoveContent, WebkitRequestType } from '@extension/websocket/MessageTypes';
 import { webSocketClient } from '../shared';
 
 @EnumerableMethods

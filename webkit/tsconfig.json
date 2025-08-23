@@ -1,4 +1,10 @@
 {
   "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@extension/*": ["../shared/extension/*"]
+    }
+  },
   "include": ["."],
 }

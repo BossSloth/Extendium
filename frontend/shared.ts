@@ -1,9 +1,9 @@
+import { Extension } from '@extension/Extension';
+import { UserInfo } from '@extension/shared';
 import { Millennium } from '@steambrew/client';
 import * as ReactDOM from 'react-dom';
 import * as ReactDOMClient from 'react-dom/client';
 import { BasicPopup } from 'steam-types/dist/types/Global/PopupManager';
-import { Extension } from './extension/Extension';
-import { UserInfo } from './extension/shared';
 
 export let mainWindow: Window;
 

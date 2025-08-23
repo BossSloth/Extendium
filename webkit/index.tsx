@@ -1,8 +1,8 @@
+import { Extension } from '@extension/Extension';
+import { steamRequestIDKey } from '@extension/requests/crossRequestKeys';
 import { callable } from '@steambrew/webkit';
 import { createChrome } from './createChrome';
 import { createContentScripts } from './createContentScripts';
-import { Extension } from './extension/Extension';
-import { steamRequestIDKey } from './extension/requests/crossRequestKeys';
 import { ExtensionWrapper } from './ExtensionWrapper';
 import { startCreateFakeSteamHeader } from './fake-header/fake-header';
 import { linkClickInterceptor } from './linkModifier';

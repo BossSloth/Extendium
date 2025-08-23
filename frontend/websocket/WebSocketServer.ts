@@ -7,7 +7,7 @@ import {
   MessageType,
   WebkitMessage,
   WebSocketMessage,
-} from '../extension/websocket/MessageTypes';
+} from '@extension/websocket/MessageTypes';
 import { WebkitWrapper } from '../webkit';
 import { handleWebkitMessage } from './MessageHandler';
 

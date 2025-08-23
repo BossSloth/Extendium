@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-return */
+import { Extension } from '@extension/Extension';
 import { findModule } from '@steambrew/client';
 import React from 'react';
 import { ExtensionsBar } from './components/ExtensionBar/ExtensionsBar';
-import { Extension } from './extension/Extension';
 import { WaitForElement } from './shared';
 
 export async function patchUrlBar(extensions: Map<string, Extension>, document: Document): Promise<void> {

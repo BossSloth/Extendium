@@ -1,8 +1,8 @@
-import { ChromeEvent } from './extension/ChromeEvent';
-import { Extension } from './extension/Extension';
-import { Logger } from './extension/Logger';
-import { parseRuntimeSendMessageArgs } from './extension/Messaging';
-import { WebkitRequestType } from './extension/websocket/MessageTypes';
+import { ChromeEvent } from '@extension/ChromeEvent';
+import { Extension } from '@extension/Extension';
+import { Logger } from '@extension/Logger';
+import { parseRuntimeSendMessageArgs } from '@extension/Messaging';
+import { WebkitRequestType } from '@extension/websocket/MessageTypes';
 import { webSocketClient } from './shared';
 import { WebkitStorage } from './webkit-extension/WebkitStorage';
 

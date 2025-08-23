@@ -1,5 +1,5 @@
+import { Extension } from '@extension/Extension';
 import { constSysfsExpr } from '@steambrew/webkit';
-import { Extension } from './extension/Extension';
 import { loadScriptWithContent, loadStyle } from './shared';
 
 type ScriptInfo = NonNullable<chrome.runtime.ManifestV3['content_scripts']>[number];

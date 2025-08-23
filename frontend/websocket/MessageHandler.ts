@@ -1,5 +1,5 @@
+import { SteamRequestResponseContent, StorageClearContent, StorageGetSetContent, StorageRemoveContent, WebkitMessage, WebkitRequestType } from '@extension/websocket/MessageTypes';
 import { resolvePendingRequest } from '../browser/corsFetch';
-import { SteamRequestResponseContent, StorageClearContent, StorageGetSetContent, StorageRemoveContent, WebkitMessage, WebkitRequestType } from '../extension/websocket/MessageTypes';
 import { WebkitWrapper } from '../webkit';
 
 export async function handleWebkitMessage(message: WebkitMessage, webkitWrapper: WebkitWrapper): Promise<unknown> {

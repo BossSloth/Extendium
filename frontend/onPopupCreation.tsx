@@ -2,9 +2,9 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 
+import { Extension } from '@extension/Extension';
 import { findModule } from '@steambrew/client';
 import { MainWindowPopup, Popup } from 'steam-types/dist/types/Global/PopupManager';
-import { Extension } from './extension/Extension';
 import { initMainWindow, MAIN_WINDOW_NAME, pluginDir, WaitForElement } from './shared';
 import { patchUrlBar } from './urlBarPatch';
 import { createOptionsWindow, createWindowWithScript } from './windowManagement';

@@ -1,9 +1,9 @@
+import { Extension } from '@extension/Extension';
+import { ExtensionMetadata } from '@extension/Metadata';
+import { UserInfo } from '@extension/shared';
 import { callable, Millennium } from '@steambrew/client';
 import { startIntervalForUpdate as startIntervalForUpdates } from 'updates/updater';
 import { handleUrlScheme } from 'urlSchemeHandler';
-import { Extension } from './extension/Extension';
-import { ExtensionMetadata } from './extension/Metadata';
-import { UserInfo } from './extension/shared';
 import { OnPopupCreation } from './onPopupCreation';
 import { getUserInfo, initPluginDir } from './shared';
 import { WebkitWrapper } from './webkit';

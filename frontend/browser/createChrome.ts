@@ -1,10 +1,10 @@
 /* eslint-disable @typescript-eslint/no-unsafe-function-type */
 /* eslint-disable @typescript-eslint/no-empty-function */
+import { ChromeEvent } from '@extension/ChromeEvent';
+import { Extension } from '@extension/Extension';
+import { Logger } from '@extension/Logger';
 import { parseRuntimeSendMessageArgs } from '@extension/Messaging';
-import { ChromeEvent } from '../extension/ChromeEvent';
-import { Extension } from '../extension/Extension';
-import { Logger } from '../extension/Logger';
-import { Storage, SyncStorage } from '../extension/Storage';
+import { Storage, SyncStorage } from '@extension/Storage';
 import { queryTabs } from '../TabManager';
 import { closeOffscreen, createOffscreen, createOptionsWindow } from '../windowManagement';
 

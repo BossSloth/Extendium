@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/class-methods-use-this */
 /* eslint-disable max-classes-per-file */
+import { Extension } from '@extension/Extension';
+import { StorageClearContent, StorageGetSetContent, StorageRemoveContent } from '@extension/websocket/MessageTypes';
 import { createChrome } from './browser/createChrome';
-import { Extension } from './extension/Extension';
-import { StorageClearContent, StorageGetSetContent, StorageRemoveContent } from './extension/websocket/MessageTypes';
 import { addTab, focusTab } from './TabManager';
 import { WebSocketServer } from './websocket/WebSocketServer';
 

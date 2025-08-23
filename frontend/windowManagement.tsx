@@ -1,9 +1,9 @@
+import { Extension } from '@extension/Extension';
 import { findClass } from '@steambrew/client';
 import { openExtensionSettingsPopup } from 'components/ExtensionSettingsPopup';
 import React from 'react';
 import { injectBrowser } from './browser/injectBrowser';
 import { ExtensionPopup } from './components/ExtensionPopup';
-import { Extension } from './extension/Extension';
 import { loadScript, mainWindow } from './shared';
 
 export function createWindow(extension: Extension, title: string, baseHref: string): Window {

@@ -1,6 +1,6 @@
-import { steamRequestIDKey, steamRequestInfoKey, steamRequestUrlKey } from '../extension/requests/crossRequestKeys';
-import { base64Encode } from '../extension/utils';
-import { SteamRequestResponseContent, WebkitRequestType } from '../extension/websocket/MessageTypes';
+import { steamRequestIDKey, steamRequestInfoKey, steamRequestUrlKey } from '@extension/requests/crossRequestKeys';
+import { base64Encode } from '@extension/utils';
+import { SteamRequestResponseContent, WebkitRequestType } from '@extension/websocket/MessageTypes';
 import { webSocketClient } from '../shared';
 
 export async function handleSteamRequests(): Promise<void> {

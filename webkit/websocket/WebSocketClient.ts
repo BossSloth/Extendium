@@ -9,7 +9,7 @@ import {
   WebkitMessage,
   WebkitRequestType,
   WebSocketMessage,
-} from '../extension/websocket/MessageTypes';
+} from '@extension/websocket/MessageTypes';
 
 /**
  * Interface for pending request data

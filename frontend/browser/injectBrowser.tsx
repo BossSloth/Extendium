@@ -1,8 +1,8 @@
 /* eslint-disable func-names */
+import { Extension } from '@extension/Extension';
 import { ConfirmModal, showModal } from '@steambrew/client';
 import React from 'react';
 import { loadScript } from 'shared';
-import { Extension } from '../extension/Extension';
 import { patchFetch } from './corsFetch';
 import { createChrome } from './createChrome';
 

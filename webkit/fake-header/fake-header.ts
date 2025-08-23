@@ -1,5 +1,5 @@
+import { UserInfo } from '@extension/shared';
 import { callable } from '@steambrew/webkit';
-import { UserInfo } from '../extension/shared';
 import { loadStyle, onDomReady } from '../shared';
 import { legacyFakeHeader, reactFakeHeader } from './fake-header-strings';
 

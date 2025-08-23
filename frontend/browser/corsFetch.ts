@@ -1,6 +1,6 @@
-import { steamRequestIDKey, steamRequestInfoKey, steamRequestUrlKey } from '../extension/requests/crossRequestKeys';
-import { base64Decode } from '../extension/utils';
-import { SteamRequestResponseContent } from '../extension/websocket/MessageTypes';
+import { steamRequestIDKey, steamRequestInfoKey, steamRequestUrlKey } from '@extension/requests/crossRequestKeys';
+import { base64Decode } from '@extension/utils';
+import { SteamRequestResponseContent } from '@extension/websocket/MessageTypes';
 import { mainWindow } from '../shared';
 
 /* eslint-disable @typescript-eslint/no-base-to-string */

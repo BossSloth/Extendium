@@ -1,4 +1,4 @@
-import { WebkitRequestType } from './extension/websocket/MessageTypes';
+import { WebkitRequestType } from '@extension/websocket/MessageTypes';
 import { ExtensionWrapper } from './ExtensionWrapper';
 import { webSocketClient } from './shared';
 

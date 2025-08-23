@@ -3,7 +3,7 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
-      "@extension/*": ["extension/*"]
+      "@extension/*": ["../shared/extension/*"]
     }
   }
 }

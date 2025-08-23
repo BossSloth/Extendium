@@ -1,5 +1,5 @@
+import { Extension } from '@extension/Extension';
 import React, { JSX, useEffect, useRef, useState } from 'react';
-import { Extension } from '../extension/Extension';
 import { mainWindow } from '../shared';
 import { injectHtml } from '../windowManagement';
 
