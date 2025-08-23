@@ -25,7 +25,7 @@ export function ManagerExtensionItem({ extension, pinned, pinExtension, unpinExt
       <DialogButton onClick={handlePin} style={{ padding: '0 8px' }} title={pinned ? 'Unpin' : 'Pin'}>
         {pinned ? <LuPinOff color="lightblue" /> : <LuPin />}
       </DialogButton>
-      <DialogButton onClick={() => { openExtensionManagerPopup(extension.getName()); }} style={{ padding: '0 8px' }} title="Manage">
+      <DialogButton onClick={() => { openExtensionManagerPopup(`info/${extension.getName()}`); }} style={{ padding: '0 8px' }} title="Manage">
         <FaCog />
       </DialogButton>
     </Field>
