@@ -97,6 +97,7 @@ $secondary-text-color: rgba(255, 255, 255, 0.6);
     height: 31px;
     padding: 7px;
     border-radius: 50%;
+    position: relative;
     transition: background 0.2s ease;
 
     &:hover {
@@ -110,6 +111,19 @@ $secondary-text-color: rgba(255, 255, 255, 0.6);
 
     svg {
       display: block !important;
+    }
+
+    .update-dot {
+      position: absolute;
+      top: 3px;
+      right: 3px;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #53e582;
+      border: 1px solid rgba(83, 229, 130, 0.7);
+      box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.4);
+      pointer-events: none;
     }
   }
 }

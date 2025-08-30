@@ -5,6 +5,7 @@ import { Extension } from './Extension';
 export class Action {
   private iconUrl: string | undefined;
   private iconUrlListeners: (() => void)[] = [];
+  private title: string | undefined;
 
   constructor(readonly extension: Extension) {
     this.initIconUrl();
@@ -16,15 +17,6 @@ export class Action {
 
   public getPopupDir(): string | undefined {
     return this.extension.getFileDir(this.extension.manifest.action?.default_popup);
-  }
-
-  public getTitle(): string {
-    const defaultTitle = this.extension.manifest.action?.default_title;
-    if (defaultTitle !== undefined) {
-      return this.extension.tryGetLocaleMessage(defaultTitle);
-    }
-
-    return this.extension.getName();
   }
 
   // #region icon
@@ -114,6 +106,29 @@ export class Action {
     return undefined;
   }
   // #endregion icon
+
+  // #region title
+  public getTitle(): string {
+    return this.title ?? this.extension.getName();
+  }
+
+  public setTitle(title: string): void {
+    this.title = title;
+  }
+
+  public initTitle(): void {
+    this.title = this.getDefaultTitle();
+  }
+
+  private getDefaultTitle(): string {
+    const defaultTitle = this.extension.manifest.action?.default_title;
+    if (defaultTitle !== undefined) {
+      return this.extension.tryGetLocaleMessage(defaultTitle);
+    }
+
+    return this.extension.getName();
+  }
+  // #endregion title
 
   // #region onClicked
   public onClicked = new ChromeEvent<(tab?: chrome.tabs.Tab) => void>();

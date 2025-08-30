@@ -169,6 +169,18 @@ function createActionType(extension: Extension, logger: Logger): typeof chrome.a
 
       return Promise.resolve();
     },
+    setPopup: async (details: chrome.action.PopupDetails): Promise<void> => {
+      logger.log('action.setPopup', details);
+
+      return Promise.resolve();
+    },
+    setTitle: async (details: chrome.action.TitleDetails): Promise<void> => {
+      logger.log('action.setTitle', details);
+
+      extension.action.setTitle(details.title);
+
+      return Promise.resolve();
+    },
   };
 }
 
