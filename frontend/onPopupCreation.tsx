@@ -76,7 +76,7 @@ async function setupBackground(extension: Extension): Promise<void> {
     return;
   }
 
-  const backgroundWindow = await createWindowWithScript(backgroundScriptUrl, extension, 'Background');
+  const backgroundWindow = await createWindowWithScript(backgroundScriptUrl, extension, 'Background', extension.manifest.background?.type === 'module');
   extension.contexts.addContext(backgroundWindow, 'BACKGROUND', extension.getBackgroundUrl());
 }
 

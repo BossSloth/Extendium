@@ -34,7 +34,7 @@ export interface ContextMenu {
   m_popupContextMenu: BasicPopup;
 }
 
-export async function loadScript(src: string, document: Document, attributes?: NamedNodeMap): Promise<void> {
+export async function loadScript(src: string, document: Document, attributes?: NamedNodeMap, module?: boolean): Promise<void> {
   return new Promise<void>((resolve, reject) => {
     const script = document.createElement('script');
     script.setAttribute('type', 'text/javascript');
@@ -44,6 +44,10 @@ export async function loadScript(src: string, document: Document, attributes?: N
       for (const attribute of attributes) {
         script.setAttribute(attribute.name, attribute.value);
       }
+    }
+
+    if (module) {
+      script.setAttribute('type', 'module');
     }
 
     script.addEventListener('load', () => {

@@ -27,7 +27,7 @@ export function createWindow(extension: Extension, title: string, baseHref: stri
   return backgroundWindow;
 }
 
-export async function createWindowWithScript(scriptPath: string, extension: Extension, title: string): Promise<Window> {
+export async function createWindowWithScript(scriptPath: string, extension: Extension, title: string, module = false): Promise<Window> {
   const script = extension.getFileUrl(scriptPath);
   if (script === undefined) {
     throw new Error(`Script ${scriptPath} not found`);
@@ -36,7 +36,7 @@ export async function createWindowWithScript(scriptPath: string, extension: Exte
   const backgroundWindow = createWindow(extension, title, extension.getFileDir(scriptPath));
 
   try {
-    await loadScript(script, backgroundWindow.document);
+    await loadScript(script, backgroundWindow.document, undefined, module);
   } catch (error) {
     extension.logger.error('createWindowWithScript', error);
   }
