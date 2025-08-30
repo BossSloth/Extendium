@@ -21,7 +21,7 @@ export class Extension {
     this.runtimeEmulator = new RuntimeEmulator(this);
     this.contexts = new Contexts();
     this.locale = new Locale(this);
-    this.logger = new Logger(this, false, 'Extension');
+    this.logger = new Logger(this, true, 'Extension');
     this.options = new Options(this);
   }
 

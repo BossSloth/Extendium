@@ -26,11 +26,11 @@ export class Locale implements chromeLocale {
       content = await this.fetchLocale(language);
     } catch {
       const shortLanguage = navigator.language.split('-')[0] ?? '';
-      console.debug(`[${this.#extension.getName()}] Locale ${language} not found, falling back to short locale (${shortLanguage})`);
+      this.#extension.logger.log('Locale', `Locale ${language} not found, falling back to short locale (${shortLanguage})`);
       try {
         content = await this.fetchLocale(shortLanguage);
       } catch {
-        console.debug(`[${this.#extension.getName()}] Locale ${shortLanguage} not found, falling back to default locale (${defaultLocale})`);
+        this.#extension.logger.log('Locale', `Locale ${shortLanguage} not found, falling back to default locale (${defaultLocale})`);
         // Fallback to default locale (en) if the requested locale doesn't exist
         content = await this.fetchLocale(defaultLocale);
       }

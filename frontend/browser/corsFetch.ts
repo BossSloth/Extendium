@@ -1,3 +1,4 @@
+import { Extension } from '@extension/Extension';
 import { steamRequestIDKey, steamRequestInfoKey, steamRequestUrlKey } from '@extension/requests/crossRequestKeys';
 import { base64Decode } from '@extension/utils';
 import { SteamRequestResponseContent } from '@extension/websocket/MessageTypes';
@@ -14,7 +15,7 @@ interface PendingRequest {
   resolve(value: Response): void;
 }
 
-export function patchFetch(window: Window): void {
+export function patchFetch(window: Window, extension: Extension): void {
   const oldFetch = window.fetch;
 
   window.fetch = async (input: RequestInfo | URL, init?: RequestInit & { xhrFields?: { withCredentials: boolean; }; }): Promise<Response> => {
@@ -28,7 +29,7 @@ export function patchFetch(window: Window): void {
     }
 
     if (shouldDoCredentialsFetch(baseUrl, input, init)) {
-      return credentialsFetch(input, init);
+      return credentialsFetch(input, init, extension);
     }
 
     const corsCache = JSON.parse(localStorage.getItem(corsCacheKey) ?? '[]') as string[];
@@ -78,8 +79,8 @@ function shouldDoCredentialsFetch(baseUrl: string, input: RequestInfo | URL, ini
   return false;
 }
 
-async function credentialsFetch(input: RequestInfo | URL, init?: RequestInit): Promise<Response> {
-  console.log(`Fetching ${input.toString()} with credentials`);
+async function credentialsFetch(input: RequestInfo | URL, init?: RequestInit, extension?: Extension): Promise<Response> {
+  extension?.logger.log('credentialsFetch', input.toString());
 
   const requestId = generateRequestId();
   const query = new URLSearchParams();

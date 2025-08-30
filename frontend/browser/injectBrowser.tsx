@@ -55,7 +55,7 @@ export function injectBrowser(context: string, window: Window, extension: Extens
     asyncLoadScripts();
   };
 
-  patchFetch(window);
+  patchFetch(window, extension);
 
   window.confirm = (message?: string): boolean => {
     const description = (

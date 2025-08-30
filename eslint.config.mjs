@@ -112,7 +112,7 @@ export default tseslint.config(
       // #endregion
 
       // #region Project specific
-      '@typescript-eslint/member-ordering': ['error', { interfaces: ['method', 'field'] }],
+      '@typescript-eslint/member-ordering': ['error', { interfaces: ['method', 'field'], classes: 'off' }],
 
       'arrow-body-style': ['off'],
       '@typescript-eslint/unbound-method': 'off',
