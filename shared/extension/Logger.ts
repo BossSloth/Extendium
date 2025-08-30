@@ -2,12 +2,18 @@ import { Extension } from './Extension';
 
 export class Logger {
   public readonly errors: string[] = [];
-  private readonly extBadgeStyle: string;
+  private extBadgeStyle: string = '';
   private readonly ctxBadgeStyle: string;
 
   constructor(readonly parent: Extension, readonly VERBOSE: boolean, readonly context: string) {
-    this.extBadgeStyle = Logger.makeStyleFromStr(this.parent.getName());
     this.ctxBadgeStyle = Logger.makeStyleFromStr(this.context);
+    if (this.parent.locale.isReady()) {
+      this.init();
+    }
+  }
+
+  public init(): void {
+    this.extBadgeStyle = Logger.makeStyleFromStr(this.parent.getName());
   }
 
   public log(type: string, ...args: unknown[]): void {

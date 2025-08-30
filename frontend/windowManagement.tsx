@@ -208,7 +208,7 @@ body {
 async function loadStyle(src: string, document: Document): Promise<void> {
   let content = await fetch(src).then(async r => r.text());
   content = replaceBodyStyle(content);
-  content += `\n//# sourceURL=${src}`;
+  content += `\n/*# sourceURL=${src}*/`;
 
   const style = document.createElement('style');
   style.textContent = content;

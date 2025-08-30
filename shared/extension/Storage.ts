@@ -21,7 +21,7 @@ export class Storage implements chrome.storage.StorageArea {
   constructor(extension: Extension, readonly area: chrome.storage.AreaName, logger: Logger) {
     this.#extension = extension;
     this.#logger = logger;
-    this.STORAGE_KEY = `${this.#extension.manifest.name}::${this.area}`;
+    this.STORAGE_KEY = `${this.#extension.getName()}::${this.area}`;
 
     if (this.area === 'local') {
       this.QUOTA_BYTES = 5 * 1024 * 1024; // 5MB

@@ -9,13 +9,15 @@ export class Locale implements chromeLocale {
   private messages: Record<string, LanguageRecord> | undefined;
   readonly #extension: Extension;
 
+  private readonly defaultLocale: string | undefined;
+
   constructor(extension: Extension) {
     this.#extension = extension;
+    this.defaultLocale = this.#extension.manifest.default_locale;
   }
 
   async initLocale(): Promise<void> {
-    const defaultLocale = this.#extension.manifest.default_locale;
-    if (defaultLocale === undefined) {
+    if (this.defaultLocale === undefined) {
       // This extension does not have locales
       return;
     }
@@ -30,9 +32,9 @@ export class Locale implements chromeLocale {
       try {
         content = await this.fetchLocale(shortLanguage);
       } catch {
-        this.#extension.logger.log('Locale', `Locale ${shortLanguage} not found, falling back to default locale (${defaultLocale})`);
+        this.#extension.logger.log('Locale', `Locale ${shortLanguage} not found, falling back to default locale (${this.defaultLocale})`);
         // Fallback to default locale (en) if the requested locale doesn't exist
-        content = await this.fetchLocale(defaultLocale);
+        content = await this.fetchLocale(this.defaultLocale);
       }
     }
     this.messages = JSON.parse(content) as Record<string, LanguageRecord>;
@@ -54,7 +56,7 @@ export class Locale implements chromeLocale {
     }
 
     if (this.messages === undefined) {
-      throw new Error(`[${this.#extension.getName()}] Locale not initialized, missing manifest.default_locale?`);
+      throw new Error(`[${this.#extension.url}] Locale not initialized, missing manifest.default_locale?`);
     }
 
     if (typeof substitutions === 'string') {
@@ -117,6 +119,10 @@ export class Locale implements chromeLocale {
     }
 
     return language.replaceAll('-', '_');
+  }
+
+  isReady(): boolean {
+    return this.messages !== undefined || this.defaultLocale === undefined;
   }
 }
 

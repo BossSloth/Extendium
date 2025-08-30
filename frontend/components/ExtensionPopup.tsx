@@ -1,6 +1,6 @@
 import { Extension } from '@extension/Extension';
 import React, { JSX, useEffect, useRef, useState } from 'react';
-import { mainWindow } from '../shared';
+import { changeTagPreserveChildren, mainWindow } from '../shared';
 import { injectHtml } from '../windowManagement';
 
 export function ExtensionPopup({
@@ -34,6 +34,17 @@ export function ExtensionPopup({
       // content = content.replace(/(href=")\/|(src=")\//g, '$1$2');
       setPopupContent(content);
     }
+    // Remove useless form
+    const popupDocument = container.current?.ownerDocument;
+    if (!popupDocument) return;
+    const steamForm = popupDocument.querySelector('form:has(.extendium-popup)');
+    if (steamForm) {
+      changeTagPreserveChildren(steamForm, 'div');
+    }
+    const base = popupDocument.createElement('base');
+    base.href = baseDir;
+    popupDocument.head.prepend(base);
+
     initPopupContent();
   }, []);
 

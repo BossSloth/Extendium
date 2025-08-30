@@ -39,15 +39,20 @@ export default async function WebkitMain(): Promise<void> {
   const endMark = performance.mark('[Extendium] WebkitMain extensions loaded');
   performance.measure('[Extendium] WebkitMain extensions loading', startMark.name, endMark.name);
   const extensionsUrl = `https://js.millennium.app/${extensionsDir}`;
+  const extensionObjects: Extension[] = [];
   for (const [folderName, manifest] of Object.entries(manifests)) {
     const extension = new Extension(manifest, `${extensionsUrl}/${folderName}`, folderName);
-    const chrome = createChrome('content', extension);
-    extensions.set(manifest.name, new ExtensionWrapper(extension, chrome));
+    extensionObjects.push(extension);
   }
 
-  linkClickInterceptor(extensions);
+  await Promise.all(extensionObjects.map(async extension => {
+    await extension.init();
+    const chrome = createChrome('content', extension);
+    extensions.set(extension.getName(), new ExtensionWrapper(extension, chrome));
+    await createContentScripts(extension)
+  }));
 
-  await Promise.all([...extensions.values()].map(async wrapper => createContentScripts(wrapper.extension)));
+  linkClickInterceptor(extensions);
   performance.mark('[Extendium] WebkitMain content scripts created done');
 
   TabInject();

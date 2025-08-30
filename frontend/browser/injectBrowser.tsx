@@ -2,7 +2,7 @@
 import { Extension } from '@extension/Extension';
 import { ConfirmModal, showModal } from '@steambrew/client';
 import React from 'react';
-import { loadScript } from 'shared';
+import { loadScriptSync } from 'shared';
 import { patchFetch } from './corsFetch';
 import { createChrome } from './createChrome';
 
@@ -16,9 +16,9 @@ export function injectBrowser(context: string, window: Window, extension: Extens
   const originalOnError = window.onerror;
 
   window.onerror = function (this: WindowEventHandlers, ...args: unknown[]): boolean {
-    console.error(`Error in ${extension.manifest.name} - ${context}`, ...args);
+    console.error(`Error in ${extension.getName()} - ${context}`, ...args);
 
-    extension.logger.errors.push(`Error in "${extension.manifest.name} - ${context}": ${args.join(' ')}`);
+    extension.logger.errors.push(`Error in "${extension.getName()} - ${context}": ${args.join(' ')}`);
 
     // @ts-expect-error ignore
     return originalOnError?.call(this, ...args);
@@ -27,9 +27,9 @@ export function injectBrowser(context: string, window: Window, extension: Extens
   const originalOnUnhandledRejection = window.onunhandledrejection;
 
   window.onunhandledrejection = function (this: WindowEventHandlers, event): unknown {
-    console.error(`Error in ${extension.manifest.name} - ${context}`, event);
+    console.error(`Error in ${extension.getName()} - ${context}`, event);
 
-    extension.logger.errors.push(`Error in "${extension.manifest.name} - ${context}": ${event.reason}`);
+    extension.logger.errors.push(`Error in "${extension.getName()} - ${context}": ${event.reason}`);
 
     return originalOnUnhandledRejection?.call(this, event);
   };
@@ -39,20 +39,20 @@ export function injectBrowser(context: string, window: Window, extension: Extens
   window.console.error = function (...args: unknown[]): void {
     originalConsoleError(...args);
 
-    console.error(`Error in ${extension.manifest.name} - ${context}`, ...args);
+    console.error(`Error in ${extension.getName()} - ${context}`, ...args);
 
-    extension.logger.errors.push(`Error in "${extension.manifest.name} - ${context}": ${args.join(' ')}`);
+    extension.logger.errors.push(`Error in "${extension.getName()} - ${context}": ${args.join(' ')}`);
   };
 
   window.importScripts = (...urls: string[]): void => {
-    async function asyncLoadScripts(): Promise<void> {
+    // async function asyncLoadScripts(): Promise<void> {
       for (const url of urls) {
         // eslint-disable-next-line no-await-in-loop
-        await loadScript(extension.getFileUrl(url) ?? '', window.document);
+        loadScriptSync(extension.getFileUrl(url) ?? '', window.document);
       }
-    }
+    // }
 
-    asyncLoadScripts();
+    // asyncLoadScripts();
   };
 
   patchFetch(window, extension);

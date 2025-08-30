@@ -27,6 +27,7 @@ export class Extension {
 
   public async init(): Promise<void> {
     await this.locale.initLocale();
+    this.logger.init();
     this.action.initTitle();
   }
 

@@ -62,6 +62,15 @@ export async function loadScript(src: string, document: Document, attributes?: N
   });
 }
 
+export function loadScriptSync(src: string, document: Document): void {
+  const xhr = new XMLHttpRequest();
+  xhr.open('GET', src, false);
+  xhr.send();
+  const script = document.createElement('script');
+  script.textContent = `${xhr.responseText}\n//# sourceURL=${src}`;
+  document.head.appendChild(script);
+}
+
 export async function getUserInfo(): Promise<UserInfo> {
   const loginUsers = await SteamClient.User.GetLoginUsers();
   const user = loginUsers[0];
@@ -86,4 +95,23 @@ export async function getUserInfo(): Promise<UserInfo> {
     avatarUrl: 'https://avatars.steamstatic.com/b5bd56c1aa4644a474a2e4972be27ef9e82e517e_full.jpg', // TODO: replace with loginUsers[0]?.avatarUrl and use correct steam path
     personaName: user.personaName,
   };
+}
+
+export function changeTagPreserveChildren(element: Element, newTag: string): HTMLElement {
+  const newElement = document.createElement(newTag);
+
+  // Copy attributes
+  for (let attr of element.attributes) {
+    newElement.setAttribute(attr.name, attr.value);
+  }
+
+  // Move children *except* the React mount
+  while (element.firstChild) {
+    newElement.appendChild(element.firstChild);
+  }
+
+  // Swap in DOM
+  element.parentNode?.replaceChild(newElement, element);
+
+  return newElement;
 }

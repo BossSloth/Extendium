@@ -53,9 +53,6 @@ async function mutateScripts(urls: Map<string, ScriptInfo>, extension: Extension
     }
   });
 
-  // Also load the extension's locale
-  promises.unshift(extension.init());
-
   const startMark = performance.mark(`[Extendium][${extension.getName()}] mutateScripts start`);
   await Promise.all(promises);
   const endMark = performance.mark(`[Extendium][${extension.getName()}] mutateScripts end`);
