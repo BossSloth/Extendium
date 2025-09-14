@@ -1,6 +1,6 @@
 name: Bug Report
 description: Report a bug with Extendium itself (not a specific Chrome extension)
-title: "[Bug]"
+title: "[Bug] "
 labels: [bug]
 body:
 - type: markdown

@@ -1,6 +1,6 @@
 name: Extension Issue
 description: Report a problem with a specific Chrome extension running under Extendium
-title: "[Extension Issue] <Extension Name>"
+title: "[Extension Issue] "
 labels: [bug, extension]
 body:
 - type: markdown
@@ -105,4 +105,3 @@ body:
       - label: Reinstalled this extension from the Chrome Web Store URL
       - label: Switched to Default skin/theme
       - label: Removed other extensions to rule out conflicts
-      - label: Verified that the extension works in Google Chrome (or another Chromium browser)
