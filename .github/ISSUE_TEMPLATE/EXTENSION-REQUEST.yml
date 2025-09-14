@@ -1,0 +1,96 @@
+name: Extension Request
+description: Request support for a Chrome extension or report that an extension works so it can be added to the compatibility list
+title: "[Extension Request] <Extension Name>"
+labels: [compatibility, extension]
+body:
+- type: markdown
+  attributes:
+    value: |
+      Use this form to:
+      - Request Extendium support for a specific Chrome extension (not working/unknown)
+      - Report that an extension works so it can be added to the compatibility list
+
+      Compatibility list: https://docs.google.com/spreadsheets/d/e/2PACX-1vRDoTrxtBhLurvlxZNW7vYpUtp-dU4iyRgS3GnVKjXx2seONwU_BtORtDoE8WbbrRp0-OohYI2NAM-j/pubhtml
+- type: dropdown
+  attributes:
+    label: Request type
+    options:
+      - Request support (not working or unknown)
+      - Report as working (add to compatibility list)
+  validations:
+    required: true
+- type: input
+  attributes:
+    label: Extension name
+    placeholder: "e.g. SteamDB"
+  validations:
+    required: true
+- type: input
+  attributes:
+    label: Chrome Web Store URL
+    description: Link to the extension on the Chrome Web Store
+    placeholder: "e.g. https://chromewebstore.google.com/detail/steamdb/kdbmhfkmnlmbkgbabkdealhhbfhlmmon"
+  validations:
+    required: true
+- type: input
+  attributes:
+    label: Extension version (if known)
+    placeholder: "e.g. 3.12.0"
+  validations:
+    required: false
+- type: checkboxes
+  attributes:
+    label: Pre-check
+    options:
+      - label: I checked the compatibility list and did not find a definitive answer
+        required: true
+- type: textarea
+  attributes:
+    label: Summary
+    description: |
+      If requesting support, describe what's missing or failing.
+      If reporting as working, describe what you tested (action button, options page, background behavior, etc.).
+  validations:
+    required: true
+- type: dropdown
+  attributes:
+    label: Current working status (your assessment)
+    options:
+      - Perfect
+      - Great
+      - Okay
+      - Broken
+  validations:
+    required: false
+- type: input
+  attributes:
+    label: Extendium Plugin Version
+    placeholder: "e.g. v1.2.3"
+  validations:
+    required: true
+- type: input
+  attributes:
+    label: Millennium Version
+    placeholder: "e.g. v2.17.2"
+  validations:
+    required: true
+- type: dropdown
+  attributes:
+    label: Operating System
+    options:
+      - Windows
+      - Linux
+  validations:
+    required: true
+- type: textarea
+  attributes:
+    label: Evidence / Logs (optional but helpful)
+    description: Screenshots or console logs that demonstrate working/non-working behavior. You can drag-and-drop files here.
+  validations:
+    required: false
+- type: textarea
+  attributes:
+    label: Additional notes
+    description: Anything else we should know (e.g., special steps, related links).
+  validations:
+    required: false
