@@ -1,14 +1,26 @@
 name: Bug Report
-description: Create a bug report to help me find and fix bugs!
+description: Report a bug with Extendium itself (not a specific Chrome extension)
 title: "[Bug]"
 labels: [bug]
 body:
+- type: markdown
+  attributes:
+    value: |
+      Use this form for bugs with Extendium itself (UI, manager, backend, etc.).
+
+      If the problem occurs only with one specific Chrome extension, please use the "Extension Issue" template instead.
 - type: textarea
   attributes:
     label: Describe the Bug
     description: A clear and concise description of what you're experiencing. If applicable, add screenshots to help explain your problem.
   validations:
     required: true
+- type: checkboxes
+  attributes:
+    label: Is this an Extendium bug (not extension-specific)?
+    options:
+      - label: This issue is not limited to a single Chrome extension
+        required: true
 - type: input
   attributes:
     label: Plugin Version
@@ -50,6 +62,14 @@ body:
     description: Is this issue consistently reproducible?
     options:
       - label: Yes, I can reproduce this issue consistently
+- type: checkboxes
+  attributes:
+    label: Troubleshooting tried
+    description: Select all the steps you have already tried
+    options:
+      - label: Made sure that the plugin is enabled in the Millennium plugin menu
+      - label: Restarted Steam
+      - label: Switched to Default skin/theme (only applicable if it's and UI issue)
 - type: textarea
   attributes:
     label: Steps To Reproduce
@@ -61,6 +81,12 @@ body:
       4. See error...
   validations:
     required: true
+- type: textarea
+  attributes:
+    label: Logs / Console output
+    description: Paste any relevant logs from the console or logs directory.
+  validations:
+    required: false
 - type: textarea
   attributes:
     label: Anything else?

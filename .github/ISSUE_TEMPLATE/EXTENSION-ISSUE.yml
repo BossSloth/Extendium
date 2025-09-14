@@ -1,0 +1,108 @@
+name: Extension Issue
+description: Report a problem with a specific Chrome extension running under Extendium
+title: "[Extension Issue] <Extension Name>"
+labels: [bug, extension]
+body:
+- type: markdown
+  attributes:
+    value: |
+      Use this form for issues that affect a specific Chrome extension when used with Extendium.
+
+      If the problem affects Extendium itself (UI/manager, installation, etc.), please use the "Bug Report" template instead.
+- type: input
+  attributes:
+    label: Extension name
+    placeholder: "e.g. SteamDB"
+  validations:
+    required: true
+- type: input
+  attributes:
+    label: Chrome Web Store URL
+    description: Link to the extension on the Chrome Web Store
+    placeholder: "e.g. https://chromewebstore.google.com/detail/steamdb/kdbmhfkmnlmbkgbabkdealhhbfhlmmon"
+  validations:
+    required: true
+- type: input
+  attributes:
+    label: Extension version, can be found in the extension's details page (if known)
+    placeholder: "e.g. 3.12.0"
+  validations:
+    required: false
+- type: checkboxes
+  attributes:
+    label: Problem type
+    options:
+      - label: Won't install / download fails
+      - label: Installs but doesn't run
+      - label: Action button missing or not clickable
+      - label: Options page doesn't open or is broken
+      - label: Background service worker errors
+      - label: Feature(s) not working as expected
+      - label: Crashes / errors shown in console
+      - label: Other
+- type: textarea
+  attributes:
+    label: Describe the issue
+    description: A clear and concise description of what happens. Add screenshots if helpful.
+  validations:
+    required: true
+- type: checkboxes
+  attributes:
+    label: Confirmation
+    options:
+      - label: I tested with the latest Extendium version
+      - label: The extension works in Google Chrome (or another Chromium browser)
+  validations:
+    required: true
+- type: input
+  attributes:
+    label: Extendium Plugin Version
+    placeholder: "e.g. v1.2.3"
+  validations:
+    required: true
+- type: input
+  attributes:
+    label: Millennium Version
+    placeholder: "e.g. v2.17.2"
+  validations:
+    required: true
+- type: dropdown
+  attributes:
+    label: Operating System
+    options:
+      - Windows
+      - Linux
+  validations:
+    required: true
+- type: textarea
+  attributes:
+    label: Steps To Reproduce
+    description: Exact steps so we can reproduce the problem.
+    placeholder: |
+      1. Install the extension via Extensions Manager
+      2. Click the action button / open options
+      3. Do '...'
+      4. See error / unexpected behavior
+  validations:
+    required: true
+- type: textarea
+  attributes:
+    label: Logs / Console output
+    description: Paste any relevant logs from the console or logs directory.
+  validations:
+    required: false
+- type: textarea
+  attributes:
+    label: Other installed extensions (optional)
+    description: Listing other installed extensions can help reproduce and isolate conflicts.
+  validations:
+    required: false
+- type: checkboxes
+  attributes:
+    label: Troubleshooting tried
+    options:
+      - label: Restarted Steam
+      - label: Reinstalled this extension from the Chrome Web Store URL
+      - label: Switched to Default skin/theme
+      - label: Removed other extensions to rule out conflicts
+      - label: Verified that the extension works in Google Chrome (or another Chromium browser)

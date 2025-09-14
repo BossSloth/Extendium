@@ -1,8 +1,14 @@
 name: Feature Request
-description: Suggest an idea for this plugin!
+description: Suggest an idea or improvement for Extendium itself
 title: "[Feature]"
 labels: [enhancement]
 body:
+- type: markdown
+  attributes:
+    value: |
+      This template is for features in Extendium (UI/manager, settings, backend services, etc.).
+
+      If your request targets a specific Chrome extension's behavior, please open an "Extension Issue" instead.
 - type: textarea
   attributes:
     label: Describe the feature you'd like!
