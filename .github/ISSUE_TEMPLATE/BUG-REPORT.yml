@@ -67,7 +67,6 @@ body:
     label: Troubleshooting tried
     description: Select all the steps you have already tried
     options:
-      - label: Made sure that the plugin is enabled in the Millennium plugin menu
       - label: Restarted Steam
       - label: Switched to Default skin/theme (only applicable if it's and UI issue)
 - type: textarea
