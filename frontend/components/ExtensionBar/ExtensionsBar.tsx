@@ -2,7 +2,7 @@ import { closestCenter, DndContext, DragEndEvent, PointerSensor, useSensor, useS
 import { restrictToHorizontalAxis, restrictToParentElement } from '@dnd-kit/modifiers';
 import { arrayMove, horizontalListSortingStrategy, SortableContext } from '@dnd-kit/sortable';
 import { Extension } from '@extension/Extension';
-import React, { JSX, useEffect } from 'react';
+import React, { JSX } from 'react';
 import { useSettingsStore } from '../../extensions-manager/Settings/settingsStore';
 import { ToolbarManagerButton } from '../ToolbarExtensionManager/ToolbarManagerButton';
 import { useExtensionsBarStore } from '../stores/extensionsBarStore';
@@ -26,12 +26,6 @@ export function ExtensionsBar({ extensions }: { readonly extensions: Map<string,
       });
     }
   }
-
-  useEffect(() => {
-    if (extensionsOrder.length === 0) {
-      setExtensionsOrder([...extensions.keys()]);
-    }
-  }, []);
 
   function getBarStyles(): React.CSSProperties {
     const style: React.CSSProperties = {};
