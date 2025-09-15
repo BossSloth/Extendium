@@ -41,9 +41,9 @@ Or follow this gif.
     Or if you are using the Fluenty skin
     ![Extensions puzzle icon next to the address bar with Fluenty skin](images/extension-icon-fluenty.png)
 
-    > [!NOTE]
-    If you can't find the puzzle icon, you can open the extension manager by running <a href="steam://extendium/manager">steam://extendium/manager</a>
-    If you still can't find it try using the default skin or adjusting the margins in the settings menu
+> [!NOTE]
+> If you can't find the puzzle icon, you can open the extension manager by running `steam://extendium/manager` by putting it in your browser url or on windows running it with `windows` + `R`  
+> If you still can't find it try using the default skin or adjusting the margins in the settings menu
 
   - In the menu, click __Manage extensions__ to open the Extensions Manager.
 
