@@ -1,0 +1,14 @@
+diff --git a/build/globals/index.d.ts b/build/globals/index.d.ts
+index c749319b4d070f0a6bd6d80448b6f49ce107d537..e69de29bb2d1d6434b8b29ae775ad8c2e48c5391 100644
+--- a/build/globals/index.d.ts
++++ b/build/globals/index.d.ts
+@@ -1,2 +0,0 @@
+-export * from './SteamClient';
+-export * from './stores';
+diff --git a/build/globals/index.js b/build/globals/index.js
+index c749319b4d070f0a6bd6d80448b6f49ce107d537..e69de29bb2d1d6434b8b29ae775ad8c2e48c5391 100644
+--- a/build/globals/index.js
++++ b/build/globals/index.js
+@@ -1,2 +0,0 @@
+-export * from './SteamClient';
+-export * from './stores';

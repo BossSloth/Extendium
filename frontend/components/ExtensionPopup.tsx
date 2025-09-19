@@ -77,7 +77,7 @@ export function ExtensionPopup({
 
     popupWindow().SteamClient.Window.ResizeTo(size.width, size.height, false);
     if (centerPopup) {
-      popupWindow().SteamClient.Window.MoveTo(popupWindow().screen.availWidth / 2 - size.width / 2, popupWindow().screen.availHeight / 2 - size.height / 2);
+      popupWindow().SteamClient.Window.MoveTo(popupWindow().screen.availWidth / 2 - size.width / 2, popupWindow().screen.availHeight / 2 - size.height / 2, true);
     }
   }
 
