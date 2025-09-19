@@ -16,7 +16,7 @@ from cors_proxy import CORSProxy
 from logger.logger import logger  # pylint: disable=import-error
 from websocket import initialize_server, run_server, shutdown_server
 
-EXTENSIONS_DIR = '\\.extensions'
+EXTENSIONS_DIR = '.extensions'
 EXTENDIUM_INFO_FILE = 'extendium.info'
 
 cors_proxy: Optional[CORSProxy] = None
@@ -25,7 +25,7 @@ def GetPluginDir():
     return path.abspath(PLUGIN_BASE_DIR) # pylint: disable=undefined-variable
 
 def GetExtensionsDir():
-    return GetPluginDir() + EXTENSIONS_DIR
+    return os.path.join(GetPluginDir(), EXTENSIONS_DIR)
 
 def GetExtensionManifests():
     # Get all the manifest.json files in the extensions directory
