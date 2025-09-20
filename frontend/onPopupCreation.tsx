@@ -93,7 +93,7 @@ export function modifyLinks(document: Document): void {
     const anchor = target.closest('a');
 
     if (anchor) {
-      const extension = optionsLinks.get(anchor.href);
+      const extension = optionsLinks.get(decodeURIComponent(anchor.href));
       if (extension) {
         event.preventDefault(); // stop default link behavior if needed
 

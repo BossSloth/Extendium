@@ -12,7 +12,7 @@ export function linkClickInterceptor(extensions: Map<string, ExtensionWrapper>, 
     const anchor = target.closest('a');
 
     if (anchor) {
-      const href = anchor.href;
+      const href = decodeURIComponent(anchor.href);
 
       if (optionsLinks.has(href)) {
         event.preventDefault(); // stop default link behavior if needed
