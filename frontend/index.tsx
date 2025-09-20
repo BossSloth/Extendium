@@ -6,7 +6,7 @@ import { GetExtensionsInfos } from 'callables';
 import { startIntervalForUpdate as startIntervalForUpdates } from 'updates/updater';
 import { handleUrlScheme } from 'urlSchemeHandler';
 import { OnPopupCreation } from './onPopupCreation';
-import { getUserInfo, initPluginDir } from './shared';
+import { getUserInfo, infos, initInfos, initPluginDir } from './shared';
 import { WebkitWrapper } from './webkit';
 
 const extensions = new Map<string, Extension>();
@@ -24,13 +24,11 @@ const global = {
 // @ts-expect-error ignore
 Millennium.exposeObj(global);
 
-export let infos: ExtensionInfos;
-
 // Entry point on the front end of your plugin
 export default async function PluginMain(): Promise<void> {
   SteamClient.URL.RegisterForRunSteamURL('extendium', handleUrlScheme);
   userInfo = await getUserInfo();
-  infos = JSON.parse(await GetExtensionsInfos()) as ExtensionInfos;
+  initInfos(JSON.parse(await GetExtensionsInfos()) as ExtensionInfos);
   const manifests = infos.manifests;
   initPluginDir(infos.pluginDir);
   extensionsDir = infos.extensionsDir.replaceAll('\\', '/');

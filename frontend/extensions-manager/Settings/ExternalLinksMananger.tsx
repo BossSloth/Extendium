@@ -1,7 +1,7 @@
 import { ExternalLink } from '@extension/Metadata';
 import { UpdateExternalLinks } from 'callables';
-import { infos } from 'index';
 import React from 'react';
+import { infos } from 'shared';
 import DynamicListManager from './DynamicListManager';
 
 export function ExternalLinksManager(): React.ReactNode {

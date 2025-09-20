@@ -1,4 +1,5 @@
 import { Extension } from '@extension/Extension';
+import { ExtensionInfos } from '@extension/Metadata';
 import { UserInfo } from '@extension/shared';
 import { Millennium } from '@steambrew/client';
 import * as ReactDOM from 'react-dom';
@@ -15,6 +16,12 @@ export let pluginDir: string;
 
 export function initPluginDir(_pluginDir: string): void {
   pluginDir = _pluginDir;
+}
+
+export let infos: ExtensionInfos;
+
+export function initInfos(_infos: ExtensionInfos): void {
+  infos = _infos;
 }
 
 declare global {

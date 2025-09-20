@@ -198,8 +198,8 @@ function createTabsType(extension: Extension, logger: Logger): typeof chrome.tab
       return Promise.resolve({});
     },
     onRemoved: new ChromeEvent<(tabId: number) => void>(),
-    onUpdated: new ChromeEvent<(tabId: number, changeInfo: chrome.tabs.TabChangeInfo, tab: chrome.tabs.Tab) => void>(),
-    onActivated: new ChromeEvent<(activeInfo: chrome.tabs.TabActiveInfo) => void>(),
+    onUpdated: new ChromeEvent<(tabId: number, changeInfo: chrome.tabs.OnUpdatedInfo, tab: chrome.tabs.Tab) => void>(),
+    onActivated: new ChromeEvent<(activeInfo: chrome.tabs.OnActivatedInfo) => void>(),
     query: queryTabs,
     detectLanguage: async (arg1?: number | ((language: string) => void), arg2?: (language: string) => void): Promise<string> => {
       logger.log('tabs.detectLanguage', arg1, arg2);
@@ -252,7 +252,7 @@ function createAlarmsType(extension: Extension, logger: Logger): typeof chrome.a
 
       return Promise.resolve();
     },
-    get: async (..._args: unknown[]): Promise<chrome.alarms.Alarm> => {
+    get: async (): Promise<chrome.alarms.Alarm> => {
       return Promise.resolve({} as chrome.alarms.Alarm);
     },
     getAll: async (): Promise<chrome.alarms.Alarm[]> => {

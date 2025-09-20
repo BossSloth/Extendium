@@ -49,7 +49,7 @@ export class Locale implements chromeLocale {
     return response.text();
   }
 
-  getMessage(messageKey: string, substitutions?: string[] | string): string {
+  getMessage(messageKey: string, substitutions?: (string | number)[] | string): string {
     const predefinedMessage = this.getPredefinedMessage(messageKey);
     if (predefinedMessage !== undefined) {
       return predefinedMessage;
@@ -81,7 +81,7 @@ export class Locale implements chromeLocale {
     }
 
     for (let i = 1; i <= substitutions.length; i++) {
-      message = message.replace(`$${i}`, substitutions[i - 1] ?? '');
+      message = message.replace(`$${i}`, substitutions[i - 1]?.toString() ?? '');
     }
 
     return message;
