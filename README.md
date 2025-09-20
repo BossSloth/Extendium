@@ -68,6 +68,13 @@ Or follow this gif.
     - __Browse local files__: Opens the directory where the extensions are stored.
   - Note: Enabling/disabling via a toggle is not available yet.
 
+#### __Configuring External Links__
+  - By default, all links are opened within the Steam client. You can configure certain URL patterns to always open in your default external browser (e.g., Chrome, Firefox).
+  - To configure this, go to __Extensions Manager__ > __Settings__ (cog icon).
+  - In the "External Links" section, you can add, edit, or remove URL patterns.
+    - For each pattern, you can specify a simple text match (e.g., `youtube.com`) or a more complex regular expression by checking the "Regex" box.
+    - For example, to open all YouTube links externally, add an entry for `youtube.com`.
+
 #### __Troubleshooting__
   - If installation fails, check the logs and try again and check if you can access the Chrome web store. If it still fails make a bug report.
   - If you don’t see the puzzle icon, ensure Extendium is enabled in Millennium and that you clicked __Save changes__ at the top of the Millennium plugin menu.
