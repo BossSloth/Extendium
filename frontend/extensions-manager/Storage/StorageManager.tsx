@@ -7,6 +7,7 @@ import { MdArrowBack, MdDelete, MdRefresh } from 'react-icons/md';
 export function StorageManager(): React.ReactNode {
   const [storages, setStorages] = React.useState<[string, unknown][]>([]);
   const { setManagerPopup } = usePopupsStore();
+  const [searchQuery, setSearchQuery] = React.useState('');
 
   React.useEffect(() => {
     refreshStorages();
@@ -82,12 +83,23 @@ export function StorageManager(): React.ReactNode {
         All this data is stored in the Steam browser&apos;s local storage and can be accessed through the browser&apos;s developer tools on any steamloopback address like the extension backgrounds.
       </p>
 
-      {storages.map(([key, value]) => (
-        <div key={key} className="storage-manager-row">
-          {renderObject(JSON.parse(value as string) as object, formatStorageKey(key))}
-          <button type="button" onClick={() => { removeStorage(key); }}><MdDelete /></button>
-        </div>
-      ))}
+      <input
+        type="text"
+        placeholder="Search..."
+        value={searchQuery}
+        onChange={(e) => { setSearchQuery(e.target.value); }}
+        className="styled-input"
+        style={{ marginBottom: '1rem' }}
+      />
+
+      {storages
+        .filter(([key]) => formatStorageKey(key).toLowerCase().includes(searchQuery.toLowerCase()))
+        .map(([key, value]) => (
+          <div key={key} className="storage-manager-row">
+            {renderObject(JSON.parse(value as string) as object, formatStorageKey(key))}
+            <button type="button" onClick={() => { removeStorage(key); }}><MdDelete /></button>
+          </div>
+        ))}
     </div>
   );
 }

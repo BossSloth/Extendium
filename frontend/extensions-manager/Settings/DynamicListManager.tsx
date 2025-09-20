@@ -80,7 +80,7 @@ export default function DynamicListManager({
                 // eslint-disable-next-line react/no-array-index-key
                 <div key={`${idx}`} className="ext-links-row">
                   <input
-                    className="ext-links-input"
+                    className="styled-input"
                     type="text"
                     inputMode="url"
                     value={link.match}
