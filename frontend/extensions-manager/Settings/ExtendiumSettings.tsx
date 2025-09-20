@@ -2,6 +2,7 @@ import { DialogBody, Field, SliderField } from '@steambrew/client';
 import { usePopupsStore } from 'components/stores/popupsStore';
 import React from 'react';
 import { MdArrowBack } from 'react-icons/md';
+import { ExternalLinksManager } from './ExternalLinksMananger';
 import { useSettingsStore } from './settingsStore';
 
 export function ExtendiumSettings(): React.ReactNode {
@@ -37,6 +38,7 @@ export function ExtendiumSettings(): React.ReactNode {
         editableValue
         resetValue={0}
       />
+      <ExternalLinksManager />
     </DialogBody>
   );
 }

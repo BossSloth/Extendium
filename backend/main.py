@@ -17,7 +17,7 @@ from logger.logger import logger  # pylint: disable=import-error
 from websocket import initialize_server, run_server, shutdown_server
 
 EXTENSIONS_DIR = '.extensions'
-EXTENDIUM_INFO_FILE = 'extendium.info'
+EXTENDIUM_EXTERNAL_LINKS_FILE = 'external-links.json'
 
 cors_proxy: Optional[CORSProxy] = None
 
@@ -67,12 +67,32 @@ def GetExtensionMetadatas():
 
     return metadatas
 
+def GetExternalLinks():
+    external_links_path = os.path.join(GetPluginDir(), EXTENDIUM_EXTERNAL_LINKS_FILE)
+    if os.path.isfile(external_links_path):
+        try:
+            with open(external_links_path, 'r', encoding='utf-8') as f:
+                external_links = json.load(f)
+                return external_links
+        except Exception as e:
+            logger.error(f"Error reading external links {external_links_path}: {str(e)}")
+    return []
+
+def UpdateExternalLinks(external_links: str):
+    external_links_path = os.path.join(GetPluginDir(), EXTENDIUM_EXTERNAL_LINKS_FILE)
+    try:
+        with open(external_links_path, 'w', encoding='utf-8') as f:
+            f.write(external_links)
+    except Exception as e:
+        logger.error(f"Error writing external links {external_links_path}: {str(e)}")
+
 def GetExtensionsInfos():
     return json.dumps({
         'extensionsDir': GetExtensionsDir(),
         'pluginDir': GetPluginDir(),
         'manifests': GetExtensionManifests(),
         'metadatas': GetExtensionMetadatas(),
+        'externalLinks': GetExternalLinks(),
     })
 
 def RemoveExtension(name: str):

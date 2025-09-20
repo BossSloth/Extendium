@@ -1,5 +1,5 @@
 import { callable, DialogButton } from '@steambrew/client';
-import { DialogControlSectionClass, settingsClasses } from 'classes';
+import { settingsClasses } from 'classes';
 import { usePopupsStore } from 'components/stores/popupsStore';
 import React from 'react';
 import { FaCog, FaDatabase, FaFolderOpen, FaStore } from 'react-icons/fa';
@@ -18,11 +18,7 @@ export function ExtensionManagerRoot(): React.ReactNode {
 
   return (
     <>
-      <div className={`${DialogControlSectionClass}`}>
-        {/* <DialogButton className={`span-icon ${settingsClasses.SettingsDialogButton}`}>
-            <FaSave />
-            Save
-          </DialogButton> */}
+      <div className="root-buttons">
         <DialogButton
           onClick={() => { setManagerPopup({ route: 'storage' }); }}
           className={`span-icon ${settingsClasses.SettingsDialogButton}`}
@@ -37,20 +33,22 @@ export function ExtensionManagerRoot(): React.ReactNode {
           <FaStore />
           Install extension
         </DialogButton>
-        <DialogButton
-          onClick={openExtensionsFolder}
-          className={`span-icon ${settingsClasses.SettingsDialogButton}`}
-        >
-          <FaFolderOpen />
-          Browse local files
-        </DialogButton>
-        <DialogButton
-          onClick={() => { setManagerPopup({ route: 'settings' }); }}
-          className={`span-icon ${settingsClasses.SettingsDialogButton}`}
-          style={{ width: 'min-content', minWidth: 'unset' }}
-        >
-          <FaCog />
-        </DialogButton>
+        <div style={{ display: 'flex', gap: '6px' }}>
+          <DialogButton
+            onClick={openExtensionsFolder}
+            className={`span-icon ${settingsClasses.SettingsDialogButton}`}
+          >
+            <FaFolderOpen />
+            Browse local files
+          </DialogButton>
+          <DialogButton
+            onClick={() => { setManagerPopup({ route: 'settings' }); }}
+            className={`span-icon ${settingsClasses.SettingsDialogButton}`}
+            style={{ width: '40px', minWidth: 'unset', }}
+          >
+            <FaCog />
+          </DialogButton>
+        </div>
       </div>
       <div className="card-container">
         {[...extensions.values()].map(extension => (

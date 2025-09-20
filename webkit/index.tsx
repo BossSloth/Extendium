@@ -1,4 +1,5 @@
 import { Extension } from '@extension/Extension';
+import { ExtensionInfos } from '@extension/Metadata';
 import { steamRequestIDKey } from '@extension/requests/crossRequestKeys';
 import { callable } from '@steambrew/webkit';
 import { createChrome } from './createChrome';
@@ -33,7 +34,7 @@ export default async function WebkitMain(): Promise<void> {
   }
 
   const startMark = performance.mark('[Extendium] WebkitMain extensions loading start');
-  const extensionInfos = JSON.parse(await GetExtensionsInfos()) as { extensionsDir: string; manifests: Record<string, chrome.runtime.ManifestV3>; };
+  const extensionInfos = JSON.parse(await GetExtensionsInfos()) as ExtensionInfos
   const manifests = extensionInfos.manifests;
   const extensionsDir = extensionInfos.extensionsDir.replaceAll('\\', '/');
   const endMark = performance.mark('[Extendium] WebkitMain extensions loaded');
@@ -52,7 +53,7 @@ export default async function WebkitMain(): Promise<void> {
     await createContentScripts(extension)
   }));
 
-  linkClickInterceptor(extensions);
+  linkClickInterceptor(extensions, extensionInfos.externalLinks ?? []);
   performance.mark('[Extendium] WebkitMain content scripts created done');
 
   TabInject();

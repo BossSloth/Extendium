@@ -94,7 +94,9 @@ $secondary-text-color: rgba(255, 255, 255, 0.6);
     @include button;
 
     width: 31px;
+    min-width: unset !important;
     height: 31px;
+    min-height: unset !important;
     padding: 7px;
     border-radius: 50%;
     position: relative;
@@ -149,6 +151,16 @@ $grid-gutter: 12px;
   justify-content: center !important;
 }
 
+.root-buttons {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(auto-fill, 400px);
+
+  * {
+    box-sizing: border-box !important;
+  }
+}
+
 .card-container {
   display: grid;
   gap: $grid-gutter;
@@ -161,6 +173,7 @@ $grid-gutter: 12px;
 .extension-card {
   border-radius: 8px;
   background-color: #292a2d;
+  background-color: hsla(0, 0%, 100%, 0.05);
   display: flex;
   flex-direction: column;
   height: 180px;
@@ -442,4 +455,122 @@ $grid-gutter: 12px;
     }
   }
 
+}
+
+.ext-links-manager {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+
+  * {
+    box-sizing: border-box;
+  }
+
+  .ext-links-title {
+    font-weight: 600;
+  }
+
+  .ext-links-list {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .ext-links-row {
+    display: grid;
+    grid-template-columns: 1fr auto auto; // input, regex toggle, remove button
+    gap: 8px;
+    align-items: center;
+  }
+
+  $externalLinksDefaultBackground: rgba(255, 255, 255, 0.04);
+
+  .ext-links-input {
+    width: 100%;
+    height: 100%;
+    padding: 6px 8px;
+    border-radius: 4px;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    background: $externalLinksDefaultBackground;
+    color: inherit;
+
+    &:focus {
+      outline: none;
+      border-color: #5aa9ff;
+      box-shadow: 0 0 0 2px rgba(90, 169, 255, 0.25);
+    }
+  }
+
+  .ext-links-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 8px;
+    border-radius: 4px;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    background: $externalLinksDefaultBackground;
+    color: inherit;
+    height: 100%;
+    cursor: pointer;
+    user-select: none;
+
+    input[type='checkbox'] {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 16px;
+      height: 16px;
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      border-radius: 3px;
+      background: rgba(255, 255, 255, 0.06);
+      display: inline-grid;
+      place-content: center;
+      cursor: pointer;
+    }
+
+    input[type='checkbox']::after {
+      content: '';
+      width: 10px;
+      height: 10px;
+      transform: scale(0);
+      transition: transform 0.12s ease;
+      background: #5aa9ff;
+      border-radius: 2px;
+    }
+
+    input[type='checkbox']:checked::after {
+      transform: scale(1);
+    }
+
+    span {
+      font-size: 12px;
+    }
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.08);
+    }
+  }
+
+  .ext-links-remove,
+  .ext-links-add {
+    padding: 6px 10px;
+    border-radius: 4px;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    background: $externalLinksDefaultBackground;
+    color: inherit;
+    cursor: pointer;
+    height: 100%;
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.08);
+    }
+  }
+
+  .ext-links-empty {
+    opacity: 0.7;
+    font-style: italic;
+  }
+
+  .ext-links-actions {
+    margin-top: 4px;
+  }
 }

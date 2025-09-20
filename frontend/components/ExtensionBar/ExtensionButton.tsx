@@ -82,6 +82,9 @@ export function ExtensionButton({ extension }: { readonly extension: Extension; 
     if (extension.action.getPopupUrl() === undefined) {
       /** Only fire onClicked if there is no popup @see https://developer.chrome.com/docs/extensions/reference/api/action#event-onClicked */
       extension.action.onClicked.emit();
+
+      // Open context menu if no action popup is defined
+      onContextMenu();
     }
   }
 
