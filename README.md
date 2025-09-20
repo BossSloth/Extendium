@@ -42,7 +42,7 @@ Or follow this gif.
     ![Extensions puzzle icon next to the address bar with Fluenty skin](images/extension-icon-fluenty.png)
 
 > [!NOTE]
-> If you can't find the puzzle icon, you can open the extension manager by running `steam://extendium/manager` by putting it in your browser url or on windows running it with `windows` + `R`  
+> If you can't find the puzzle icon, you can open the extension manager by running `steam://extendium/manager` by putting it in your browser url or on windows running it with `windows` + `R`
 > If you still can't find it try using the default skin or adjusting the margins in the settings menu
 
   - In the menu, click __Manage extensions__ to open the Extensions Manager.
@@ -87,6 +87,18 @@ Or follow this gif.
 - permission control
 - global keyboard shortcuts
 - anything to do with tabs
+
+## Reporting Issues
+
+If you encounter a bug, have a problem with an extension, or want to request a new one, please open an issue on GitHub. Using the correct issue template helps us track and address problems more effectively.
+
+-   **Bug Report**: Use this if you've found a problem with Extendium itself, such as a UI glitch, a problem with the extension manager, or a backend error. This is for bugs that are not specific to a single Chrome extension.
+
+-   **Extension Issue**: If a specific Chrome extension isn't working as expected (e.g., it won't install, its features are broken, or it's causing errors), please use this template.
+
+-   **Extension Request**: Use this template for two main purposes:
+    1.  To request support for a Chrome extension that is not yet compatible with Extendium.
+    2.  To report that an extension works correctly but is not yet on the [compatibility list](https://docs.google.com/spreadsheets/d/e/2PACX-1vRDoTrxtBhLurvlxZNW7vYpUtp-dU4iyRgS3GnVKjXx2seONwU_BtORtDoE8WbbrRp0-OohYI2NAM-j/pubhtml). Your contributions help us keep the list up-to-date for everyone!
 
 ## Backend services
 Extendium includes optional backend helpers that are started automatically by Millennium when the plugin loads (see `backend/main.py`):
