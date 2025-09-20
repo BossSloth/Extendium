@@ -5,13 +5,13 @@ export interface ExtensionMetadata {
 
 export interface ExtensionInfos {
   extensionsDir: string;
-  pluginDir: string;
+  externalLinks?: ExternalLink[];
   manifests: Record<string, chrome.runtime.ManifestV3>;
   metadatas?: Record<string, ExtensionMetadata>;
-  externalLinks?: ExternalLink[];
+  pluginDir: string;
 }
 
 export interface ExternalLink {
-  match: string;
   isRegex: boolean;
+  match: string;
 }

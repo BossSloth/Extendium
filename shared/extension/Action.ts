@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/member-ordering */
 import { ChromeEvent } from './ChromeEvent';
 import { Extension } from './Extension';
 

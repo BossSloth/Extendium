@@ -2,7 +2,7 @@ import { Extension } from './Extension';
 
 export class Logger {
   public readonly errors: string[] = [];
-  private extBadgeStyle: string = '';
+  private extBadgeStyle = '';
   private readonly ctxBadgeStyle: string;
 
   constructor(readonly parent: Extension, readonly VERBOSE: boolean, readonly context: string) {
@@ -51,6 +51,7 @@ export class Logger {
   private static makeStyleFromStr(input: string): string {
     const color = Logger.colorFromString(input);
     const text = Logger.getTextColorForBg(color);
+
     return Logger.makeBadgeStyle(color, text);
   }
 
@@ -75,8 +76,9 @@ export class Logger {
     let color = '#';
     for (let i = 0; i < 3; i++) {
       const value = (hash >> (i * 8)) & 0xFF;
-      color += ('00' + value.toString(16)).slice(-2);
+      color += (`00${value.toString(16)}`).slice(-2);
     }
+
     return color;
   }
 

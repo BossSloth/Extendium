@@ -2,11 +2,11 @@ import pluginJs from '@eslint/js';
 import stylistic from '@stylistic/eslint-plugin';
 import perfectionist from 'eslint-plugin-perfectionist';
 import pluginReact from 'eslint-plugin-react';
-import { globalIgnores } from 'eslint/config';
+import { defineConfig, globalIgnores } from 'eslint/config';
 import globals from 'globals';
 import tseslint from 'typescript-eslint';
 
-export default tseslint.config(
+export default defineConfig(
   { files: ['**/*.{js,mjs,cjs,ts}'] },
   globalIgnores(['.millennium/', '.venv/', '.extensions/', 'webkit/chromeInjectionContent.js']),
   {
@@ -112,7 +112,7 @@ export default tseslint.config(
       // #endregion
 
       // #region Project specific
-      '@typescript-eslint/member-ordering': ['error', { interfaces: ['method', 'field'], classes: 'off' }],
+      '@typescript-eslint/member-ordering': ['error', { interfaces: ['method', 'field'], classes: 'never' }],
 
       'arrow-body-style': ['off'],
       '@typescript-eslint/unbound-method': 'off',

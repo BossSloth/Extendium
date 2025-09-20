@@ -17,13 +17,13 @@ export function linkClickInterceptor(extensions: Map<string, ExtensionWrapper>, 
       if (optionsLinks.has(href)) {
         event.preventDefault(); // stop default link behavior if needed
         webSocketClient.sendMessage({}, WebkitRequestType.OpenOptions, optionsLinks.get(href) ?? '');
+
         return;
       }
 
       if (externalLinks.some(link => linkMatches(link, href))) {
-        location.href = 'steam://openurl_external/' + href;
+        location.href = `steam://openurl_external/${href}`;
         event.preventDefault();
-        return;
       }
     }
   });
@@ -42,6 +42,7 @@ function linkMatches(link: ExternalLink, href: string): boolean {
   if (link.isRegex) {
     return stringToRegex(link.match).test(href);
   }
+
   return href.includes(link.match);
 }
 
@@ -50,5 +51,6 @@ function stringToRegex(input: string): RegExp {
   if (!match) {
     return new RegExp(input);
   }
+
   return new RegExp(match[1] ?? '', match[2] ?? '');
 }

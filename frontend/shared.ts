@@ -46,7 +46,7 @@ export async function loadScript(src: string, document: Document, attributes?: N
       }
     }
 
-    if (module) {
+    if (module === true) {
       script.setAttribute('type', 'module');
     }
 
@@ -101,7 +101,7 @@ export function changeTagPreserveChildren(element: Element, newTag: string): HTM
   const newElement = document.createElement(newTag);
 
   // Copy attributes
-  for (let attr of element.attributes) {
+  for (const attr of element.attributes) {
     newElement.setAttribute(attr.name, attr.value);
   }
 

@@ -45,14 +45,9 @@ export function injectBrowser(context: string, window: Window, extension: Extens
   };
 
   window.importScripts = (...urls: string[]): void => {
-    // async function asyncLoadScripts(): Promise<void> {
-      for (const url of urls) {
-        // eslint-disable-next-line no-await-in-loop
-        loadScriptSync(extension.getFileUrl(url) ?? '', window.document);
-      }
-    // }
-
-    // asyncLoadScripts();
+    for (const url of urls) {
+      loadScriptSync(extension.getFileUrl(url) ?? '', window.document);
+    }
   };
 
   patchFetch(window, extension);

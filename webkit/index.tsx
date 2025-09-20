@@ -34,7 +34,7 @@ export default async function WebkitMain(): Promise<void> {
   }
 
   const startMark = performance.mark('[Extendium] WebkitMain extensions loading start');
-  const extensionInfos = JSON.parse(await GetExtensionsInfos()) as ExtensionInfos
+  const extensionInfos = JSON.parse(await GetExtensionsInfos()) as ExtensionInfos;
   const manifests = extensionInfos.manifests;
   const extensionsDir = extensionInfos.extensionsDir.replaceAll('\\', '/');
   const endMark = performance.mark('[Extendium] WebkitMain extensions loaded');
@@ -46,11 +46,11 @@ export default async function WebkitMain(): Promise<void> {
     extensionObjects.push(extension);
   }
 
-  await Promise.all(extensionObjects.map(async extension => {
+  await Promise.all(extensionObjects.map(async (extension) => {
     await extension.init();
     const chrome = createChrome('content', extension);
     extensions.set(extension.getName(), new ExtensionWrapper(extension, chrome));
-    await createContentScripts(extension)
+    await createContentScripts(extension);
   }));
 
   linkClickInterceptor(extensions, extensionInfos.externalLinks ?? []);

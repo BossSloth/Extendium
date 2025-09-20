@@ -44,7 +44,7 @@ export function ExtensionManagerRoot(): React.ReactNode {
           <DialogButton
             onClick={() => { setManagerPopup({ route: 'settings' }); }}
             className={`span-icon ${settingsClasses.SettingsDialogButton}`}
-            style={{ width: '40px', minWidth: 'unset', }}
+            style={{ width: '40px', minWidth: 'unset' }}
           >
             <FaCog />
           </DialogButton>
