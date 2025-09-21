@@ -21,7 +21,7 @@ Want to know if your favorite chrome extension is compatible with Extendium? Che
 
 ## Installation
 1. Ensure you have Millennium installed on your Steam client
-2. Download the [latest release](https://github.com/BossSloth/Extendium/releases/latest) of this plugin from GitHub or from the [Steambrew](https://steambrew.app/plugins) website
+2. Download the [latest release](https://github.com/BossSloth/Extendium/releases/latest) of this plugin from GitHub or from the [Steambrew](https://steambrew.app/plugin?id=788ed8554492) website
 3. Place the plugin files in your Millennium plugins directory (should be a plugins folder in your Steam client directory)
 4. Restart your Steam client
 5. Enable the Extendium plugin in the Millennium plugin menu
