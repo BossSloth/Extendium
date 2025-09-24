@@ -33,7 +33,7 @@ export function ToolbarManagerButton(): React.JSX.Element {
       type="button"
       className="extension-button"
       onClick={openExtensionsContextMenu}
-      title={hasAnyUpdate ? 'Extensions — updates available' : 'Extensions'}
+      title={hasAnyUpdate ? 'Extensions - updates available' : 'Extensions'}
     >
       <IoExtensionPuzzleOutline color="gray" size={17} style={{ padding: 0 }} />
       {hasAnyUpdate && <span className="update-dot" aria-label="Updates available" />}
