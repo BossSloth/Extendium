@@ -28,7 +28,7 @@ export function ExtensionManagerComponent({ extension }: { readonly extension: E
   function handleReinstallInfoClick(): void {
     showConfirmationModal({
       title: 'Metadata missing',
-      description: 'This extension is missing its update metadata, so it cannot be updated automatically. Please reinstall it from its original Chrome Web Store URL.',
+      description: 'This extension is missing its update metadata, so it cannot be updated automatically. Please reinstall it from its original Chrome Web Store URL. Or ignore this message if you don\'t want updates.',
       okButtonText: 'OK',
     });
   }
