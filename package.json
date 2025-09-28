@@ -41,7 +41,7 @@
     "@dnd-kit/utilities": "^3.2.2",
     "@steambrew/api": "^5.5.13",
     "@steambrew/client": "^5.5.13",
-    "@steambrew/ttc": "^2.7.3",
+    "@steambrew/ttc": "^2.7.5",
     "@steambrew/webkit": "5.5.13",
     "react-icons": "^5.5.0",
     "sass-embedded": "^1.92.1",
