@@ -27,7 +27,7 @@ Millennium.exposeObj(global);
 // Entry point on the front end of your plugin
 export default async function PluginMain(): Promise<void> {
   SteamClient.URL.RegisterForRunSteamURL('extendium', handleUrlScheme);
-  userInfo = await getUserInfo();
+  userInfo = getUserInfo();
   initInfos(JSON.parse(await GetExtensionsInfos()) as ExtensionInfos);
   const manifests = infos.manifests;
   initPluginDir(infos.pluginDir);

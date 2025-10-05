@@ -78,20 +78,10 @@ export function loadScriptSync(src: string, document: Document): void {
   document.head.appendChild(script);
 }
 
-export async function getUserInfo(): Promise<UserInfo> {
-  const loginUsers = await SteamClient.User.GetLoginUsers();
-  const user = loginUsers[0];
-
-  if (!user) {
-    throw new Error('Failed to get user info');
-  }
-
-  const match = user.avatarUrl.match(/avatarcache\/(\d+)/);
-  if (!match) {
-    throw new Error('Failed to match avatar URL');
-  }
-
-  const steamid = match[1] ?? '';
+export function getUserInfo(): UserInfo {
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+  const connectionManager = App.m_cm ?? appDetailsStore.m_CMInterface;
+  const steamid = connectionManager.steamid.m_ulSteamID.toString();
 
   const profileUrl = urlStore.m_steamUrls.SteamIDMyProfile.url;
   const userId = profileUrl.match(/\/id\/(.+)\//)?.[1] ?? '';
@@ -100,7 +90,7 @@ export async function getUserInfo(): Promise<UserInfo> {
     steamid,
     userId,
     avatarUrl: 'https://avatars.steamstatic.com/b5bd56c1aa4644a474a2e4972be27ef9e82e517e_full.jpg', // TODO: replace with loginUsers[0]?.avatarUrl and use correct steam path
-    personaName: user.personaName,
+    personaName: connectionManager.persona_name,
   };
 }
 
