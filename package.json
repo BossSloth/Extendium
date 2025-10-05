@@ -29,7 +29,7 @@
   },
   "type": "module",
   "name": "extendium",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "A plugin for Millennium that adds chrome extensions support to the client",
   "main": "./frontend/index.jsx",
   "author": "BossSloth",
