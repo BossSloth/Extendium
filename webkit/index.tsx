@@ -22,7 +22,7 @@ export default async function WebkitMain(): Promise<void> {
   // performance.measure('Total load time', '[Millennium] preload-start', '[Extendium] WebkitMain start');
   initWebSocketClient();
   // Add fake header to steam pages
-  if (isSteamPage()) {
+  if (isSteamPage() && !window.location.href.startsWith('https://store.steampowered.com/news')) {
     const steamRequestID = new URLSearchParams(window.location.search).get(steamRequestIDKey);
     if (steamRequestID !== null) {
       handleSteamRequests();
