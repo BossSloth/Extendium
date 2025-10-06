@@ -22,7 +22,7 @@ export class Locale implements chromeLocale {
       return;
     }
 
-    const language = this.getUILanguage();
+    const language = this.getUILanguageKey();
     let content;
     try {
       content = await this.fetchLocale(language);
@@ -92,13 +92,13 @@ export class Locale implements chromeLocale {
   }
 
   async detectLanguage(): Promise<chrome.i18n.LanguageDetectionResult> {
-    return Promise.resolve({ language: this.getUILanguage(), isReliable: true, languages: [{ language: this.getUILanguage(), percentage: 100 }] });
+    return Promise.resolve({ language: this.getUILanguageKey(), isReliable: true, languages: [{ language: this.getUILanguageKey(), percentage: 100 }] });
   }
 
   getPredefinedMessage(key: string): string | undefined {
     switch (key) {
       case '@@extension_id': return '1234';
-      case '@@ui_locale': return this.getUILanguage();
+      case '@@ui_locale': return this.getUILanguageKey();
       case '@@bidi_dir': return document.body.dir;
       case '@@bidi_reversed_dir': return document.body.dir === 'ltr' ? 'rtl' : 'ltr';
       case '@@bidi_start_edge': return document.body.dir === 'ltr' ? 'left' : 'right';
@@ -112,14 +112,23 @@ export class Locale implements chromeLocale {
   }
 
   getUILanguage(): string {
-    const longRegionLocales = ['es-419', 'pt-BR', 'pt-PT', 'zh-CN', 'zh-TW'];
-    let language = navigator.language;
-    if (!longRegionLocales.includes(language)) {
-      language = language.split('-')[0] ?? '';
-    }
-
-    return language.replaceAll('-', '_');
+    return navigator.language;
   }
+
+  getUILanguageKey(): string {
+    return this.getUILanguage().replaceAll('-', '_');
+  }
+
+  // TODO: Figure out why I did this?
+  // getUILanguage(): string {
+  //   const longRegionLocales = ['es-419', 'pt-BR', 'pt-PT', 'zh-CN', 'zh-TW'];
+  //   let language = navigator.language;
+  //   if (!longRegionLocales.includes(language)) {
+  //     language = language.split('-')[0] ?? '';
+  //   }
+
+  //   return language.replaceAll('-', '_');
+  // }
 
   isReady(): boolean {
     return this.messages !== undefined || this.defaultLocale === undefined;
