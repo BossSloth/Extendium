@@ -30,12 +30,16 @@ export function linkClickInterceptor(extensions: Map<string, ExtensionWrapper>, 
 }
 
 function getOptionLinks(extensions: Map<string, ExtensionWrapper>): Map<string, string> {
-  return [...extensions.values()].map((extensionW) => {
+  return [...extensions.values()].flatMap((extensionW) => {
     const extension = extensionW.extension;
-    const link = extension.options.getOptionsPageUrl() ?? '';
+    const optionsPageUrl = extension.options.getOptionsPageUrl() ?? '';
+    const fileUrl = extension.getFileUrl(optionsPageUrl) ?? '';
 
-    return [link, extension.getName()];
-  }).filter(link => link[0] !== '').reduce((map, [key, value]) => map.set(key ?? '', value ?? ''), new Map<string, string>());
+    return [
+      [optionsPageUrl, extension.getName()],
+      [fileUrl, extension.getName()],
+    ].filter(([key]) => key !== '');
+  }).reduce((map, [key, value]) => map.set(key ?? '', value ?? ''), new Map<string, string>());
 }
 
 function linkMatches(link: ExternalLink, href: string): boolean {
