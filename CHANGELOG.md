@@ -1,3 +1,13 @@
+## [1.0.3](https://github.com/BossSloth/Extendium/compare/v1.0.2...v1.0.3) (2025-10-06)
+
+
+### Bug Fixes
+
+* Detect more links to open as options menu ([ca1fe0b](https://github.com/BossSloth/Extendium/commit/ca1fe0b0e2892b756ec49da8c34f6f8dfbfdf6dd))
+* Disabled fake header on steam news page as steam does some weird things on that page if the header is present, closes [#18](https://github.com/BossSloth/Extendium/issues/18) ([33c747e](https://github.com/BossSloth/Extendium/commit/33c747e163f0e91480f145da039e7e1a1976d9e6))
+* Fixed extendium giving back the wrong locale if the current language had a sub tag like `pt-br` or `zh-cn`. This should fix some extensions that would previously not work with these languages ([e70b1b1](https://github.com/BossSloth/Extendium/commit/e70b1b1640de436a33f7fa1b430baa2c0d929db4))
+* Fixed extension button sometimes disspearing when extendium fails to get some user data ([bb3c3b7](https://github.com/BossSloth/Extendium/commit/bb3c3b76a3315650f2ef72947941b2ff0621eff8))
+
 ## [1.0.2](https://github.com/BossSloth/Extendium/compare/v1.0.1...v1.0.2) (2025-10-05)
 
 
