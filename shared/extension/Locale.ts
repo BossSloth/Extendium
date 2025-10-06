@@ -22,7 +22,7 @@ export class Locale implements chromeLocale {
       return;
     }
 
-    const language = this.getUILanguageKey();
+    const language = this.getLocaleLanguage();
     let content;
     try {
       content = await this.fetchLocale(language);
@@ -119,16 +119,15 @@ export class Locale implements chromeLocale {
     return this.getUILanguage().replaceAll('-', '_');
   }
 
-  // TODO: Figure out why I did this?
-  // getUILanguage(): string {
-  //   const longRegionLocales = ['es-419', 'pt-BR', 'pt-PT', 'zh-CN', 'zh-TW'];
-  //   let language = navigator.language;
-  //   if (!longRegionLocales.includes(language)) {
-  //     language = language.split('-')[0] ?? '';
-  //   }
+  getLocaleLanguage(): string {
+    const longRegionLocales = ['es-419', 'pt-BR', 'pt-PT', 'zh-CN', 'zh-TW'];
+    let language = navigator.language;
+    if (!longRegionLocales.includes(language)) {
+      language = language.split('-')[0] ?? '';
+    }
 
-  //   return language.replaceAll('-', '_');
-  // }
+    return language.replaceAll('-', '_');
+  }
 
   isReady(): boolean {
     return this.messages !== undefined || this.defaultLocale === undefined;
