@@ -1,7 +1,7 @@
 import { Extension } from '@extension/Extension';
 import { ExtensionInfos } from '@extension/Metadata';
 import { UserInfo } from '@extension/shared';
-import { Millennium } from '@steambrew/client';
+import { Millennium, sleep } from '@steambrew/client';
 import { GetExtensionsInfos } from 'callables';
 import { startIntervalForUpdate as startIntervalForUpdates } from 'updates/updater';
 import { handleUrlScheme } from 'urlSchemeHandler';
@@ -26,8 +26,18 @@ Millennium.exposeObj(global);
 
 // Entry point on the front end of your plugin
 export default async function PluginMain(): Promise<void> {
+  await App.WaitForServicesInitialized();
   SteamClient.URL.RegisterForRunSteamURL('extendium', handleUrlScheme);
-  userInfo = getUserInfo();
+  let userInfoTries = 0;
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+  while (userInfo === undefined && userInfoTries < 10) {
+    userInfo = getUserInfo();
+    if (userInfoTries !== 0) {
+      // eslint-disable-next-line no-await-in-loop
+      await sleep(100);
+    }
+    userInfoTries++;
+  }
   initInfos(JSON.parse(await GetExtensionsInfos()) as ExtensionInfos);
   const manifests = infos.manifests;
   initPluginDir(infos.pluginDir);
