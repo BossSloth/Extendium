@@ -71,3 +71,24 @@ class ClientManager:
     def has_webkit_clients(self) -> bool:
         """Check if any webkit clients are connected."""
         return len(self._webkit_clients) > 0
+    
+    def disconnect_all_clients(self):
+        if self._frontend_client:
+            try:
+                websocket = getattr(self._frontend_client, 'websocket', None)
+                if websocket and hasattr(websocket, 'close'):
+                    websocket.close()
+            except Exception:
+                pass
+            finally:
+                self._frontend_client = None
+        
+        for client in self._webkit_clients:
+            try:
+                websocket = getattr(client, 'websocket', None)
+                if websocket and hasattr(websocket, 'close'):
+                    websocket.close()
+            except Exception:
+                pass
+        
+        self._webkit_clients.clear()
