@@ -1,11 +1,12 @@
 /* eslint-disable @typescript-eslint/no-unsafe-function-type */
 /* eslint-disable @typescript-eslint/no-empty-function */
 import { ChromeEvent } from '@extension/ChromeEvent';
+import { OnInstalledReason } from '@extension/Enums';
 import { Extension } from '@extension/Extension';
 import { Logger } from '@extension/Logger';
 import { parseRuntimeSendMessageArgs } from '@extension/Messaging';
 import { Storage, SyncStorage } from '@extension/Storage';
-import { queryTabs } from '../TabManager';
+import { createTab, queryTabs } from '../TabManager';
 import { closeOffscreen, createOffscreen, createOptionsWindow } from '../windowManagement';
 
 const VERBOSE = true;
@@ -72,7 +73,8 @@ function createRuntimeType(extension: Extension, logger: Logger, senderUrl?: str
 
     // TODO: implement
     onStartup: new ChromeEvent(),
-    onInstalled: new ChromeEvent<() => void>(),
+    onInstalled: extension.onInstalled,
+    OnInstalledReason,
     id: '1234',
     connect: (arg1?: chrome.runtime.ConnectInfo | string, arg2?: chrome.runtime.ConnectInfo): chrome.runtime.Port => {
       let extensionId: string | undefined;
@@ -119,7 +121,7 @@ function createStorageType(extension: Extension, logger: Logger): typeof chrome.
     local: new Storage(extension, 'local', logger),
     sync: new SyncStorage(extension, logger),
     session: new Storage(extension, 'session', logger),
-    onChanged: extension.storageOnChanged,
+    onChanged: extension.onStorageChanged,
     managed: new Storage(extension, 'managed', logger),
     // @ts-expect-error ignore AccessLevel
     AccessLevel: null,
@@ -193,7 +195,7 @@ function createTabsType(extension: Extension, logger: Logger): typeof chrome.tab
     create: async (properties: chrome.tabs.CreateProperties): Promise<chrome.tabs.Tab> => {
       logger.log('tabs.create', properties);
 
-      SteamClient.System.OpenInSystemBrowser(properties.url ?? '');
+      createTab(properties);
 
       return Promise.resolve({});
     },

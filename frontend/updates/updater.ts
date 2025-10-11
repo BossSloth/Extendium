@@ -1,3 +1,4 @@
+import { Extension } from '@extension/Extension';
 import { Logger } from '@extension/Logger';
 import { ExtensionMetadata } from '@extension/Metadata';
 import { callable } from '@steambrew/client';
@@ -28,4 +29,37 @@ async function checkForAllUpdates(): Promise<void> {
   Logger.globalLog('Updater', 'Available updates:', availableUpdates);
 
   useUpdateStore.setState({ updateAvailable: Object.keys(availableUpdates), lastChecked: new Date().toJSON() });
+}
+
+function getInstalledVersion(extension: Extension): string | null {
+  const state = useUpdateStore.getState();
+
+  return state.lastVersions[extension.getName()] ?? null;
+}
+
+function saveInstalledVersion(extension: Extension): void {
+  useUpdateStore.getState().addLastVersion(extension.getName(), extension.getVersion());
+}
+
+export function checkAndEmitInstallEvent(extension: Extension): void {
+  const previousVersion = getInstalledVersion(extension);
+  const currentVersion = extension.getVersion();
+
+  let details: chrome.runtime.InstalledDetails | null = null;
+
+  if (previousVersion === null) {
+    details = {
+      reason: 'install',
+    };
+  } else if (previousVersion !== currentVersion) {
+    details = {
+      reason: 'update',
+      previousVersion,
+    };
+  }
+
+  if (details !== null) {
+    saveInstalledVersion(extension);
+    extension.onInstalled.emit(details);
+  }
 }

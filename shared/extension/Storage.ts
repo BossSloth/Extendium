@@ -109,7 +109,7 @@ export class Storage implements chrome.storage.StorageArea {
       };
     }
 
-    this.#extension.storageOnChanged.emit(changes, this.area);
+    this.#extension.onStorageChanged.emit(changes, this.area);
     this.onChanged.emit(changes, this.area);
 
     return Promise.resolve();
@@ -145,7 +145,7 @@ export class Storage implements chrome.storage.StorageArea {
       };
     }
 
-    this.#extension.storageOnChanged.emit(changes, this.area);
+    this.#extension.onStorageChanged.emit(changes, this.area);
     this.onChanged.emit(changes, this.area);
 
     return Promise.resolve();

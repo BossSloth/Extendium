@@ -9,12 +9,14 @@ export function ExtensionPopup({
   baseDir,
   centerPopup = false,
   removeSteamCss = true,
+  queryParams,
 }: {
   readonly extension: Extension;
   readonly popupContentUrl: string;
   readonly baseDir: string;
   readonly centerPopup?: boolean;
   readonly removeSteamCss?: boolean;
+  readonly queryParams?: string;
 }): JSX.Element {
   const [popupContent, setPopupContent] = useState<string | null>(null);
   const container = useRef<HTMLDivElement>(null);
@@ -44,6 +46,11 @@ export function ExtensionPopup({
     const base = popupDocument.createElement('base');
     base.href = baseDir;
     popupDocument.head.prepend(base);
+
+    if (queryParams !== undefined) {
+      const url = new URL(popupWindow().location.href + queryParams);
+      popupWindow().history.pushState({}, '', url);
+    }
 
     initPopupContent();
   }, []);

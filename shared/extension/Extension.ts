@@ -8,11 +8,13 @@ import { ExtensionMetadata } from './Metadata';
 import { Options } from './Options';
 
 export class Extension {
+  public readonly onInstalled = new ChromeEvent<(details: chrome.runtime.InstalledDetails) => void>();
+  public readonly onStorageChanged = new ChromeEvent<(changes: Record<string, chrome.storage.StorageChange>, areaName: chrome.storage.AreaName) => void>();
+
   public readonly action: Action;
   public readonly runtimeEmulator: RuntimeEmulator;
   public readonly contexts: Contexts;
   public readonly locale: Locale;
-  public readonly storageOnChanged = new ChromeEvent<(changes: Record<string, chrome.storage.StorageChange>, areaName: chrome.storage.AreaName) => void>();
   public readonly logger: Logger;
   public readonly options: Options;
 

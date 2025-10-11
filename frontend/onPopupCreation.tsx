@@ -5,6 +5,7 @@
 import { Extension } from '@extension/Extension';
 import { findModule } from '@steambrew/client';
 import { MainWindowPopup, Popup } from 'steam-types/dist/types/Global/PopupManager';
+import { checkAndEmitInstallEvent } from 'updates/updater';
 import { initMainWindow, MAIN_WINDOW_NAME, pluginDir, WaitForElement } from './shared';
 import { patchUrlBar } from './urlBarPatch';
 import { createOptionsWindow, createWindowWithScript } from './windowManagement';
@@ -76,8 +77,16 @@ async function setupBackground(extension: Extension): Promise<void> {
     return;
   }
 
-  const backgroundWindow = await createWindowWithScript(backgroundScriptUrl, extension, 'Background', extension.manifest.background?.type === 'module');
+  const backgroundWindow = await createWindowWithScript(
+    backgroundScriptUrl,
+    extension,
+    'Background',
+    extension.manifest.background?.type === 'module',
+  );
+
   extension.contexts.addContext(backgroundWindow, 'BACKGROUND', extension.getBackgroundUrl());
+
+  checkAndEmitInstallEvent(extension);
 }
 
 function isMainWindow(popup: Popup): popup is MainWindowPopup {
@@ -103,7 +112,7 @@ export function modifyLinks(document: Document): void {
   });
 }
 
-function getOptionLinks(): Map<string, Extension> {
+export function getOptionLinks(): Map<string, Extension> {
   return [...extensions.values()].map((extension): [string, Extension] => {
     const link = extension.getFileUrl(extension.options.getOptionsPageUrl()) ?? '';
 

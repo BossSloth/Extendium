@@ -157,7 +157,7 @@ export async function injectHtml(html: string, popupWindow: Window, extension: E
   }));
 }
 
-export function createOptionsWindow(extension: Extension): void {
+export function createOptionsWindow(extension: Extension, queryParams?: string): void {
   const url = extension.options.getOptionsPageUrl() ?? '';
 
   openExtensionSettingsPopup(
@@ -167,6 +167,7 @@ export function createOptionsWindow(extension: Extension): void {
       baseDir={extension.getFileDir(url)}
       removeSteamCss={false}
       centerPopup
+      queryParams={queryParams}
     />,
     `${extension.action.getTitle()} - Options`,
   );

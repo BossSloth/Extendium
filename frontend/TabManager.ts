@@ -1,4 +1,6 @@
 import { base64Decode } from '@extension/utils';
+import { getOptionLinks } from 'onPopupCreation';
+import { createOptionsWindow } from 'windowManagement';
 
 const tabs = new Map<number, ExtendedTab>();
 let nextTabId = 0;
@@ -56,4 +58,19 @@ export interface WebkitTabInfo {
 
 export interface ExtendedTab extends chrome.tabs.Tab {
   focused: boolean;
+}
+
+export function createTab(properties: chrome.tabs.CreateProperties): void {
+  const url = properties.url ?? '';
+  const optionLinks = getOptionLinks();
+
+  const extensionKey = Array.from(optionLinks.keys()).find(key => url.includes(key));
+  const extension = optionLinks.get(extensionKey ?? '');
+  if (extension) {
+    createOptionsWindow(extension, url.split('?')[1]);
+
+    return;
+  }
+
+  SteamClient.System.OpenInSystemBrowser(url);
 }
