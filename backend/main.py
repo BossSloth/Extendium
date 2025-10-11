@@ -7,7 +7,6 @@ import shutil
 import struct
 import tempfile
 import zipfile
-import time
 from os import path
 from typing import Optional
 
@@ -279,7 +278,7 @@ class Plugin:
         pass
 
     def _load(self):
-        # didn't touch this, but this should probably be self.cors_proxy. 
+        # didn't touch this, but this should probably be self.cors_proxy.
         global cors_proxy
 
         logger.log(f"bootstrapping Extendium, millennium {Millennium.version()}")
@@ -313,17 +312,17 @@ class Plugin:
     def _unload(self):
         global cors_proxy
         logger.log("Starting plugin unload process...")
-        
+
         # sig stop the WebSocket server, and wait for the thread to die
         try:
             logger.log("Shutting down WebSocket server...")
             shutdown_server()
-            
+
             logger.log("WebSocket server shutdown completed")
         except Exception as e:
             logger.error(f"Error shutting down websocket server: {e}")
-        
-        # sig stop the CORS proxy server, and wait for the thread to die 
+
+        # sig stop the CORS proxy server, and wait for the thread to die
         try:
             logger.log("Shutting down CORS proxy server...")
             if cors_proxy:
@@ -332,10 +331,10 @@ class Plugin:
                 logger.log("CORS proxy server shutdown completed")
         except Exception as e:
             logger.error(f"Error shutting down CORS proxy server: {e}")
-        
+
         try:
             logger.log("Cleaning up HTTP connection pools...")
-            
+
             # close any existing sessions in the requests module
             try:
                 default_session = getattr(requests.sessions, 'Session', None)
@@ -345,12 +344,12 @@ class Plugin:
                     temp_session.close()
             except Exception:
                 pass
-            
+
             session = requests.Session()
             session.close()
-        
+
             logger.log("HTTP connection pools cleaned up")
         except Exception as e:
             logger.error(f"Error cleaning up HTTP connection pools: {e}")
-        
+
         logger.log("Plugin unload process completed")

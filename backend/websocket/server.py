@@ -90,11 +90,11 @@ def _cleanup_routine() -> None:
     while _running and _request_handler:
         # Clean up requests older than 30 seconds
         _request_handler.cleanup_old_requests(30)
-        
+
         # split wait into intervals to allow faster shutdown detection
         for _ in range(20):
-            if not _running: 
-                return 
+            if not _running:
+                return
             time.sleep(0.25)
 
 def initialize_server() -> None:
@@ -136,7 +136,7 @@ def run_server(port: int, host: str = "localhost") -> None:
 
     # Start cleanup thread as non-daemon for proper shutdown
     _cleanup_thread = threading.Thread(target=_cleanup_routine)
-    _cleanup_thread.daemon = False  # non-daemon so we can actually clean it up. 
+    _cleanup_thread.daemon = False  # non-daemon so we can actually clean it up.
     _cleanup_thread.start()
 
     # Start server in a separate thread
@@ -144,9 +144,7 @@ def run_server(port: int, host: str = "localhost") -> None:
         global _server
         try:
             _server = serve(handle_client, host, port)
-            logger.log("WebSocket server serve_forever starting...")
             _server.serve_forever()
-            logger.log("WebSocket server serve_forever ended")
         except Exception as e:
             if _running:  # Only log if we're not shutting down
                 logger.error(f"Error in WebSocket server: {e}")
@@ -176,20 +174,20 @@ def shutdown_server() -> None:
             _client_manager.disconnect_all_clients()
         except Exception as e:
             logger.error(f"Error disconnecting clients: {e}")
-    
+
     # shutdown the server
     if _server:
         try:
             _server.shutdown()
         except Exception as e:
             logger.error(f"Error shutting down WebSocket server: {e}")
-        
+
         try:
             if hasattr(_server, 'close'):
                 _server.close()
         except Exception as e:
             logger.error(f"Error closing WebSocket server: {e}")
-    
+
     # give some time for the server to shutdown, this is somewhat just a safeguard.
     time.sleep(0.2)
 
@@ -205,7 +203,7 @@ def shutdown_server() -> None:
         if _server_thread.is_alive():
             logger.error("Server thread did not finish within timeout")
 
-    # force inline gc cleanup from the gil. 
+    # force inline gc cleanup from the gil.
     _server = None
     _client_manager = None
     _request_handler = None

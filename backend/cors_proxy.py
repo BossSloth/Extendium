@@ -9,6 +9,7 @@ from urllib.request import HTTPErrorProcessor, Request, build_opener
 
 from logger import logger
 
+
 class NoExceptionErrorProcessor(HTTPErrorProcessor):
     def http_response(self, request, response):
         # Allow redirects (3xx) to be processed by the default redirect handler,
@@ -166,16 +167,14 @@ class CORSProxy:
             logger.log(f"Starting CORS proxy server on http://{self.host}:{self.port}")
 
             # Start the server in a thread
-            def serve_with_logging():   
+            def serve_with_logging():
                 try:
-                    logger.log("serve_with_logging starting...")
                     self.server.serve_forever()
-                    logger.log("serve_with_logging ended")
                 except Exception as e:
                     logger.log(f"CORS proxy server error: {e}")
                 finally:
                     logger.log("CORS proxy server thread ending")
-            
+
             self.server_thread = threading.Thread(target=serve_with_logging)
             self.server_thread.daemon = False
             self.server_thread.start()
@@ -189,25 +188,25 @@ class CORSProxy:
         """Stop the proxy server"""
         if self.server:
             logger.log("Stopping CORS proxy server...")
-            
+
             try:
                 self.server.shutdown()
             except Exception as e:
                 logger.log(f"Error during server shutdown: {e}")
-            
+
             try:
                 self.server.server_close()
             except Exception as e:
                 logger.log(f"Error closing server socket: {e}")
-            
+
             # wait for server thread to finish properly
             if self.server_thread and self.server_thread.is_alive():
                 logger.log("Waiting for proxy server thread to finish...")
-                self.server_thread.join(timeout=10) 
+                self.server_thread.join(timeout=10)
 
                 if self.server_thread.is_alive():
                     logger.error("Proxy server thread did not finish within timeout!")
-            
+
             logger.log("CORS proxy server shutdown complete")
             self.server = None
             self.server_thread = None
