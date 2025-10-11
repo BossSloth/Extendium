@@ -21,6 +21,7 @@ _client_manager: Optional[ClientManager] = None
 _request_handler: Optional[RequestHandler] = None
 _message_handler: Optional[MessageHandler] = None
 _cleanup_thread: Optional[threading.Thread] = None
+_server_thread: Optional[threading.Thread] = None
 _running = False
 
 
@@ -89,7 +90,12 @@ def _cleanup_routine() -> None:
     while _running and _request_handler:
         # Clean up requests older than 30 seconds
         _request_handler.cleanup_old_requests(30)
-        time.sleep(10)  # Sleep for 10 seconds between cleanups
+        
+        # split wait into intervals to allow faster shutdown detection
+        for _ in range(20):
+            if not _running: 
+                return 
+            time.sleep(0.25)
 
 def initialize_server() -> None:
     """
@@ -105,7 +111,7 @@ def initialize_server() -> None:
     global _server, _client_manager, _request_handler, _message_handler
 
     if _server:
-        logger.warning("WebSocket server already initialized")
+        logger.warn("WebSocket server already initialized")
         return _server
 
     # Create instances
@@ -120,7 +126,7 @@ def initialize_server() -> None:
 
 def run_server(port: int, host: str = "localhost") -> None:
     """Run the WebSocket server in a separate thread."""
-    global _server, _cleanup_thread, _running
+    global _server, _cleanup_thread, _server_thread, _running
 
     if _running:
         logger.log("WebSocket server already running")
@@ -128,41 +134,83 @@ def run_server(port: int, host: str = "localhost") -> None:
 
     _running = True
 
-    # Start cleanup thread
+    # Start cleanup thread as non-daemon for proper shutdown
     _cleanup_thread = threading.Thread(target=_cleanup_routine)
-    _cleanup_thread.daemon = True
+    _cleanup_thread.daemon = False  # non-daemon so we can actually clean it up. 
     _cleanup_thread.start()
 
     # Start server in a separate thread
     def start_server():
         global _server
-        _server = serve(handle_client, host, port)
         try:
+            _server = serve(handle_client, host, port)
+            logger.log("WebSocket server serve_forever starting...")
             _server.serve_forever()
+            logger.log("WebSocket server serve_forever ended")
         except Exception as e:
-            logger.error(f"Error in WebSocket server: {e}")
+            if _running:  # Only log if we're not shutting down
+                logger.error(f"Error in WebSocket server: {e}")
+        finally:
+            logger.log("WebSocket server thread ending")
 
-    server_thread = threading.Thread(target=start_server)
-    server_thread.daemon = True
-    server_thread.start()
+    _server_thread = threading.Thread(target=start_server)
+    _server_thread.daemon = False  # Non-daemon so we can wait for proper termination
+    _server_thread.start()
 
     logger.log(f"WebSocket server is running on {host}:{port}")
 
 def shutdown_server() -> None:
     """Shutdown the WebSocket server."""
-    global _server, _running, _cleanup_thread
+    global _server, _running, _cleanup_thread, _server_thread, _client_manager, _request_handler, _message_handler
 
     if not _running:
-        logger.error("WebSocket server not running")
+        logger.log("WebSocket server not running")
         return
 
+    logger.log("Shutting down WebSocket server...")
     _running = False
 
-    if _cleanup_thread:
-        _cleanup_thread.join(timeout=1)
-
+    # disconnect all connected/dangling clients
+    if _client_manager:
+        try:
+            _client_manager.disconnect_all_clients()
+        except Exception as e:
+            logger.error(f"Error disconnecting clients: {e}")
+    
+    # shutdown the server
     if _server:
         try:
             _server.shutdown()
         except Exception as e:
             logger.error(f"Error shutting down WebSocket server: {e}")
+        
+        try:
+            if hasattr(_server, 'close'):
+                _server.close()
+        except Exception as e:
+            logger.error(f"Error closing WebSocket server: {e}")
+    
+    # give some time for the server to shutdown, this is somewhat just a safeguard.
+    time.sleep(0.2)
+
+    # wait for cleanup thread to finish
+    if _cleanup_thread and _cleanup_thread.is_alive():
+        _cleanup_thread.join(timeout=5)
+        if _cleanup_thread.is_alive():
+            logger.error("Cleanup thread did not finish within timeout")
+
+    # wait for server thread to finish
+    if _server_thread and _server_thread.is_alive():
+        _server_thread.join(timeout=5)
+        if _server_thread.is_alive():
+            logger.error("Server thread did not finish within timeout")
+
+    # force inline gc cleanup from the gil. 
+    _server = None
+    _client_manager = None
+    _request_handler = None
+    _message_handler = None
+    _cleanup_thread = None
+    _server_thread = None
+
+    logger.log("WebSocket server shutdown complete")
