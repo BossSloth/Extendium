@@ -1,0 +1,53 @@
+diff --git a/node_modules/@steambrew/client/.bun-tag-179673b84ebff5f b/.bun-tag-179673b84ebff5f
+new file mode 100644
+index 0000000000000000000000000000000000000000..e69de29bb2d1d6434b8b29ae775ad8c2e48c5391
+diff --git a/build/globals/index.d.ts b/build/globals/index.d.ts
+index c749319b4d070f0a6bd6d80448b6f49ce107d537..e69de29bb2d1d6434b8b29ae775ad8c2e48c5391 100644
+--- a/build/globals/index.d.ts
++++ b/build/globals/index.d.ts
+@@ -1,2 +0,0 @@
+-export * from './SteamClient';
+-export * from './stores';
+diff --git a/build/globals/index.js b/build/globals/index.js
+index c749319b4d070f0a6bd6d80448b6f49ce107d537..e69de29bb2d1d6434b8b29ae775ad8c2e48c5391 100644
+--- a/build/globals/index.js
++++ b/build/globals/index.js
+@@ -1,2 +0,0 @@
+-export * from './SteamClient';
+-export * from './stores';
+diff --git a/build/hooks/toaster-hook.d.ts b/build/hooks/toaster-hook.d.ts
+index b24e87f083be9493dd1c3448ea641d0bdb83de2b..2e12ab97e21a32e5bb7e22df940ade7a9e5539c2 100644
+--- a/build/hooks/toaster-hook.d.ts
++++ b/build/hooks/toaster-hook.d.ts
+@@ -1,5 +1,5 @@
+-import Logger from '../logger';
+ import { ReactNode } from 'react';
++import Logger from '../logger';
+ export interface ToastData {
+     title: ReactNode;
+     body: ReactNode;
+@@ -29,8 +29,6 @@ export interface ToastNotification {
+ declare global {
+     interface Window {
+         __TOASTER_INSTANCE: any;
+-        settingsStore: any;
+-        NotificationStore: any;
+     }
+ }
+ declare class Toaster extends Logger {
+diff --git a/build/utils/index.d.ts b/build/utils/index.d.ts
+index d9eff69d5f8e9ddeb65e2dfcc90497d7025d428b..71f3b62e87bcbe4251e33acb256549c84da75be5 100644
+--- a/build/utils/index.d.ts
++++ b/build/utils/index.d.ts
+@@ -1,10 +1,9 @@
+ export * from './patcher';
+-export * from './react/react';
+ export * from './react/fc';
++export * from './react/react';
+ export * from './react/treepatcher';
+ export * from './static-classes';
+ declare global {
+-    var FocusNavController: any;
+     var GamepadNavTree: any;
+ }
+ export declare function joinClassNames(...classes: string[]): string;

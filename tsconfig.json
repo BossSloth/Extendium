@@ -5,7 +5,7 @@
       "target": "ES2022",
       "jsx": "react",
       "declaration": false,
-      "moduleResolution": "node",
+      "moduleResolution": "bundler",
       "noUnusedLocals": true,
       "noUnusedParameters": true,
       "esModuleInterop": true,

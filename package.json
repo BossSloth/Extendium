@@ -24,7 +24,7 @@
     "globals": "^16.4.0",
     "nodemon": "^3.1.10",
     "semantic-release": "^24.2.9",
-    "steam-types": "^0.1.4",
+    "steam-types": "^1.0.2",
     "typescript-eslint": "^8.46.0"
   },
   "type": "module",
@@ -48,6 +48,6 @@
     "zustand": "^5.0.8"
   },
   "patchedDependencies": {
-    "@steambrew/client": "patches/@steambrew%2Fclient@5.5.13.patch"
+    "@steambrew/client@5.8.0": "patches/@steambrew%2Fclient@5.8.0.patch"
   }
 }

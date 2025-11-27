@@ -4,7 +4,7 @@
 
 import { Extension } from '@extension/Extension';
 import { findModule } from '@steambrew/client';
-import { MainWindowPopup, Popup } from 'steam-types/dist/types/Global/PopupManager';
+import { MainWindowPopup, Popup } from 'steam-types/Global/managers/PopupManager';
 import { checkAndEmitInstallEvent } from 'updates/updater';
 import { initMainWindow, MAIN_WINDOW_NAME, pluginDir, WaitForElement } from './shared';
 import { patchUrlBar } from './urlBarPatch';
