@@ -137,5 +137,6 @@ function replaceKeys(str: string, userInfo: UserInfo): string {
   return str
     .replaceAll('%user_id%', userInfo.userId)
     .replaceAll('%persona_name%', userInfo.personaName)
-    .replaceAll('%img_src%', userInfo.avatarUrl);
+    .replaceAll('%img_src%', userInfo.avatarUrl)
+    .replaceAll('%account_balance%', userInfo.accountBalance);
 }

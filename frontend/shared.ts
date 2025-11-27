@@ -105,6 +105,7 @@ function getUserInfo(): UserInfo | undefined {
   const userId = profileUrl.match(/\/id\/(.+)\//)?.[1] ?? '';
 
   return {
+    accountBalance: App.GetCurrentUser().strAccountBalance,
     steamid,
     userId,
     avatarUrl: friendStore.m_FriendsUIFriendStore.GetPlayer(friendStore.currentUserSteamID.GetAccountID()).persona.avatar_url_medium,
