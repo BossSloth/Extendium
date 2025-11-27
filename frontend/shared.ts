@@ -78,7 +78,25 @@ export function loadScriptSync(src: string, document: Document): void {
   document.head.appendChild(script);
 }
 
-export function getUserInfo(): UserInfo {
+export async function getUserInfoPromise(): Promise<UserInfo> {
+  return new Promise((resolve) => {
+    let userInfoTries = 0;
+    const interval = setInterval(() => {
+      const userInfoScoped = getUserInfo();
+      if (userInfoScoped !== undefined) {
+        clearInterval(interval);
+        resolve(userInfoScoped);
+      }
+      if (userInfoTries >= 10) {
+        clearInterval(interval);
+        console.error('Failed to get user info?');
+      }
+      userInfoTries++;
+    }, 100);
+  });
+}
+
+function getUserInfo(): UserInfo | undefined {
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
   const connectionManager = App.m_cm ?? appDetailsStore.m_CMInterface;
   const steamid = connectionManager.steamid.m_ulSteamID.toString();
@@ -89,7 +107,7 @@ export function getUserInfo(): UserInfo {
   return {
     steamid,
     userId,
-    avatarUrl: 'https://avatars.steamstatic.com/b5bd56c1aa4644a474a2e4972be27ef9e82e517e_full.jpg', // TODO: replace with loginUsers[0]?.avatarUrl and use correct steam path
+    avatarUrl: friendStore.m_FriendsUIFriendStore.GetPlayer(friendStore.currentUserSteamID.GetAccountID()).persona.avatar_url_medium,
     personaName: connectionManager.persona_name,
   };
 }

@@ -102,12 +102,12 @@ def RemoveExtension(name: str):
         shutil.rmtree(ext_dir)
     Millennium.call_frontend_method('removeExtension', params=[name])
 
-USER_INFO = None
+USER_INFO: Optional[str] = None
 
 def GetUserInfo():
     global USER_INFO
-    if USER_INFO is None:
-        USER_INFO = Millennium.call_frontend_method('getUserInfo') # pylint: disable=assignment-from-no-return,no-value-for-parameter
+    if USER_INFO is None or not USER_INFO.startswith('{'):
+        USER_INFO = Millennium.call_frontend_method('getUserInfo') # pylint: disable=assignment-from-no-return
     return USER_INFO
 
 def CheckForUpdates():
