@@ -116,11 +116,17 @@ def CheckForUpdates():
     foundUpdates = {}
     for [name, metadata] in metadatas.items():
         try:
-            page = requests.get(metadata['url'], timeout=30)
-            version = re.search(r'<div[^>]*>Version</div><div[^>]*>([^<]+)</div>', page.text)
+            page = requests.get(metadata['url'], timeout=30, headers={
+                'Accept-Language': 'en-US',
+            })
+            version = re.search(r'version\\": \\"([^\\]+)', page.text)
+
             if version:
                 if version.group(1) != manifests[name]['version']:
+                    logger.log(f"New version found for extension '{name}': {version.group(1)}")
                     foundUpdates[name] = metadata
+            else:
+                logger.error(f"Update version not found for extension '{name}'")
         except Exception as e:
             logger.error(f"Error checking for updates for extension '{name}': {str(e)}")
 
