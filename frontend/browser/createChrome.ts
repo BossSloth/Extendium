@@ -6,9 +6,9 @@ import { Extension } from '@extension/Extension';
 import { Logger } from '@extension/Logger';
 import { parseRuntimeSendMessageArgs } from '@extension/Messaging';
 import { Storage, SyncStorage } from '@extension/Storage';
+import { createSafeProxy } from '@extension/helpers/safeProxy';
 import { createTab, queryTabs } from '../TabManager';
 import { closeOffscreen, createOffscreen, createOptionsWindow } from '../windowManagement';
-import { createSafeProxy } from './safeProxy';
 
 const VERBOSE = true;
 

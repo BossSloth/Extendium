@@ -1,5 +1,6 @@
 import { ChromeEvent } from '@extension/ChromeEvent';
 import { Extension } from '@extension/Extension';
+import { createSafeProxy } from '@extension/helpers/safeProxy';
 import { Logger } from '@extension/Logger';
 import { parseRuntimeSendMessageArgs } from '@extension/Messaging';
 import { WebkitRequestType } from '@extension/websocket/MessageTypes';
@@ -34,7 +35,7 @@ export function createChrome(context: string, extension: Extension): typeof wind
     }
   }
 
-  return {
+  const baseChromeObj: typeof window.chrome = {
     i18n: extension.locale,
     runtime: {
       sendMessage: async (...args: unknown[]): Promise<unknown> => {
@@ -62,4 +63,6 @@ export function createChrome(context: string, extension: Extension): typeof wind
       onChanged: new ChromeEvent<(changes: Record<string, chrome.storage.StorageChange>, areaName: chrome.storage.AreaName) => void>(),
     },
   };
+
+  return createSafeProxy(baseChromeObj, logger) as typeof window.chrome;
 }
