@@ -1,4 +1,4 @@
-import { Logger } from '@extension/Logger';
+import { Logger } from '../Logger';
 
 // This allows chained access like chrome.test.other.something() to work without errors
 function createNoopProxy(path: string[], logger: Logger): unknown {
