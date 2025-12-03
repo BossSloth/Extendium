@@ -3,6 +3,7 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 
 import { Extension } from '@extension/Extension';
+import { Logger } from '@extension/Logger';
 import { findModule } from '@steambrew/client';
 import { MainWindowPopup, Popup } from 'steam-types/Global/managers/PopupManager';
 import { checkAndEmitInstallEvent } from 'updates/updater';
@@ -30,7 +31,9 @@ async function OnMainWindowCreation(popup: MainWindowPopup): Promise<void> {
 
   const backgroundPromises: Promise<void>[] = [];
   for (const extension of extensions.values()) {
-    backgroundPromises.push(setupBackground(extension));
+    backgroundPromises.push(setupBackground(extension).catch((e: unknown) => {
+      Logger.globalLog('Background-init', 'Failed to setup background for extension:', extension.getName(), e);
+    }));
   }
   await Promise.all(backgroundPromises);
 
