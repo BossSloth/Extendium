@@ -113,6 +113,7 @@ function createRuntimeType(extension: Extension, logger: Logger, senderUrl?: str
     onConnect: new ChromeEvent<(port: chrome.runtime.Port) => void>(),
     onConnectExternal: new ChromeEvent<(port: chrome.runtime.Port) => void>(),
     onUpdateAvailable: new ChromeEvent<(details: chrome.runtime.UpdateAvailableDetails) => void>(),
+    lastError: undefined,
   };
 }
 

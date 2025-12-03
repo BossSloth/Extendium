@@ -55,6 +55,7 @@ export function createChrome(context: string, extension: Extension): typeof wind
       onMessage: new ChromeEvent<(message: unknown, sender: chrome.runtime.MessageSender, sendResponse: (response?: unknown) => void) => void>(),
       getURL: (path: string): string => extension.getFileUrl(path) ?? '',
       getManifest: (): chrome.runtime.Manifest => extension.manifest,
+      lastError: undefined,
     },
     storage: {
       sync: syncStorage,
