@@ -25,12 +25,17 @@ export class Logger {
 
   public error(type: string, ...args: unknown[]): void {
     this.silentError(type, ...args);
-    this.errors.push(`[${this.context}][${type}]: ${args.join(' ')}`);
+    this.addError(type, ...args);
+    this.parent.logger.addError(type, ...args);
   }
 
   public silentError(type: string, ...args: unknown[]): void {
     const prefix = `%c[${this.parent.getName()}]%c[${this.context}]%c[${type}]`;
     console.error(prefix, this.extBadgeStyle, this.ctxBadgeStyle, Logger.makeStyleFromStr(type), ...args);
+  }
+
+  public addError(type: string, ...args: unknown[]): void {
+    this.errors.push(`[${this.context}][${type}]: ${args.join(' ')}`);
   }
 
   public warn(type: string, ...args: unknown[]): void {

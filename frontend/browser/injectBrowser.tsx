@@ -16,9 +16,7 @@ export function injectBrowser(context: string, window: Window, extension: Extens
   const originalOnError = window.onerror;
 
   window.onerror = function (this: WindowEventHandlers, ...args: unknown[]): boolean {
-    console.error(`Error in ${extension.getName()} - ${context}`, ...args);
-
-    extension.logger.errors.push(`Error in "${extension.getName()} - ${context}": ${args.join(' ')}`);
+    extension.logger.error(context, ...args);
 
     // @ts-expect-error ignore
     return originalOnError?.call(this, ...args);
@@ -27,9 +25,7 @@ export function injectBrowser(context: string, window: Window, extension: Extens
   const originalOnUnhandledRejection = window.onunhandledrejection;
 
   window.onunhandledrejection = function (this: WindowEventHandlers, event): unknown {
-    console.error(`Error in ${extension.getName()} - ${context}`, event);
-
-    extension.logger.errors.push(`Error in "${extension.getName()} - ${context}": ${event.reason}`);
+    extension.logger.error(context, event);
 
     return originalOnUnhandledRejection?.call(this, event);
   };
@@ -37,11 +33,9 @@ export function injectBrowser(context: string, window: Window, extension: Extens
   const originalConsoleError = window.console.error;
 
   window.console.error = function (...args: unknown[]): void {
+    extension.logger.error(context, ...args);
+
     originalConsoleError(...args);
-
-    console.error(`Error in ${extension.getName()} - ${context}`, ...args);
-
-    extension.logger.errors.push(`Error in "${extension.getName()} - ${context}": ${args.join(' ')}`);
   };
 
   window.importScripts = (...urls: string[]): void => {

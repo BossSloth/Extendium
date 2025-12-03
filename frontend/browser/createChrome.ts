@@ -8,6 +8,7 @@ import { parseRuntimeSendMessageArgs } from '@extension/Messaging';
 import { Storage, SyncStorage } from '@extension/Storage';
 import { createTab, queryTabs } from '../TabManager';
 import { closeOffscreen, createOffscreen, createOptionsWindow } from '../windowManagement';
+import { createSafeProxy } from './safeProxy';
 
 const VERBOSE = true;
 
@@ -17,7 +18,7 @@ let chromeObj: typeof window.chrome;
 export function createChrome(context: string, extension: Extension, senderUrl?: string): typeof window.chrome {
   const logger = new Logger(extension, VERBOSE, context);
 
-  chromeObj = {
+  const baseChromeObj: typeof window.chrome = {
     i18n: extension.locale,
     storage: createStorageType(extension, logger),
     runtime: createRuntimeType(extension, logger, senderUrl),
@@ -35,6 +36,8 @@ export function createChrome(context: string, extension: Extension, senderUrl?: 
     declarativeNetRequest: createDeclarativeNetRequestType(extension, logger),
     management: createManagementType(extension, logger),
   };
+
+  chromeObj = createSafeProxy(baseChromeObj, logger) as typeof window.chrome;
 
   return chromeObj;
 }
