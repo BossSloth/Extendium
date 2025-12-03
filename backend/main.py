@@ -165,6 +165,17 @@ def DownloadExtensionFromUrl(url: str, metadata: str, name: str):
         response.raise_for_status()
 
         crx_data = response.content
+        # If response is empty, try with a higher version as it likely has a minimum chrome version that we wan't to ignore
+        if not crx_data:
+            prodversion = re.search(r'prodversion=([^.]+)', url)
+            if prodversion:
+                prodversion = prodversion.group(1)
+
+            logger.log(f"Could not download extension from {url}, trying with a higher version: {int(str(prodversion)) + 1}")
+            url = url.replace(f'prodversion={prodversion}', f'prodversion={int(str(prodversion)) + 1}')
+
+            return DownloadExtensionFromUrl(url, metadata, name)
+
         zip_data = extract_zip_from_crx(crx_data)
 
         # Extract the extension directly to the extensions directory
