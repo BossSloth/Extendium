@@ -1,3 +1,22 @@
+# [1.1.0](https://github.com/BossSloth/Extendium/compare/v1.0.3...v1.1.0) (2025-12-03)
+
+
+### Bug Fixes
+
+* add fallback to higher Chrome version when extension has a minimum chrome version like stylus, closes [#32](https://github.com/BossSloth/Extendium/issues/32) ([f05018a](https://github.com/BossSloth/Extendium/commit/f05018a1fd9cadc5273729ac550d54e26f70dc69))
+* catch errors extension initialization to not break the extension bar ([a827418](https://github.com/BossSloth/Extendium/commit/a827418e7c46fe379da8744b4390c1d826fff4d2))
+* Fixed extensions not finding updates if chrome page was not in english ([de2420f](https://github.com/BossSloth/Extendium/commit/de2420f65e146178dad268be35afd8d4daadc822))
+* properly shutdown plugin when unloading ([6b4f757](https://github.com/BossSloth/Extendium/commit/6b4f7571268ff49fbbf4aae8ac76e6e1a0eccdf2))
+* try making getUserInfo more reliable, should prevent less random fails on launch ([59d74e3](https://github.com/BossSloth/Extendium/commit/59d74e3fb02cedeb30948c7dc9b5c75c6cb9e709))
+
+
+### Features
+
+* add chrome.runtime.lastError property to both frontend and webkit implementations ([fceded0](https://github.com/BossSloth/Extendium/commit/fceded0cd95c1f03d3da55e5df08188b583c9d10))
+* add current account balance to fake header ([6f0cf8e](https://github.com/BossSloth/Extendium/commit/6f0cf8e80523b076a14eaea1ae4d0591b7ca5414))
+* add safe proxy wrapper for chrome API to improve error logging on unhandled api calls ([5dab17e](https://github.com/BossSloth/Extendium/commit/5dab17e1673a64f5150b7427ea2b116bedc1f232))
+* implement extension onInstalled events and handle create tab option page ([2e69ea3](https://github.com/BossSloth/Extendium/commit/2e69ea3ff66b289c7ee9cdacd265a814c7d297ba))
+
 ## [1.0.3](https://github.com/BossSloth/Extendium/compare/v1.0.2...v1.0.3) (2025-10-06)
 
 
