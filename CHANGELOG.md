@@ -1,3 +1,10 @@
+## [1.1.1](https://github.com/BossSloth/Extendium/compare/v1.1.0...v1.1.1) (2025-12-19)
+
+
+### Bug Fixes
+
+* Added websockets to requirements ([#44](https://github.com/BossSloth/Extendium/issues/44)). Closes [#28](https://github.com/BossSloth/Extendium/issues/28), Closes [#42](https://github.com/BossSloth/Extendium/issues/42), Closes [#43](https://github.com/BossSloth/Extendium/issues/43) ([51933b6](https://github.com/BossSloth/Extendium/commit/51933b6efd3417dbee284fe0df6a55eb27620edf))
+
 # [1.1.0](https://github.com/BossSloth/Extendium/compare/v1.0.3...v1.1.0) (2025-12-03)
 
 
