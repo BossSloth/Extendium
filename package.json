@@ -1,8 +1,8 @@
 {
   "scripts": {
-    "dev": "millennium-ttc --build dev --no-update",
+    "dev": "millennium-ttc --build dev --watch",
     "sass": "sass ./public/extendium.scss:./public/extendium.css --style compressed --embed-sources --embed-source-map",
-    "watch": "nodemon --watch webkit --watch frontend --watch shared --watch public/extendium.scss --ext ts,tsx,js,jsx --exec \"npm run sass && npm run dev\"",
+    "watch": "nodemon --watch public/extendium.scss --exec \"npm run sass && npm run dev\"",
     "build": "npm run sass && millennium-ttc --build prod"
   },
   "devDependencies": {
@@ -24,7 +24,7 @@
     "globals": "^16.4.0",
     "nodemon": "^3.1.10",
     "semantic-release": "^24.2.9",
-    "steam-types": "^1.0.2",
+    "steam-types": "^2.1.0",
     "typescript-eslint": "^8.46.0"
   },
   "type": "module",
@@ -41,7 +41,7 @@
     "@dnd-kit/utilities": "^3.2.2",
     "@steambrew/api": "^5.8.3",
     "@steambrew/client": "^5.8.3",
-    "@steambrew/ttc": "^2.8.6",
+    "@steambrew/ttc": "^3.2.6",
     "@steambrew/webkit": "5.8.3",
     "react-icons": "^5.5.0",
     "sass-embedded": "^1.93.2",

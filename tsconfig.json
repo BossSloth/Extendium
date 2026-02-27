@@ -18,6 +18,8 @@
       "strictNullChecks": true,
       "noUncheckedIndexedAccess": true,
       "strict": true,
+      "experimentalDecorators": true,
+      "isolatedModules": true,
       "types": ["steam-types", "chrome", "node"]
     },
     "exclude": ["node_modules"]
