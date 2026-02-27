@@ -3,29 +3,30 @@
     "dev": "millennium-ttc --build dev --watch",
     "sass": "sass ./public/extendium.scss:./public/extendium.css --style compressed --embed-sources --embed-source-map",
     "watch": "nodemon --watch public/extendium.scss --exec \"npm run sass && npm run dev\"",
-    "build": "npm run sass && millennium-ttc --build prod"
+    "build": "npm run sass && millennium-ttc --build prod",
+    "lint": "eslint"
   },
   "devDependencies": {
-    "@eslint/js": "^9.37.0",
+    "@eslint/js": "^9.39.3",
     "@semantic-release/changelog": "^6.0.3",
     "@semantic-release/exec": "^7.1.0",
     "@semantic-release/git": "^10.0.1",
     "@semantic-release/github": "^11.0.6",
     "@stylistic/eslint-plugin": "^5.4.0",
-    "@types/bun": "^1.3.8",
-    "@types/chrome": "^0.1.24",
-    "@types/react": "^19.2.7",
+    "@types/bun": "^1.3.9",
+    "@types/chrome": "^0.1.37",
+    "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
     "@types/webpack": "^5.28.5",
-    "devtools-protocol": "^0.0.1551306",
-    "eslint": "^9.37.0",
+    "devtools-protocol": "^0.0.1591319",
+    "eslint": "^9.39.3",
     "eslint-plugin-perfectionist": "^4.15.1",
     "eslint-plugin-react": "^7.37.5",
-    "globals": "^16.4.0",
-    "nodemon": "^3.1.10",
+    "globals": "^17.3.0",
+    "nodemon": "^3.1.14",
     "semantic-release": "^24.2.9",
     "steam-types": "^2.1.0",
-    "typescript-eslint": "^8.46.0"
+    "typescript-eslint": "^8.56.1"
   },
   "type": "module",
   "name": "extendium",
@@ -39,15 +40,15 @@
     "@dnd-kit/modifiers": "^9.0.0",
     "@dnd-kit/sortable": "^10.0.0",
     "@dnd-kit/utilities": "^3.2.2",
-    "@steambrew/api": "^5.8.3",
-    "@steambrew/client": "^5.8.3",
+    "@steambrew/api": "^5.8.4",
+    "@steambrew/client": "^5.8.4",
     "@steambrew/ttc": "^3.2.6",
-    "@steambrew/webkit": "5.8.3",
+    "@steambrew/webkit": "5.8.4",
     "react-icons": "^5.5.0",
-    "sass-embedded": "^1.93.2",
-    "zustand": "^5.0.8"
+    "sass-embedded": "^1.97.3",
+    "zustand": "^5.0.11"
   },
   "patchedDependencies": {
-    "@steambrew/client@5.8.3": "patches/@steambrew%2Fclient@5.8.3.patch"
+    "@steambrew/client@5.8.4": "patches/@steambrew%2Fclient@5.8.4.patch"
   }
 }
