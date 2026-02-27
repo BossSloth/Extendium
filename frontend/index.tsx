@@ -9,9 +9,9 @@ import { OnPopupCreation } from './onPopupCreation';
 import { getUserInfoPromise, infos, initInfos, initPluginDir } from './shared';
 import { WebkitWrapper } from './webkit';
 
-const extensions = new Map<string, Extension>();
+const extensions_old = new Map<string, Extension>();
 // @ts-expect-error globalThis is missing type
-globalThis.extensions = extensions;
+globalThis.extensions_old = extensions_old;
 let extensionsDir: string;
 
 let userInfo: UserInfo;
@@ -19,7 +19,7 @@ let userInfo: UserInfo;
 const global = {
   webkit: new WebkitWrapper(),
   getUserInfo: (): string => JSON.stringify(userInfo),
-  removeExtension: (name: string): void => { extensions.delete(name); },
+  removeExtension: (name: string): void => { extensions_old.delete(name); },
 };
 // @ts-expect-error ignore
 Millennium.exposeObj(global);
@@ -43,10 +43,10 @@ export default async function PluginMain(): Promise<void> {
 
   await Promise.all(extensionObjects.map(async (extension) => {
     await extension.init();
-    extensions.set(extension.getName(), extension);
+    extensions_old.set(extension.getName(), extension);
   }));
 
-  global.webkit.init(extensions);
+  global.webkit.init(extensions_old);
 
   startIntervalForUpdates();
 

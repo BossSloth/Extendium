@@ -2,6 +2,7 @@ import { routerHook } from '@steambrew/client';
 import { EUIMode } from '@steambrew/client/build/globals/steam-client/shared';
 import React from 'react';
 import { mainWindow } from 'shared';
+import { BrowserView } from './BrowserView';
 import { SteamDialog } from './SteamComponents';
 import { usePopupsStore } from './stores/popupsStore';
 
@@ -28,11 +29,11 @@ export function ExtensionSettingsPopup(): React.ReactNode {
 
 routerHook.addGlobalComponent('ExtensionSettingsPopup', () => <ExtensionSettingsPopup />, EUIMode.Desktop);
 
-export function openExtensionSettingsPopup(content: React.ReactNode, title: string): void {
+export function openExtensionSettingsPopup(settingsUrl: string, title: string): void {
   const state = usePopupsStore.getState();
 
   state.setSettingsPopup({ open: false });
   setTimeout(() => {
-    state.setSettingsPopup({ content, open: true, title });
+    state.setSettingsPopup({ content: <BrowserView expectedParentPopupTitle={title} url={settingsUrl} />, open: true, title });
   }, 1);
 }

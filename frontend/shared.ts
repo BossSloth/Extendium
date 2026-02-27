@@ -26,7 +26,7 @@ export function initInfos(_infos: ExtensionInfos): void {
 
 declare global {
   const SP_REACTDOM: typeof ReactDOM & typeof ReactDOMClient;
-  const extensions: Map<string, Extension>;
+  const extensions_old: Map<string, Extension>;
 }
 
 export const MAIN_WINDOW_NAME = 'SP Desktop_uid0';
@@ -130,4 +130,11 @@ export function changeTagPreserveChildren(element: Element, newTag: string): HTM
   element.parentNode?.replaceChild(newElement, element);
 
   return newElement;
+}
+
+export function uniqueId(): string {
+  const dateString = Date.now().toString(36);
+  const randomness = Math.random().toString(36).substring(2);
+
+  return dateString + randomness;
 }

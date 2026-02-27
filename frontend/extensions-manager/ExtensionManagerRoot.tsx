@@ -3,6 +3,7 @@ import { settingsClasses } from 'classes';
 import { usePopupsStore } from 'components/stores/popupsStore';
 import React from 'react';
 import { FaCog, FaDatabase, FaFolderOpen, FaStore } from 'react-icons/fa';
+import { useExtensionsStore } from 'stores/extensionsStore';
 import { ExtensionManagerComponent } from './ExtensionManagerComponent';
 import { showInstallExtensionModal } from './InstallExtensionModal';
 
@@ -10,6 +11,7 @@ const GetExtensionsDir = callable<[], string>('GetExtensionsDir');
 
 export function ExtensionManagerRoot(): React.ReactNode {
   const { setManagerPopup } = usePopupsStore();
+  const { extensions } = useExtensionsStore();
 
   async function openExtensionsFolder(): Promise<void> {
     const extensionsDir = await GetExtensionsDir();
@@ -51,9 +53,21 @@ export function ExtensionManagerRoot(): React.ReactNode {
         </div>
       </div>
       <div className="card-container">
-        {[...extensions.values()].map(extension => (
-          <ExtensionManagerComponent key={extension.getName()} extension={extension} />
-        ))}
+        {Array.from(extensions.values())
+          .sort((a, b) => {
+            // First sort by enabled state (enabled first)
+            // const aEnabled = a.state === 'ENABLED';
+            // const bEnabled = b.state === 'ENABLED';
+            // if (aEnabled !== bEnabled) {
+            //   return aEnabled ? -1 : 1;
+            // }
+
+            // Then sort alphabetically by name
+            return a.name.localeCompare(b.name);
+          })
+          .map(extension => (
+            <ExtensionManagerComponent key={extension.id} extension={extension} />
+          ))}
       </div>
     </>
   );

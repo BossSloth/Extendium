@@ -1,9 +1,7 @@
 import { Extension } from '@extension/Extension';
 import { findClass } from '@steambrew/client';
 import { openExtensionSettingsPopup } from 'components/ExtensionSettingsPopup';
-import React from 'react';
 import { injectBrowser } from './browser/injectBrowser';
-import { ExtensionPopup } from './components/ExtensionPopup';
 import { loadScript, mainWindow } from './shared';
 
 export function createWindow(extension: Extension, title: string, baseHref: string): Window {
@@ -160,15 +158,19 @@ export async function injectHtml(html: string, popupWindow: Window, extension: E
 export function createOptionsWindow(extension: Extension, queryParams?: string): void {
   const url = extension.options.getOptionsPageUrl() ?? '';
 
+  // openExtensionSettingsPopup(
+  //   <ExtensionPopup
+  //     extension={extension}
+  //     popupContentUrl={extension.getFileUrl(url) ?? ''}
+  //     baseDir={extension.getFileDir(url)}
+  //     removeSteamCss={false}
+  //     centerPopup
+  //     queryParams={queryParams}
+  //   />,
+  //   `${extension.action.getTitle()} - Options`,
+  // );
   openExtensionSettingsPopup(
-    <ExtensionPopup
-      extension={extension}
-      popupContentUrl={extension.getFileUrl(url) ?? ''}
-      baseDir={extension.getFileDir(url)}
-      removeSteamCss={false}
-      centerPopup
-      queryParams={queryParams}
-    />,
+    extension.getFileUrl(url) ?? '',
     `${extension.action.getTitle()} - Options`,
   );
 }

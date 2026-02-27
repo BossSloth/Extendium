@@ -6,6 +6,7 @@ import { Extension } from '@extension/Extension';
 import { Logger } from '@extension/Logger';
 import { findModule } from '@steambrew/client';
 import { extendiumStyles } from 'components/Styles';
+import { initializeExtension } from 'extensionInitialization';
 import { MainWindowPopup, Popup } from 'steam-types/Global/managers/PopupManager';
 import { checkAndEmitInstallEvent } from 'updates/updater';
 import { initMainWindow, MAIN_WINDOW_NAME, WaitForElement } from './shared';
@@ -28,23 +29,25 @@ export async function OnPopupCreation(popup: Popup | undefined): Promise<void> {
 async function OnMainWindowCreation(popup: MainWindowPopup): Promise<void> {
   initMainWindow(popup.m_popup);
 
+  await initializeExtension();
+
   addStyles(popup);
 
   const backgroundPromises: Promise<void>[] = [];
-  for (const extension of extensions.values()) {
+  for (const extension of extensions_old.values()) {
     backgroundPromises.push(setupBackground(extension).catch((e: unknown) => {
       Logger.globalLog('Background-init', 'Failed to setup background for extension:', extension.getName(), e);
     }));
   }
   await Promise.all(backgroundPromises);
 
-  patchUrlBar(extensions, popup.m_popup.document);
+  patchUrlBar(extensions_old, popup.m_popup.document);
 }
 
 async function OnTabbedPopupBrowserCreation(popup: Popup): Promise<void> {
   addStyles(popup);
 
-  await patchUrlBar(extensions, popup.m_popup.document);
+  await patchUrlBar(extensions_old, popup.m_popup.document);
 
   function observerCallback(): void {
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
@@ -55,7 +58,7 @@ async function OnTabbedPopupBrowserCreation(popup: Popup): Promise<void> {
     }
 
     if (!popup.m_popup.document.querySelector('.extensions-bar-container')) {
-      patchUrlBar(extensions, popup.m_popup.document);
+      patchUrlBar(extensions_old, popup.m_popup.document);
     }
   }
 
@@ -115,7 +118,7 @@ export function modifyLinks(document: Document): void {
 }
 
 export function getOptionLinks(): Map<string, Extension> {
-  return [...extensions.values()].map((extension): [string, Extension] => {
+  return [...extensions_old.values()].map((extension): [string, Extension] => {
     const link = extension.getFileUrl(extension.options.getOptionsPageUrl()) ?? '';
 
     return [link, extension];

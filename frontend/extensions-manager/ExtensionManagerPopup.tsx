@@ -22,7 +22,7 @@ export function ExtensionManagerPopup(): React.ReactNode {
   if (managerPopup.route === null) {
     content = <ExtensionManagerRoot />;
   } else if (managerPopup.route.startsWith('info/')) {
-    content = <ExtensionDetailInfo extension={extensions.get(managerPopup.route.split('/').pop() ?? '')} />;
+    content = <ExtensionDetailInfo extension={extensions_old.get(managerPopup.route.split('/').pop() ?? '')} />;
   } else if (managerPopup.route.startsWith('storage')) {
     content = <StorageManager />;
   } else if (managerPopup.route.startsWith('settings')) {

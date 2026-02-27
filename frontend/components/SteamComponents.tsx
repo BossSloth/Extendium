@@ -5,6 +5,7 @@
 
 import { findModuleExport, ModalRoot } from '@steambrew/client';
 import React from 'react';
+import { BrowserViewPopup } from 'steam-types/types/SteamClient/BrowserView/BrowserViewPopup';
 
 interface GenericDialogProps {
   /**
@@ -80,3 +81,12 @@ export function SteamDialog({ children, ...props }: GenericDialogProps & { reado
     </GenericDialog>
   );
 }
+
+export interface BrowserViewHostProps extends React.HTMLAttributes<HTMLDivElement> {
+  browser: BrowserViewPopup;
+  visible: boolean;
+  /** default false */
+  underlay?: boolean;
+}
+
+export const BrowserViewHost = findModuleExport(e => e?.type?.toString?.()?.includes('RemotePlay.UnlockH264') === true) as React.FC<BrowserViewHostProps>;
