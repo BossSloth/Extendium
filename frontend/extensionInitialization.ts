@@ -1,14 +1,15 @@
-import { getExtensions, persistentExtensionsPage } from 'chrome/ChromeExtensionPageManager';
+import { Extension } from '@extension/Extension';
+import { getExtensionManifest, getExtensions, persistentExtensionsPage } from 'chrome/ChromeExtensionPageManager';
 import { useExtensionsStore } from 'stores/extensionsStore';
 
 export async function initializeExtension(): Promise<void> {
   const extensionsStore = useExtensionsStore.getState();
 
-  persistentExtensionsPage.on('INSTALLED', (_, extension) => {
-    if (extension === undefined) {
+  persistentExtensionsPage.on('INSTALLED', async (_, extensionInfo) => {
+    if (extensionInfo === undefined) {
       return;
     }
-    extensionsStore.addExtension(extension);
+    extensionsStore.addExtension(new Extension(await getExtensionManifest(extensionInfo.id), extensionInfo));
   });
   persistentExtensionsPage.on('UNINSTALLED', (extensionId) => {
     extensionsStore.removeExtension(extensionId);
@@ -16,8 +17,8 @@ export async function initializeExtension(): Promise<void> {
   await persistentExtensionsPage.initialize();
 
   await getExtensions().then((exts) => {
-    exts.forEach((ext) => {
-      extensionsStore.addExtension(ext);
+    exts.forEach(async (ext) => {
+      extensionsStore.addExtension(new Extension(await getExtensionManifest(ext.id), ext));
     });
   });
 }

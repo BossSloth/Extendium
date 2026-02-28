@@ -3,7 +3,7 @@ import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { Extension } from '@extension/Extension';
 import { showContextMenu } from '@steambrew/client';
-import React, { CSSProperties, JSX, MouseEvent, useEffect, useRef, useState } from 'react';
+import React, { CSSProperties, JSX, MouseEvent, useEffect, useRef } from 'react';
 import { ContextMenu } from '../../shared';
 import { ExtensionPopup } from '../ExtensionPopup';
 import { showExtensionContextMenu } from './ExtensionContextMenu';
@@ -11,31 +11,17 @@ import { showExtensionContextMenu } from './ExtensionContextMenu';
 const KEEP_OPEN = false;
 
 export function ExtensionButton({ extension }: { readonly extension: Extension; }): JSX.Element {
-  const [iconUrl, setIconUrl] = useState(extension.action.getIconUrl());
   const contextMenuWindow = useRef<Window | null>(null);
   const popupContextMenuRef = useRef<ContextMenu | undefined>(undefined);
 
   const { attributes, listeners, setNodeRef, transform, transition, isDragging }
-    = useSortable({ id: extension.getName() });
+    = useSortable({ id: extension.id });
 
   const style: CSSProperties = {
     transform: CSS.Transform.toString(transform),
     transition,
     zIndex: isDragging ? 1000 : undefined,
   };
-
-  // Listener to update icon when Action notifies
-  useEffect(() => {
-    function handleIconChange(): void {
-      setIconUrl(extension.action.getIconUrl());
-    }
-    extension.action.subscribeToIconUrlChange(handleIconChange);
-
-    // Cleanup to unsubscribe from icon change
-    return (): void => {
-      extension.action.unsubscribeFromIconUrlChange(handleIconChange);
-    };
-  }, [extension]);
 
   // Cleanup to close context menu on unmount
   useEffect(() => {
@@ -101,7 +87,7 @@ export function ExtensionButton({ extension }: { readonly extension: Extension; 
       className="extension-button"
       onClick={onClick}
       onContextMenu={onContextMenu}
-      title={extension.action.getTitle()}
+      title={extension.name}
       ref={(el) => {
         if (el) {
           contextMenuWindow.current = el.ownerDocument.defaultView;
@@ -116,7 +102,7 @@ export function ExtensionButton({ extension }: { readonly extension: Extension; 
       {...attributes}
       {...listeners}
     >
-      <img src={iconUrl ?? ''} alt={extension.getName()} />
+      <img src={extension.action.iconUrl} alt={extension.name} />
     </button>
   );
 }

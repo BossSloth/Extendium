@@ -2,11 +2,13 @@ import { DialogHeader, Field } from '@steambrew/client';
 import { openExtensionManagerPopup } from 'extensions-manager/ExtensionManagerPopup';
 import React from 'react';
 import { FaCog } from 'react-icons/fa';
+import { useExtensionsStore } from 'stores/extensionsStore';
 import { useExtensionsBarStore } from '../stores/extensionsBarStore';
 import { ManagerExtensionItem } from './ManagerExtensionItem';
 
 export function ToolbarManagerContextMenu(): React.JSX.Element {
   const { extensionsOrder, setExtensionsOrder } = useExtensionsBarStore();
+  const { extensions } = useExtensionsStore();
 
   function isExtensionPinned(extensionId: string): boolean {
     return extensionsOrder.includes(extensionId);
@@ -27,15 +29,17 @@ export function ToolbarManagerContextMenu(): React.JSX.Element {
   return (
     <div style={{ padding: '1rem', width: '18rem' }}>
       <DialogHeader>Extensions</DialogHeader>
-      {[...extensions_old.values()].map(extension => (
-        <ManagerExtensionItem
-          key={extension.getName()}
-          extension={extension}
-          pinned={isExtensionPinned(extension.getName())}
-          pinExtension={pinExtension}
-          unpinExtension={unpinExtension}
-        />
-      ))}
+      {Array.from(extensions.values())
+        .sort((a, b) => a.name.localeCompare(b.name))
+        .map(extension => (
+          <ManagerExtensionItem
+            key={extension.id}
+            extension={extension}
+            pinned={isExtensionPinned(extension.id)}
+            pinExtension={pinExtension}
+            unpinExtension={unpinExtension}
+          />
+        ))}
       <Field icon={<FaCog />} label="Manage extensions" onClick={() => { openExtensionManagerPopup(); }} />
     </div>
   );

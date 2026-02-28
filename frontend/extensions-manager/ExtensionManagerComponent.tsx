@@ -1,13 +1,13 @@
+import { Extension } from '@extension/Extension';
 import { DialogButton, Toggle } from '@steambrew/client';
 import { persistentExtensionsPage } from 'chrome/ChromeExtensionPageManager';
-import { ExtensionInfo } from 'chrome/types';
 import { usePopupsStore } from 'components/stores/popupsStore';
 import React from 'react';
 import { useExtensionsStore } from 'stores/extensionsStore';
 
-export function ExtensionManagerComponent({ extension }: { readonly extension: ExtensionInfo; }): React.ReactNode {
+export function ExtensionManagerComponent({ extension }: { readonly extension: Extension; }): React.ReactNode {
   const { setManagerPopup } = usePopupsStore();
-  const [isEnabled, setIsEnabled] = React.useState(extension.state === 'ENABLED');
+  const [isEnabled, setIsEnabled] = React.useState(extension.enabled);
   const { removeExtension } = useExtensionsStore();
 
   function handleToggleChange(value: boolean): void {
@@ -32,7 +32,7 @@ export function ExtensionManagerComponent({ extension }: { readonly extension: E
     <div className="extension-card">
       <div className="extension-main">
         <div className="icon" style={{ position: 'relative' }}>
-          <img src={extension.iconUrl} />
+          <img src={extension.action.iconUrl} />
           {/* {extensionHasErrors && (
             <FaExclamationCircle color="red" size={24} />
           )} */}
@@ -49,7 +49,7 @@ export function ExtensionManagerComponent({ extension }: { readonly extension: E
         </div>
       </div>
       <div className="extension-buttons">
-        <DialogButton onClick={() => { setManagerPopup({ route: `info/${extension.name}` }); }}>Details</DialogButton>
+        <DialogButton onClick={() => { setManagerPopup({ route: `info/${extension.id}` }); }}>Details</DialogButton>
         <DialogButton onClick={() => { uninstallExtension(); }}>Remove</DialogButton>
         <Toggle onChange={handleToggleChange} value={isEnabled} />
       </div>

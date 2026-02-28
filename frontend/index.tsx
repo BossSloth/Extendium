@@ -1,25 +1,15 @@
-import { Extension } from '@extension/Extension';
-import { ExtensionInfos } from '@extension/Metadata';
+import { ExtendiumInfo } from '@extension/Metadata';
 import { UserInfo } from '@extension/shared';
 import { Millennium } from '@steambrew/client';
-import { GetExtensionsInfos } from 'callables';
-import { startIntervalForUpdate as startIntervalForUpdates } from 'updates/updater';
+import { GetExtendiumInfo } from 'callables';
+import { getUserInfoPromise, initInfos } from 'shared';
 import { handleUrlScheme } from 'urlSchemeHandler';
 import { OnPopupCreation } from './onPopupCreation';
-import { getUserInfoPromise, infos, initInfos, initPluginDir } from './shared';
-import { WebkitWrapper } from './webkit';
-
-const extensions_old = new Map<string, Extension>();
-// @ts-expect-error globalThis is missing type
-globalThis.extensions_old = extensions_old;
-let extensionsDir: string;
 
 let userInfo: UserInfo;
 
 const global = {
-  webkit: new WebkitWrapper(),
   getUserInfo: (): string => JSON.stringify(userInfo),
-  removeExtension: (name: string): void => { extensions_old.delete(name); },
 };
 // @ts-expect-error ignore
 Millennium.exposeObj(global);
@@ -31,24 +21,7 @@ export default async function PluginMain(): Promise<void> {
   getUserInfoPromise().then((info) => {
     userInfo = info;
   });
-  initInfos(JSON.parse(await GetExtensionsInfos()) as ExtensionInfos);
-  const manifests = infos.manifests;
-  initPluginDir(infos.pluginDir);
-  extensionsDir = infos.extensionsDir.replaceAll('\\', '/');
-  const extensionsUrl = `https://js.millennium.app/${extensionsDir}`;
-  const extensionObjects = [];
-  for (const [folderName, manifest] of Object.entries(manifests)) {
-    extensionObjects.push(new Extension(manifest, `${extensionsUrl}/${folderName}`, folderName, infos.metadatas?.[folderName]));
-  }
-
-  await Promise.all(extensionObjects.map(async (extension) => {
-    await extension.init();
-    extensions_old.set(extension.getName(), extension);
-  }));
-
-  global.webkit.init(extensions_old);
-
-  startIntervalForUpdates();
+  initInfos(JSON.parse(await GetExtendiumInfo()) as ExtendiumInfo);
 
   const wnd = g_PopupManager.GetExistingPopup('SP Desktop_uid0');
   if (wnd) {

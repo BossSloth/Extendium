@@ -7,3 +7,4 @@ public/extendium.css
 .extensions/
 metadata.json
 external-links.json
+!.vscode

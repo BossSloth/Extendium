@@ -3,12 +3,8 @@ export interface ExtensionMetadata {
   url: string;
 }
 
-export interface ExtensionInfos {
-  extensionsDir: string;
+export interface ExtendiumInfo {
   externalLinks?: ExternalLink[];
-  manifests: Record<string, chrome.runtime.ManifestV3>;
-  metadatas?: Record<string, ExtensionMetadata>;
-  pluginDir: string;
 }
 
 export interface ExternalLink {

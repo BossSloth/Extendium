@@ -17,7 +17,7 @@ export function ExtensionDetailInfo({ extension }: { readonly extension: Extensi
     return (
       <div className="extension-detail-info">
         <div className="page-header">
-          <button onClick={() => { setManagerPopup({ route: null }); }} type="button">
+          <button onClick={() => { setManagerPopup({ route: null }); }} type="button" className="md-button">
             <MdArrowBack />
           </button>
           Error in extension
@@ -32,7 +32,7 @@ export function ExtensionDetailInfo({ extension }: { readonly extension: Extensi
     ChromeDevToolsProtocol.send('Target.getTargets').then((response) => {
       const ourViews: Protocol.Target.TargetInfo[] = [];
       for (const targetInfo of response.targetInfos) {
-        if (targetInfo.title.startsWith(`${extension?.getName()} - `) || targetInfo.title === 'SharedJSContext') {
+        if (targetInfo.title.startsWith(`${extension?.name} - `) || targetInfo.title === 'SharedJSContext') {
           ourViews.push(targetInfo);
         }
       }
@@ -52,18 +52,18 @@ export function ExtensionDetailInfo({ extension }: { readonly extension: Extensi
         <button onClick={() => { setManagerPopup({ route: null }); }} type="button" className="md-button">
           <MdArrowBack />
         </button>
-        <img src={extension.action.getDefaultIconUrl(48)} />
-        <span>{extension.getName()}</span>
+        <img src={extension.action.iconUrl} />
+        <span>{extension.name}</span>
       </div>
 
       <div className="section">
         <div className="heading">Description</div>
-        <div className="content">{extension.getDescription()}</div>
+        <div className="content">{extension.description}</div>
       </div>
 
       <div className="section hr">
         <div className="heading">Version</div>
-        <div className="content">{extension.getVersion()}</div>
+        <div className="content">{extension.version}</div>
       </div>
 
       {views.length > 0 && (

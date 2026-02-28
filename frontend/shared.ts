@@ -1,5 +1,4 @@
-import { Extension } from '@extension/Extension';
-import { ExtensionInfos } from '@extension/Metadata';
+import { ExtendiumInfo } from '@extension/Metadata';
 import { UserInfo } from '@extension/shared';
 import { Millennium } from '@steambrew/client';
 import * as ReactDOM from 'react-dom';
@@ -18,15 +17,14 @@ export function initPluginDir(_pluginDir: string): void {
   pluginDir = _pluginDir;
 }
 
-export let infos: ExtensionInfos;
+export let infos: ExtendiumInfo;
 
-export function initInfos(_infos: ExtensionInfos): void {
+export function initInfos(_infos: ExtendiumInfo): void {
   infos = _infos;
 }
 
 declare global {
   const SP_REACTDOM: typeof ReactDOM & typeof ReactDOMClient;
-  const extensions_old: Map<string, Extension>;
 }
 
 export const MAIN_WINDOW_NAME = 'SP Desktop_uid0';

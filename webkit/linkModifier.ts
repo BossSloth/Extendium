@@ -1,10 +1,8 @@
 import { ExternalLink } from '@extension/Metadata';
-import { WebkitRequestType } from '@extension/websocket/MessageTypes';
 import { ExtensionWrapper } from './ExtensionWrapper';
-import { webSocketClient } from './shared';
 
 export function linkClickInterceptor(extensions: Map<string, ExtensionWrapper>, externalLinks: ExternalLink[]): void {
-  const optionsLinks = getOptionLinks(extensions);
+  // const optionsLinks = getOptionLinks(extensions);
 
   document.addEventListener('click', (event) => {
     const target = event.target as HTMLElement;
@@ -14,12 +12,12 @@ export function linkClickInterceptor(extensions: Map<string, ExtensionWrapper>, 
     if (anchor) {
       const href = decodeURIComponent(anchor.href);
 
-      if (optionsLinks.has(href)) {
-        event.preventDefault(); // stop default link behavior if needed
-        webSocketClient.sendMessage({}, WebkitRequestType.OpenOptions, optionsLinks.get(href) ?? '');
+      // if (optionsLinks.has(href)) {
+      //   event.preventDefault(); // stop default link behavior if needed
+      //   webSocketClient.sendMessage({}, WebkitRequestType.OpenOptions, optionsLinks.get(href) ?? '');
 
-        return;
-      }
+      //   return;
+      // }
 
       if (externalLinks.some(link => linkMatches(link, href))) {
         location.href = `steam://openurl_external/${href}`;

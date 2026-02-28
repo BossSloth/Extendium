@@ -1,14 +1,15 @@
 import { closestCenter, DndContext, DragEndEvent, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
 import { restrictToHorizontalAxis, restrictToParentElement } from '@dnd-kit/modifiers';
 import { arrayMove, horizontalListSortingStrategy, SortableContext } from '@dnd-kit/sortable';
-import { Extension } from '@extension/Extension';
 import React, { JSX } from 'react';
+import { useExtensionsStore } from 'stores/extensionsStore';
 import { useSettingsStore } from '../../extensions-manager/Settings/settingsStore';
 import { ToolbarManagerButton } from '../ToolbarExtensionManager/ToolbarManagerButton';
 import { useExtensionsBarStore } from '../stores/extensionsBarStore';
 import { ExtensionButton } from './ExtensionButton';
 
-export function ExtensionsBar({ extensions }: { readonly extensions: Map<string, Extension>; }): JSX.Element {
+export function ExtensionsBar(): JSX.Element {
+  const { extensions } = useExtensionsStore();
   const { extensionsOrder, setExtensionsOrder } = useExtensionsBarStore();
   const { barMarginLeft, barMarginRight } = useSettingsStore();
 
@@ -50,14 +51,14 @@ export function ExtensionsBar({ extensions }: { readonly extensions: Map<string,
     >
       <SortableContext items={extensionsOrder} strategy={horizontalListSortingStrategy}>
         <div className="extensions-bar" style={getBarStyles()}>
-          {extensionsOrder.map(extensionId => (
-            extensions.get(extensionId)?.action.getIconUrl() === undefined
-              ? null
-              : (
-                  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-                  <ExtensionButton key={extensionId} extension={extensions.get(extensionId)!} />
-                )
-          ))}
+          {extensionsOrder.map((extensionId) => {
+            const extension = extensions.get(extensionId);
+            if (extension === undefined) {
+              return null;
+            }
+
+            return <ExtensionButton key={extensionId} extension={extension} />;
+          })}
           <ToolbarManagerButton />
         </div>
       </SortableContext>

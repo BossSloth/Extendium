@@ -1,6 +1,6 @@
 import { callable } from '@steambrew/client';
 
-/** @returns json serialized {@link ExtensionInfos} */
-export const GetExtensionsInfos = callable<[], string>('GetExtensionsInfos');
+/** @returns json serialized {@link ExtendiumInfo} */
+export const GetExtendiumInfo = callable<[], string>('GetExtendiumInfo');
 
 export const UpdateExternalLinks = callable<[{ external_links: string; }], void>('UpdateExternalLinks');

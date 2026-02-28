@@ -1,15 +1,15 @@
-import { ExtensionInfo } from 'chrome/types';
+import { Extension } from '@extension/Extension';
 import { create } from 'zustand';
 
 interface ExtensionsStore {
-  addExtension(extension: ExtensionInfo): void;
+  addExtension(extension: Extension): void;
   removeExtension(id: string): void;
-  extensions: Map<string, ExtensionInfo>;
+  extensions: Map<string, Extension>;
 }
 
 export const useExtensionsStore = create<ExtensionsStore>()(set => ({
   extensions: new Map(),
-  addExtension: (extension: ExtensionInfo): void => {
+  addExtension: (extension: Extension): void => {
     set((state) => {
       const newExtensions = new Map(state.extensions);
       newExtensions.set(extension.id, extension);
@@ -26,3 +26,6 @@ export const useExtensionsStore = create<ExtensionsStore>()(set => ({
     });
   },
 }));
+
+// @ts-expect-error globalThis
+window.extensions = useExtensionsStore;

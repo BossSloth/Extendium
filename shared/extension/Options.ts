@@ -9,6 +9,6 @@ export class Options {
   }
 
   public getOptionsPageUrl(): string | undefined {
-    return this.extension.manifest.options_ui?.page ?? this.extension.manifest.options_page;
+    return this.extension.extensionInfo.optionsPage?.url;
   }
 }

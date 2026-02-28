@@ -46,6 +46,9 @@ export default defineConfig(
       perfectionist,
     },
     rules: {
+      // TODO: Remove this when all deprecated code is removed
+      '@typescript-eslint/no-deprecated': 'warn',
+
       // #region Formatting preferences
       '@stylistic/function-call-argument-newline': ['error', 'consistent'],
       '@stylistic/member-delimiter-style': ['error', { singleline: { requireLast: true } }],
@@ -120,6 +123,7 @@ export default defineConfig(
       'no-console': 'off',
       'no-alert': 'off',
       camelcase: 'off',
+      '@typescript-eslint/strict-void-return': 'off',
       // #endregion
 
       // #region React

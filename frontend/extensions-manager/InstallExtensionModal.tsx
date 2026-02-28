@@ -2,7 +2,6 @@
 import { ConfirmModal, showModal, ShowModalResult, Spinner, TextField } from '@steambrew/client';
 import React, { useEffect } from 'react';
 import { mainWindow } from 'shared';
-import { downloadExtensionFromUrl } from './Downloader/download-manager';
 import { showRestartModal } from './RestartModal';
 
 export function InstallExtensionModal({ modal }: { readonly modal: ShowModalResult | null; }): React.ReactNode {
@@ -10,15 +9,15 @@ export function InstallExtensionModal({ modal }: { readonly modal: ShowModalResu
   const [loading, setLoading] = React.useState(false);
   const [error, setError] = React.useState<string | null>(null);
 
-  async function onOk(): Promise<void> {
+  function onOk(): void {
     setLoading(true);
-    const success = await downloadExtensionFromUrl(url);
-    if (success) {
-      showRestartModal();
-      modal?.Close();
-    } else {
-      setError('Failed to download extension. Check logs for more information.');
-    }
+    // const success = await downloadExtensionFromUrl(url);
+    // if (success) {
+    showRestartModal();
+    modal?.Close();
+    // } else {
+    //   setError('Failed to download extension. Check logs for more information.');
+    // }
     setLoading(false);
   }
 

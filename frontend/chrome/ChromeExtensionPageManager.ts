@@ -4,7 +4,21 @@ import { createTarget, RuntimeEvaluate, waitForDomReadyInTarget } from './Chrome
 import { ExtensionInfo } from './types';
 
 export async function getExtensions(): Promise<ExtensionInfo[]> {
-  return persistentExtensionsPage.evaluateExpression(async () => chrome.developerPrivate.getExtensionsInfo({ includeDisabled: true }));
+  return persistentExtensionsPage.evaluateExpression(async () => {
+    return chrome.developerPrivate.getExtensionsInfo({ includeDisabled: true });
+  });
+}
+
+export async function getExtensionManifest(id: string): Promise<chrome.runtime.ManifestV3> {
+  return JSON.parse(await getExtensionFileContent(id, 'manifest.json')) as chrome.runtime.ManifestV3;
+}
+
+export async function getExtensionFileContent(id: string, filePath: string): Promise<string> {
+  return persistentExtensionsPage.evaluateExpression(async (_id: string, _filePath: string) => {
+    const response = await chrome.developerPrivate.requestFileSource({ extensionId: _id, pathSuffix: _filePath, message: '', manifestKey: 'Invalid!' });
+
+    return response.beforeHighlight + response.highlight + response.afterHighlight;
+  }, [id, filePath]);
 }
 
 export type JsonPrimitive = string | number | boolean | null | undefined | void;
@@ -13,11 +27,11 @@ export type JsonSerializable = JsonPrimitive | Record<string, unknown> | unknown
 
 declare global {
   interface Window {
-    __extendiumOnInstalledQueue?: Map<TrackedEvent, (ExtensionInfo | string)[]>;
+    __extendiumOnInstalledQueue?: Map<TrackedEvent, (chrome.developerPrivate.ExtensionInfo | string)[]>;
   }
 }
 
-const trackedEvents: `${chrome.developerPrivate.EventType}`[] = ['INSTALLED', 'UNINSTALLED'];
+const trackedEvents: `${chrome.developerPrivate.EventType}`[] = ['INSTALLED', 'UNINSTALLED', 'PREFS_CHANGED', 'CONFIGURATION_CHANGED'];
 
 type TrackedEvent = typeof trackedEvents[number];
 
@@ -110,7 +124,7 @@ class PersistentExtensionsPage {
     return trackedEvents.includes(event as TrackedEvent);
   }
 
-  private handleEvent(eventType: TrackedEvent, extensionInfo: ExtensionInfo | string): void {
+  private handleEvent(eventType: TrackedEvent, extensionInfo: chrome.developerPrivate.ExtensionInfo | string): void {
     if (this.sessionId === null) {
       return;
     }

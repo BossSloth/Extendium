@@ -3,15 +3,14 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 
 import { Extension } from '@extension/Extension';
-import { Logger } from '@extension/Logger';
 import { findModule } from '@steambrew/client';
 import { extendiumStyles } from 'components/Styles';
 import { initializeExtension } from 'extensionInitialization';
 import { MainWindowPopup, Popup } from 'steam-types/Global/managers/PopupManager';
-import { checkAndEmitInstallEvent } from 'updates/updater';
+import { useExtensionsStore } from 'stores/extensionsStore';
 import { initMainWindow, MAIN_WINDOW_NAME, WaitForElement } from './shared';
 import { patchUrlBar } from './urlBarPatch';
-import { createOptionsWindow, createWindowWithScript } from './windowManagement';
+import { createOptionsWindow } from './windowManagement';
 
 export async function OnPopupCreation(popup: Popup | undefined): Promise<void> {
   if (!popup) return;
@@ -33,21 +32,13 @@ async function OnMainWindowCreation(popup: MainWindowPopup): Promise<void> {
 
   addStyles(popup);
 
-  const backgroundPromises: Promise<void>[] = [];
-  for (const extension of extensions_old.values()) {
-    backgroundPromises.push(setupBackground(extension).catch((e: unknown) => {
-      Logger.globalLog('Background-init', 'Failed to setup background for extension:', extension.getName(), e);
-    }));
-  }
-  await Promise.all(backgroundPromises);
-
-  patchUrlBar(extensions_old, popup.m_popup.document);
+  patchUrlBar(popup.m_popup.document);
 }
 
 async function OnTabbedPopupBrowserCreation(popup: Popup): Promise<void> {
   addStyles(popup);
 
-  await patchUrlBar(extensions_old, popup.m_popup.document);
+  await patchUrlBar(popup.m_popup.document);
 
   function observerCallback(): void {
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
@@ -58,7 +49,7 @@ async function OnTabbedPopupBrowserCreation(popup: Popup): Promise<void> {
     }
 
     if (!popup.m_popup.document.querySelector('.extensions-bar-container')) {
-      patchUrlBar(extensions_old, popup.m_popup.document);
+      patchUrlBar(popup.m_popup.document);
     }
   }
 
@@ -73,25 +64,6 @@ function addStyles(popup: Popup): void {
   const style = document.createElement('style');
   style.textContent = extendiumStyles;
   popup.m_popup.document.head.appendChild(style);
-}
-
-async function setupBackground(extension: Extension): Promise<void> {
-  const backgroundScriptUrl = extension.manifest.background?.service_worker;
-
-  if (backgroundScriptUrl === undefined) {
-    return;
-  }
-
-  const backgroundWindow = await createWindowWithScript(
-    backgroundScriptUrl,
-    extension,
-    'Background',
-    extension.manifest.background?.type === 'module',
-  );
-
-  extension.contexts.addContext(backgroundWindow, 'BACKGROUND', extension.getBackgroundUrl());
-
-  checkAndEmitInstallEvent(extension);
 }
 
 function isMainWindow(popup: Popup): popup is MainWindowPopup {
@@ -118,9 +90,8 @@ export function modifyLinks(document: Document): void {
 }
 
 export function getOptionLinks(): Map<string, Extension> {
-  return [...extensions_old.values()].map((extension): [string, Extension] => {
-    const link = extension.getFileUrl(extension.options.getOptionsPageUrl()) ?? '';
-
-    return [link, extension];
-  }).filter(link => link[0] !== '').reduce((map, [key, value]) => map.set(key, value), new Map<string, Extension>());
+  return Array.from(useExtensionsStore.getState().extensions.values()).map((extension): [string, Extension] => {
+    return [extension.extensionInfo.optionsPage?.url ?? '', extension];
+  }).filter(link => link[0] !== '')
+    .reduce((map, [key, value]) => map.set(key, value), new Map<string, Extension>());
 }

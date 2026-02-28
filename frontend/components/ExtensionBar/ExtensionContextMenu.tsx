@@ -17,21 +17,21 @@ export function ExtensionContextMenu({ extension }: { readonly extension: Extens
 
   function unpin(): void {
     setExtensionsOrder((order) => {
-      return order.filter(id => id !== extension.getName());
+      return order.filter(id => id !== extension.id);
     });
   }
 
   return (
     <div className="extension-context-menu">
-      <Menu label={extension.getName()}>
+      <Menu label={extension.name}>
         <MenuItem onClick={openHomepage}>
-          {extension.getName()}
+          {extension.name}
         </MenuItem>
         <Separator />
         {extension.options.hasOptions() && <MenuItem onClick={() => { createOptionsWindow(extension); }}>Options</MenuItem>}
         <MenuItem onClick={unpin}>Unpin</MenuItem>
         <Separator />
-        <MenuItem onClick={() => { openExtensionManagerPopup(`info/${extension.getName()}`); }}>Manage</MenuItem>
+        <MenuItem onClick={() => { openExtensionManagerPopup(`info/${extension.id}`); }}>Manage</MenuItem>
       </Menu>
     </div>
   );
@@ -49,7 +49,7 @@ export function showExtensionContextMenu(extension: Extension, targetElement: El
       bCreateHidden: false,
       bRetainOnHide: false,
       bNoFocusWhenShown: undefined,
-      title: `${extension.action.getTitle()} - Context Menu`,
+      title: `${extension.name} - Context Menu`,
     },
   );
 }

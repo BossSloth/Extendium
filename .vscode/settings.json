@@ -1,0 +1,8 @@
+{
+  "Lua.runtime.version": "LuaJIT",
+  "Lua.diagnostics.globals": [
+    "on_load",
+    "on_unload",
+    "on_frontend_loaded"
+  ]
+}
