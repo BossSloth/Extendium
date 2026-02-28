@@ -1,8 +1,8 @@
 import { ChromeDevToolsProtocol, findClass } from '@steambrew/client';
 import React, { useEffect, useRef, useState } from 'react';
+import { uniqueId } from 'shared';
 import { BrowserViewPopup } from 'steam-types/types/SteamClient/BrowserView/BrowserViewPopup';
 import { BrowserViewHost } from './SteamComponents';
-import { uniqueId } from 'shared';
 
 interface BrowserViewProps {
   readonly expectedParentPopupTitle: string;
@@ -53,12 +53,8 @@ export function BrowserView({ url, expectedParentPopupTitle }: BrowserViewProps)
 
       cdpSessionIdRef.current = sessionId;
 
-      // await ChromeDevToolsProtocol.send('Page.navigate', {
-      //   url,
-      // }, sessionId);
-
       await ChromeDevToolsProtocol.send('Page.navigate', {
-        url: 'chrome-extension://kdbmhfkmnlmbkgbabkdealhhbfhlmmon/options/popup.html',
+        url,
       }, sessionId);
     }
 

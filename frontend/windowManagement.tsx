@@ -1,69 +1,7 @@
 import { Extension } from '@extension/Extension';
 import { findClass } from '@steambrew/client';
 import { openExtensionSettingsPopup } from 'components/ExtensionSettingsPopup';
-import { injectBrowser } from './browser/injectBrowser';
-import { loadScript, mainWindow } from './shared';
-
-export function createWindow(extension: Extension, title: string, baseHref: string): Window {
-  const popup = SteamClient.BrowserView.CreatePopup({ parentPopupBrowserID: mainWindow.SteamClient.Browser.GetBrowserID() });
-  const backgroundWindow = window.open(popup.strCreateURL);
-  if (!backgroundWindow) {
-    throw new Error('Failed to create window');
-  }
-  backgroundWindow.SteamClient.Window.HideWindow();
-
-  backgroundWindow.document.title = `${extension.getName()} - ${title}`;
-
-  // Add base tag
-  const base = document.createElement('base');
-  base.href = baseHref;
-  backgroundWindow.document.head.appendChild(base);
-
-  // const backgroundWindow = backgroundPopup.m_popupContextMenu.m_popup;
-  injectBrowser(title, backgroundWindow, extension);
-
-  return backgroundWindow;
-}
-
-export async function createWindowWithScript(scriptPath: string, extension: Extension, title: string, module = false): Promise<Window> {
-  const script = extension.getFileUrl(scriptPath);
-  if (script === undefined) {
-    throw new Error(`Script ${scriptPath} not found`);
-  }
-
-  const backgroundWindow = createWindow(extension, title, extension.getFileDir(scriptPath));
-
-  try {
-    await loadScript(script, backgroundWindow.document, undefined, module);
-  } catch (error) {
-    extension.logger.error('createWindowWithScript', error);
-  }
-
-  return backgroundWindow;
-}
-
-export async function createOffscreen(extension: Extension, title: string, initUrl: string): Promise<Window> {
-  const window = createWindow(extension, title, extension.getFileDir(initUrl));
-  const url = extension.getFileUrl(initUrl) ?? '';
-  const popupContent = await fetch(url).then(async r => r.text());
-  await injectHtml(popupContent, window, extension);
-
-  extension.contexts.addContext(window, 'OFFSCREEN_DOCUMENT', url);
-
-  return window;
-}
-
-export async function closeOffscreen(extension: Extension): Promise<void> {
-  const contexts = await extension.contexts.getContexts({ contextTypes: ['OFFSCREEN_DOCUMENT'] });
-  const context = contexts[0];
-  if (!context) {
-    throw new Error('No offscreen context found');
-  }
-
-  const popupWindow = context.popupWindow;
-
-  popupWindow.close();
-}
+import { loadScript } from './shared';
 
 export async function injectHtml(html: string, popupWindow: Window, extension: Extension, addToBody = true, removeSteamCss = true, baseUrl?: string, popupContentUrl?: string): Promise<void> {
   const popupDocument = popupWindow.document;
@@ -75,7 +13,7 @@ export async function injectHtml(html: string, popupWindow: Window, extension: E
   }
 
   // Inject the chrome variable
-  injectBrowser('popup', popupWindow, extension, popupContentUrl);
+  // injectBrowser('popup', popupWindow, extension, popupContentUrl);
 
   // Get the script tags and add them to the head
   const domParser = new DOMParser();
@@ -155,23 +93,10 @@ export async function injectHtml(html: string, popupWindow: Window, extension: E
   }));
 }
 
-export function createOptionsWindow(extension: Extension, queryParams?: string): void {
-  const url = extension.options.getOptionsPageUrl() ?? '';
-
-  // openExtensionSettingsPopup(
-  //   <ExtensionPopup
-  //     extension={extension}
-  //     popupContentUrl={extension.getFileUrl(url) ?? ''}
-  //     baseDir={extension.getFileDir(url)}
-  //     removeSteamCss={false}
-  //     centerPopup
-  //     queryParams={queryParams}
-  //   />,
-  //   `${extension.action.getTitle()} - Options`,
-  // );
+export function createOptionsWindow(extension: Extension): void {
   openExtensionSettingsPopup(
-    extension.getFileUrl(url) ?? '',
-    `${extension.action.getTitle()} - Options`,
+    extension.options.getOptionsPageUrl() ?? '',
+    `${extension.name} - Options`,
   );
 }
 

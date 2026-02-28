@@ -1,6 +1,6 @@
 import { DialogHeader, Field } from '@steambrew/client';
 import { openExtensionManagerPopup } from 'extensions-manager/ExtensionManagerPopup';
-import React from 'react';
+import React, { useMemo } from 'react';
 import { FaCog } from 'react-icons/fa';
 import { useExtensionsStore } from 'stores/extensionsStore';
 import { useExtensionsBarStore } from '../stores/extensionsBarStore';
@@ -8,7 +8,11 @@ import { ManagerExtensionItem } from './ManagerExtensionItem';
 
 export function ToolbarManagerContextMenu(): React.JSX.Element {
   const { extensionsOrder, setExtensionsOrder } = useExtensionsBarStore();
-  const { extensions } = useExtensionsStore();
+  const { extensions: allExtensions } = useExtensionsStore();
+
+  const enabledExtensions = useMemo(() => {
+    return Array.from(allExtensions.values()).filter(extension => extension.enabled);
+  }, [allExtensions]);
 
   function isExtensionPinned(extensionId: string): boolean {
     return extensionsOrder.includes(extensionId);
@@ -29,7 +33,7 @@ export function ToolbarManagerContextMenu(): React.JSX.Element {
   return (
     <div style={{ padding: '1rem', width: '18rem' }}>
       <DialogHeader>Extensions</DialogHeader>
-      {Array.from(extensions.values())
+      {enabledExtensions
         .sort((a, b) => a.name.localeCompare(b.name))
         .map(extension => (
           <ManagerExtensionItem

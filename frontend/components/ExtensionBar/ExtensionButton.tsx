@@ -31,7 +31,7 @@ export function ExtensionButton({ extension }: { readonly extension: Extension; 
   }, []);
 
   function createPopupContextMenu(targetElement: Element | null | undefined, clickEvent?: MouseEvent): void {
-    if (popupContextMenuRef.current || extension.action.getPopupUrl() === undefined) return;
+    if (popupContextMenuRef.current || extension.action.popupUrl === undefined) return;
 
     // Debug feature to keep the popup open to view the logs/content
     const keepOpen = clickEvent !== undefined && clickEvent.ctrlKey && clickEvent.altKey;
@@ -65,9 +65,10 @@ export function ExtensionButton({ extension }: { readonly extension: Extension; 
       createPopupContextMenu(contextMenuWindow.current?.document.activeElement, clickEvent);
     }
 
-    if (extension.action.getPopupUrl() === undefined) {
+    if (extension.action.popupUrl === undefined) {
       /** Only fire onClicked if there is no popup @see https://developer.chrome.com/docs/extensions/reference/api/action#event-onClicked */
-      extension.action.onClicked.emit();
+      // extension.action.onClicked.emit();
+      // TODO: fire onClicked event
 
       // Open context menu if no action popup is defined
       onContextMenu();

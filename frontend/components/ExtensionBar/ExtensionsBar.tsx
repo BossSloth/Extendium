@@ -1,7 +1,7 @@
 import { closestCenter, DndContext, DragEndEvent, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
 import { restrictToHorizontalAxis, restrictToParentElement } from '@dnd-kit/modifiers';
 import { arrayMove, horizontalListSortingStrategy, SortableContext } from '@dnd-kit/sortable';
-import React, { JSX } from 'react';
+import React, { JSX, useMemo } from 'react';
 import { useExtensionsStore } from 'stores/extensionsStore';
 import { useSettingsStore } from '../../extensions-manager/Settings/settingsStore';
 import { ToolbarManagerButton } from '../ToolbarExtensionManager/ToolbarManagerButton';
@@ -9,9 +9,13 @@ import { useExtensionsBarStore } from '../stores/extensionsBarStore';
 import { ExtensionButton } from './ExtensionButton';
 
 export function ExtensionsBar(): JSX.Element {
-  const { extensions } = useExtensionsStore();
+  const { extensions: allExtensions } = useExtensionsStore();
   const { extensionsOrder, setExtensionsOrder } = useExtensionsBarStore();
   const { barMarginLeft, barMarginRight } = useSettingsStore();
+
+  const enabledExtensions = useMemo(() => {
+    return new Map(Array.from(allExtensions.entries()).filter(([, extension]) => extension.enabled));
+  }, [allExtensions]);
 
   const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 8 } }));
 
@@ -52,7 +56,7 @@ export function ExtensionsBar(): JSX.Element {
       <SortableContext items={extensionsOrder} strategy={horizontalListSortingStrategy}>
         <div className="extensions-bar" style={getBarStyles()}>
           {extensionsOrder.map((extensionId) => {
-            const extension = extensions.get(extensionId);
+            const extension = enabledExtensions.get(extensionId);
             if (extension === undefined) {
               return null;
             }

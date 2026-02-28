@@ -66,6 +66,11 @@ export function ExtensionDetailInfo({ extension }: { readonly extension: Extensi
         <div className="content">{extension.version}</div>
       </div>
 
+      <div className="section hr">
+        <div className="heading">Id</div>
+        <div className="content">{extension.id}</div>
+      </div>
+
       {views.length > 0 && (
         <div className="section hr">
           <div className="heading">Inspect views</div>

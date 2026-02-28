@@ -7,15 +7,15 @@ import { useExtensionsStore } from 'stores/extensionsStore';
 
 export function ExtensionManagerComponent({ extension }: { readonly extension: Extension; }): React.ReactNode {
   const { setManagerPopup } = usePopupsStore();
-  const [isEnabled, setIsEnabled] = React.useState(extension.enabled);
-  const { removeExtension } = useExtensionsStore();
+  const { removeExtension, setExtension } = useExtensionsStore();
 
   function handleToggleChange(value: boolean): void {
     persistentExtensionsPage.evaluateExpression(
       async (id: string, enabled: boolean) => chrome.management.setEnabled(id, enabled),
       [extension.id, value],
     );
-    setIsEnabled(value);
+    extension.extensionInfo.state = value ? 'ENABLED' : 'DISABLED';
+    setExtension(extension);
   }
 
   async function uninstallExtension(): Promise<void> {
@@ -51,7 +51,7 @@ export function ExtensionManagerComponent({ extension }: { readonly extension: E
       <div className="extension-buttons">
         <DialogButton onClick={() => { setManagerPopup({ route: `info/${extension.id}` }); }}>Details</DialogButton>
         <DialogButton onClick={() => { uninstallExtension(); }}>Remove</DialogButton>
-        <Toggle onChange={handleToggleChange} value={isEnabled} />
+        <Toggle onChange={handleToggleChange} value={extension.enabled} />
       </div>
     </div>
   );

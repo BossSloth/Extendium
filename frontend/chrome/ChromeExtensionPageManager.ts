@@ -31,7 +31,7 @@ declare global {
   }
 }
 
-const trackedEvents: `${chrome.developerPrivate.EventType}`[] = ['INSTALLED', 'UNINSTALLED', 'PREFS_CHANGED', 'CONFIGURATION_CHANGED'];
+const trackedEvents: `${chrome.developerPrivate.EventType}`[] = ['INSTALLED', 'UNINSTALLED', 'UNLOADED', 'LOADED'];
 
 type TrackedEvent = typeof trackedEvents[number];
 
