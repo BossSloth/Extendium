@@ -8,6 +8,8 @@ export class Action {
   }
 
   get popupUrl(): string | undefined {
-    return this.extension.manifest.action?.default_popup;
+    return this.extension.manifest.action?.default_popup !== undefined
+      ? `chrome-extension://${this.extension.id}/${this.extension.manifest.action.default_popup}`
+      : undefined;
   }
 }

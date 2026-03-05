@@ -1,6 +1,16 @@
 import { ChromeDevToolsProtocol } from '@steambrew/client';
 import { mainWindow, uniqueId } from 'shared';
-import { JsonSerializable } from './ChromeExtensionPageManager';
+
+export type JsonPrimitive = string | number | boolean | null | undefined | void;
+
+// eslint-disable-next-line @typescript-eslint/no-unsafe-function-type, @typescript-eslint/no-explicit-any
+type NonSerializable = Function | Map<any, any> | Set<unknown> | WeakMap<object, unknown> | WeakSet<object> | Date | RegExp | Error;
+
+export type ExcludeNonSerializable<T> = Exclude<T, NonSerializable>;
+
+export type JsonSerializable = JsonPrimitive | unknown[] | object | readonly unknown[];
+
+export type Serializable<T> = T extends NonSerializable ? never : T;
 
 export async function waitForDomReadyInTarget(sessionId: string, timeoutMs = 15000): Promise<void> {
   const start = Date.now();
@@ -85,9 +95,9 @@ function createHiddenWindow(randomId: string): void {
   popupWindow.document.title = randomId;
 }
 
-export async function RuntimeEvaluate<T extends JsonSerializable = JsonSerializable, TArgs extends readonly JsonSerializable[] = []>(
+export async function RuntimeEvaluate<T extends JsonSerializable, TArgs extends readonly JsonSerializable[] = []>(
   sessionId: string,
-  expression: (...args: TArgs) => (T | Promise<T>),
+  expression: (...args: TArgs) => Serializable<T> | Promise<Serializable<T>>,
   args?: TArgs,
 ): Promise<T> {
   let expressionString: string;
@@ -113,8 +123,8 @@ export async function RuntimeEvaluate<T extends JsonSerializable = JsonSerializa
   return response.result.value as T;
 }
 
-export async function evaluateExpression<T extends JsonSerializable = JsonSerializable, TArgs extends readonly JsonSerializable[] = []>(
-  expression: (...args: TArgs) => (T | Promise<T>),
+export async function evaluateExpression<T extends JsonSerializable, TArgs extends readonly JsonSerializable[] = []>(
+  expression: (...args: TArgs) => Serializable<T> | Promise<Serializable<T>>,
   url: string,
   waitForDom = false,
   args?: TArgs,

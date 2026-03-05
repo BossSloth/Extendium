@@ -1,6 +1,6 @@
 /* eslint-disable no-underscore-dangle */
 import { ChromeDevToolsProtocol } from '@steambrew/client';
-import { createTarget, RuntimeEvaluate, waitForDomReadyInTarget } from './ChromePageManager';
+import { createTarget, JsonSerializable, RuntimeEvaluate, Serializable, waitForDomReadyInTarget } from './ChromePageManager';
 import { ExtensionInfo } from './types';
 
 export async function getExtensions(): Promise<ExtensionInfo[]> {
@@ -20,10 +20,6 @@ export async function getExtensionFileContent(id: string, filePath: string): Pro
     return response.beforeHighlight + response.highlight + response.afterHighlight;
   }, [id, filePath]);
 }
-
-export type JsonPrimitive = string | number | boolean | null | undefined | void;
-
-export type JsonSerializable = JsonPrimitive | Record<string, unknown> | unknown[] | readonly unknown[];
 
 declare global {
   interface Window {
@@ -160,8 +156,8 @@ class PersistentExtensionsPage {
     };
   }
 
-  public async evaluateExpression<T extends JsonSerializable = JsonSerializable, TArgs extends readonly JsonSerializable[] = []>(
-    expression: (...args: TArgs) => T | Promise<T>,
+  public async evaluateExpression<T extends JsonSerializable, TArgs extends readonly JsonSerializable[] = []>(
+    expression: (...args: TArgs) => Serializable<T> | Promise<Serializable<T>>,
     args?: TArgs,
   ): Promise<T> {
     if (this.sessionId === null) {

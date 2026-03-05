@@ -1,6 +1,7 @@
 import { Extension } from '@extension/Extension';
 import { getExtensionManifest, getExtensions, persistentExtensionsPage } from 'chrome/ChromeExtensionPageManager';
 import { ExtensionInfo } from 'chrome/types';
+import { INTERNAL_HOME_PAGE_URL } from 'shared';
 import { useExtensionsStore } from 'stores/extensionsStore';
 
 export async function initializeExtension(): Promise<void> {
@@ -10,6 +11,12 @@ export async function initializeExtension(): Promise<void> {
     if (extensionInfo === undefined) {
       return;
     }
+
+    if (extensionInfo.manifestHomePageUrl === INTERNAL_HOME_PAGE_URL) {
+      // Don't show our internal extensions
+      return;
+    }
+
     setExtension(new Extension(await getExtensionManifest(extensionInfo.id), extensionInfo));
   });
   persistentExtensionsPage.on('UNINSTALLED', (extensionId) => {
@@ -29,6 +36,11 @@ export async function initializeExtension(): Promise<void> {
 
   await getExtensions().then((exts) => {
     exts.forEach(async (ext) => {
+      if (ext.manifestHomePageUrl === INTERNAL_HOME_PAGE_URL) {
+        // Don't show our internal extensions
+        return;
+      }
+
       setExtension(new Extension(await getExtensionManifest(ext.id), ext));
     });
   });
