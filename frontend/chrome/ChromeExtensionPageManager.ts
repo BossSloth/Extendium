@@ -21,6 +21,13 @@ export async function getExtensionFileContent(id: string, filePath: string): Pro
   }, [id, filePath]);
 }
 
+export async function uninstallExtension(id: string): Promise<void> {
+  return persistentExtensionsPage.evaluateExpression(
+    async (_id: string) => chrome.management.uninstall(_id),
+    [id],
+  );
+}
+
 declare global {
   interface Window {
     __extendiumOnInstalledQueue?: Map<TrackedEvent, (chrome.developerPrivate.ExtensionInfo | string)[]>;

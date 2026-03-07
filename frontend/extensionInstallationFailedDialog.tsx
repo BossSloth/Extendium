@@ -34,7 +34,6 @@ export function showExtensionInstallationFailedDialog(): void {
       strCancelButtonText="Understood, I will manually install it"
       bDisableBackgroundDismiss
       bHideCloseIcon
-      strMiddleButtonText="Show logs"
       onOK={async () => {
         await InstallInternalExtension();
         dialog.Close();

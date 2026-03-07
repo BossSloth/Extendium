@@ -5,8 +5,6 @@ import * as ReactDOM from 'react-dom';
 import * as ReactDOMClient from 'react-dom/client';
 import { BasicPopup } from 'steam-types/Global/managers/PopupManager';
 
-export const INTERNAL_HOME_PAGE_URL = 'https://github.com/BossSloth/Extendium';
-
 export let mainWindow: Window;
 
 export function initMainWindow(_mainWindow: Window): void {
