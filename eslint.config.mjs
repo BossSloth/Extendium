@@ -14,7 +14,7 @@ export default defineConfig(
       globals: globals.browser,
       parserOptions: {
         projectService: {
-          allowDefaultProject: ['*config.mjs', 'helpers/clean-maps.mjs'],
+          allowDefaultProject: ['*config.mjs', 'helpers/clean-maps.mjs', 'fake-header-extension/*.js'],
         },
         tsconfigRootDir: import.meta.dirname,
       },
@@ -137,6 +137,18 @@ export default defineConfig(
       'react/require-default-props': 'off',
       'react/jsx-no-leaked-render': 'off',
       // #endregion
+    },
+  },
+  {
+    files: ['fake-header-extension/**/*.js'],
+    rules: {
+      '@typescript-eslint/no-unsafe-assignment': 'off',
+      '@typescript-eslint/no-unsafe-member-access': 'off',
+      '@typescript-eslint/no-unsafe-call': 'off',
+      '@typescript-eslint/no-unsafe-return': 'off',
+      // '@typescript-eslint/no-unsafe-argument': 'off',
+      '@typescript-eslint/explicit-function-return-type': 'off',
+      '@typescript-eslint/ban-ts-comment': 'off',
     },
   },
 );

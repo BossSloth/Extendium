@@ -3,6 +3,7 @@ local fs = require("fs")
 local json = require("json")
 local utils = require("utils")
 local logger = require("logger")
+local install_extension = require("install_extension")
 
 local EXTENDIUM_EXTERNAL_LINKS_FILE = "external-links.json"
 
@@ -63,6 +64,20 @@ function GetExtendiumInfo()
     return json.encode({
       externalLinks = GetExternalLinks(),
     })
+end
+
+---Install the fake-header-extension into Steam's Chromium preferences
+---@return string JSON result with success status
+function InstallExtension()
+    logger:info("InstallExtension called from frontend")
+    return install_extension.install()
+end
+
+---Check if the extension is currently installed
+---@return string JSON result with installation status
+function CheckExtensionStatus()
+    logger:info("CheckExtensionStatus called from frontend")
+    return install_extension.check_status()
 end
 
 function on_load()
