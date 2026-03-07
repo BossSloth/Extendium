@@ -90,6 +90,13 @@ export function ExtensionButton({ extension }: { readonly extension: Extension; 
     resizeCallbackRef.current?.(newSize);
   }
 
+  function onBrowserViewClosed(): void {
+    if (popupContextMenuRef.current) {
+      popupContextMenuRef.current.Hide();
+      popupContextMenuRef.current.Close?.();
+    }
+  }
+
   function createPopupContextMenu(targetElement: Element | null | undefined, clickEvent?: MouseEvent): void {
     if (popupContextMenuRef.current || extension.action.popupUrl === undefined) return;
 
@@ -108,6 +115,7 @@ export function ExtensionButton({ extension }: { readonly extension: Extension; 
             url={extension.action.popupUrl}
             onFocusChanged={handleFocusChanged}
             onCreated={onBrowserViewCreated}
+            onClosed={onBrowserViewClosed}
           />
         </ExtensionAction>,
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion

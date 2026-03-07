@@ -8,13 +8,14 @@ import { handleUrlScheme } from 'urlSchemeHandler';
 import { BrowserViewHost } from './SteamComponents';
 
 interface BrowserViewProps {
+  onClosed?(): void;
   onCreated?(sessionId: string): void;
   onFocusChanged?(focused: boolean): void;
   readonly expectedParentPopupTitle: string;
   readonly url: string;
 }
 
-export function BrowserView({ url, expectedParentPopupTitle, onFocusChanged, onCreated }: BrowserViewProps): React.ReactNode {
+export function BrowserView({ url, expectedParentPopupTitle, onFocusChanged, onCreated, onClosed }: BrowserViewProps): React.ReactNode {
   const [browserView, setBrowserView] = useState<BrowserViewPopup | null>(null);
   const cdpSessionIdRef = useRef<string | null>(null);
 
@@ -44,6 +45,10 @@ export function BrowserView({ url, expectedParentPopupTitle, onFocusChanged, onC
 
       newBrowserView.on('focus-changed', (focus) => {
         onFocusChanged?.(focus);
+      });
+
+      newBrowserView.on('before-close', () => {
+        onClosed?.();
       });
 
       const randomId = uniqueId();

@@ -1,22 +1,16 @@
 import { DialogButton } from '@steambrew/client';
+import { OpenTargetPage } from 'chrome/ChromePageManager';
 import { settingsClasses } from 'classes';
 import { usePopupsStore } from 'components/stores/popupsStore';
 import React from 'react';
 import { FaCog, FaDatabase, FaStore } from 'react-icons/fa';
+import { IoExtensionPuzzle } from 'react-icons/io5';
 import { useExtensionsStore } from 'stores/extensionsStore';
 import { ExtensionManagerComponent } from './ExtensionManagerComponent';
-import { showInstallExtensionModal } from './InstallExtensionModal';
-
-// const GetExtensionsDir = callable<[], string>('GetExtensionsDir');
 
 export function ExtensionManagerRoot(): React.ReactNode {
   const { setManagerPopup } = usePopupsStore();
   const { extensions } = useExtensionsStore();
-
-  // async function openExtensionsFolder(): Promise<void> {
-  //   const extensionsDir = await GetExtensionsDir();
-  //   SteamClient.System.OpenLocalDirectoryInSystemExplorer(extensionsDir);
-  // }
 
   return (
     <>
@@ -29,20 +23,20 @@ export function ExtensionManagerRoot(): React.ReactNode {
           Manage storage
         </DialogButton>
         <DialogButton
-          onClick={showInstallExtensionModal}
+          onClick={() => { OpenTargetPage('https://chromewebstore.google.com/'); }}
           className={`span-icon ${settingsClasses.SettingsDialogButton}`}
         >
           <FaStore />
           Install extension
         </DialogButton>
         <div style={{ display: 'flex', gap: '6px' }}>
-          {/* <DialogButton
-            onClick={openExtensionsFolder}
+          <DialogButton
+            onClick={() => { OpenTargetPage('chrome://extensions'); }}
             className={`span-icon ${settingsClasses.SettingsDialogButton}`}
           >
-            <FaFolderOpen />
-            Browse local files
-          </DialogButton> */}
+            <IoExtensionPuzzle />
+            Advanced extension management
+          </DialogButton>
           <DialogButton
             onClick={() => { setManagerPopup({ route: 'settings' }); }}
             className={`span-icon ${settingsClasses.SettingsDialogButton}`}

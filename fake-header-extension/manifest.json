@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "Fake Header Extension",
+  "name": "Extendium - Fake Header Extension",
   "version": "1.0.0",
-  "description": "Adds a fake Steam header to the top of Steam pages allowing some extensions like Augmented steam to function inside Steam",
+  "description": "Adds a fake Steam header to the top of Steam pages allowing some extensions like Augmented steam to function inside Steam. This is a core Extendium extension that should not be disabled or removed.",
   "content_scripts": [
     {
       "matches": [

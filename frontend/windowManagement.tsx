@@ -96,7 +96,7 @@ export async function injectHtml(html: string, popupWindow: Window, extension: E
 export function createOptionsWindow(extension: Extension): void {
   openExtensionSettingsPopup(
     extension.options.getOptionsPageUrl() ?? '',
-    `${extension.name} - Options`,
+    `${extension.name} - Extendium Options`,
   );
 }
 

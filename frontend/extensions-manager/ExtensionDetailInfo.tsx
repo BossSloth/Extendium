@@ -1,17 +1,19 @@
 import { Extension } from '@extension/Extension';
 import { ChromeDevToolsProtocol } from '@steambrew/client';
+import { persistentExtensionsPage } from 'chrome/ChromeExtensionPageManager';
 import { usePopupsStore } from 'components/stores/popupsStore';
 import type { Protocol } from 'devtools-protocol';
 import React from 'react';
 import { FaExclamationCircle } from 'react-icons/fa';
 import { MdArrowBack, MdArrowForward, MdOpenInNew } from 'react-icons/md';
 import { mainWindow } from 'shared';
+import { useExtensionsStore } from 'stores/extensionsStore';
 import { createOptionsWindow } from 'windowManagement';
-import { showRemoveModal } from './RemoveModal';
 
 export function ExtensionDetailInfo({ extension }: { readonly extension: Extension | undefined; }): React.ReactNode {
   const [views, setViews] = React.useState<Protocol.Target.TargetInfo[]>([]);
   const { setManagerPopup } = usePopupsStore();
+  const { removeExtension } = useExtensionsStore();
 
   if (!extension) {
     return (
@@ -38,6 +40,17 @@ export function ExtensionDetailInfo({ extension }: { readonly extension: Extensi
       }
       setViews(ourViews);
     });
+  }
+
+  async function uninstallExtension(): Promise<void> {
+    if (!extension) return;
+
+    await persistentExtensionsPage.evaluateExpression(
+      async (id: string) => chrome.management.uninstall(id),
+      [extension.id],
+    );
+    setManagerPopup({ route: null });
+    removeExtension(extension.id);
   }
 
   React.useEffect(() => {
@@ -118,7 +131,7 @@ export function ExtensionDetailInfo({ extension }: { readonly extension: Extensi
         </div>
       )}
 
-      <div className="section hr clickable-row" onClick={() => { showRemoveModal(extension); }}>
+      <div className="section hr clickable-row" onClick={() => { uninstallExtension(); }}>
         <span>Remove extension</span>
         <button type="button"><MdArrowForward /></button>
       </div>

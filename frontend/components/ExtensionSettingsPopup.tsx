@@ -34,6 +34,18 @@ export function openExtensionSettingsPopup(settingsUrl: string, title: string): 
 
   state.setSettingsPopup({ open: false });
   setTimeout(() => {
-    state.setSettingsPopup({ content: <BrowserView expectedParentPopupTitle={title} url={settingsUrl} />, open: true, title });
+    state.setSettingsPopup({
+      content: (
+        <BrowserView
+          expectedParentPopupTitle={title}
+          url={settingsUrl}
+          onClosed={() => {
+            state.setSettingsPopup({ open: false });
+          }}
+        />
+      ),
+      open: true,
+      title,
+    });
   }, 1);
 }
