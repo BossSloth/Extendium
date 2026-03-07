@@ -2,6 +2,7 @@ import { ExtendiumInfo } from '@extension/Metadata';
 import { UserInfo } from '@extension/shared';
 import { Millennium } from '@steambrew/client';
 import { GetExtendiumInfo } from 'callables';
+import { showExtensionInstallationFailedDialog } from 'extensionInstallationFailedDialog';
 import { getUserInfoPromise, initInfos } from 'shared';
 import { handleUrlScheme } from 'urlSchemeHandler';
 import { OnPopupCreation } from './onPopupCreation';
@@ -10,6 +11,7 @@ let userInfo: UserInfo;
 
 const global = {
   getUserInfo: (): string => JSON.stringify(userInfo),
+  showExtensionInstalationFailedDialog: showExtensionInstallationFailedDialog,
 };
 // @ts-expect-error ignore
 Millennium.exposeObj(global);

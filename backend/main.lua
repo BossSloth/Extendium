@@ -6,6 +6,7 @@ local logger = require("logger")
 local install_extension = require("install_extension.init")
 
 local EXTENDIUM_EXTERNAL_LINKS_FILE = "external-links.json"
+local EXTENDIUM_INSTALL_STATE_FILE = "install-state.json"
 
 function GetPluginDir()
     local backend_path = utils.get_backend_path()
@@ -59,25 +60,124 @@ function UpdateExternalLinks(external_links)
     end
 end
 
+---@return table|nil
+function GetInstallState()
+    local plugin_dir = GetPluginDir()
+    if not plugin_dir then
+        logger:error("Failed to get plugin directory")
+        return nil
+    end
+
+    local state_path = fs.join(plugin_dir, EXTENDIUM_INSTALL_STATE_FILE)
+
+    if fs.is_file(state_path) then
+        local content, err = utils.read_file(state_path)
+        if content then
+            local state, decode_err = json.decode(content)
+            if state then
+                return state
+            else
+                logger:error("Error decoding install state " .. state_path .. ": " .. (decode_err or "unknown error"))
+            end
+        else
+            logger:error("Error reading install state " .. state_path .. ": " .. (err or "unknown error"))
+        end
+    end
+
+    return nil
+end
+
+---@param state table
+---@return nil
+function SaveInstallState(state)
+    local plugin_dir = GetPluginDir()
+    if not plugin_dir then
+        logger:error("Failed to get plugin directory")
+        return
+    end
+
+    local state_path = fs.join(plugin_dir, EXTENDIUM_INSTALL_STATE_FILE)
+    local state_json = json.encode(state)
+
+    local success, err = utils.write_file(state_path, state_json)
+    if not success then
+        logger:error("Error writing install state " .. state_path .. ": " .. (err or "unknown error"))
+    end
+end
+
 ---@return string
 function GetExtendiumInfo()
     return json.encode({
       externalLinks = GetExternalLinks(),
+      installState = GetInstallState(),
     })
 end
 
 ---Install the fake-header-extension into Steam's Chromium preferences
 ---@return string JSON result with success status
-function InstallExtension()
+function InstallInternalExtension()
     logger:info("InstallExtension called from frontend")
     return install_extension.install()
 end
 
 ---Check if the extension is currently installed
 ---@return string JSON result with installation status
-function CheckExtensionStatus()
+function CheckInternalExtensionStatus()
     logger:info("CheckExtensionStatus called from frontend")
     return install_extension.check_status()
+end
+
+function CheckIfInternalExtensionIsInstalled()
+    local status_result = install_extension.check_status()
+    local status = json.decode(status_result)
+
+    local install_state = GetInstallState() or {}
+
+    if status and status.installed then
+        if install_state.installAttempted then
+            logger:info("Clearing previous install attempt flag")
+            SaveInstallState({
+                installAttempted = false,
+                installFailed = false,
+                lastChecked = os.time()
+            })
+        end
+    else
+        logger:info("Extension is not installed")
+
+        if install_state.installAttempted then
+            logger:error("Extension installation failed - extension not found after previous install attempt")
+            SaveInstallState({
+                installAttempted = true,
+                installFailed = true,
+                lastChecked = os.time(),
+                errorMessage = "Extension installation failed. Please try installing manually or check logs."
+            })
+            millennium.call_frontend_method("showExtensionInstalationFailedDialog")
+        else
+            logger:info("First run - attempting to install extension")
+            SaveInstallState({
+                installAttempted = true,
+                installFailed = false,
+                lastChecked = os.time()
+            })
+
+            local install_result = install_extension.install()
+            local result = json.decode(install_result)
+
+            if result and result.success then
+                logger:info("Extension installation initiated successfully")
+            else
+                logger:error("Extension installation failed: " .. (result and result.error or "unknown error"))
+                SaveInstallState({
+                    installAttempted = true,
+                    installFailed = true,
+                    lastChecked = os.time(),
+                    errorMessage = result and result.error or "Installation failed with unknown error"
+                })
+            end
+        end
+    end
 end
 
 function on_load()
@@ -85,6 +185,7 @@ function on_load()
 end
 
 function on_frontend_loaded()
+    CheckIfInternalExtensionIsInstalled()
 end
 
 return {
