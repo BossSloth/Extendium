@@ -3,7 +3,7 @@ local fs = require("fs")
 local json = require("json")
 local utils = require("utils")
 local logger = require("logger")
-local install_extension = require("install_extension")
+local install_extension = require("install_extension.init")
 
 local EXTENDIUM_EXTERNAL_LINKS_FILE = "external-links.json"
 
@@ -84,6 +84,10 @@ function on_load()
     millennium.ready()
 end
 
+function on_frontend_loaded()
+end
+
 return {
-    on_load = on_load
+    on_load = on_load,
+    on_frontend_loaded = on_frontend_loaded,
 }
