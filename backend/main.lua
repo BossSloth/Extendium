@@ -15,7 +15,7 @@ function GetPluginDir()
     return fs.parent_path(backend_path)
 end
 
----@return table
+---@return table|nil
 function GetExternalLinks()
     local plugin_dir = GetPluginDir()
     if not plugin_dir then

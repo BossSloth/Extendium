@@ -14,16 +14,43 @@ local M = {}
 -- cjson treats tables with no elements ambiguously, this ensures array serialization
 local function empty_array()
     local arr = {}
-    local mt = { __jsontype = "array" }
-    setmetatable(arr, mt)
+    setmetatable(arr, { __jsontype = "array" })
     return arr
 end
 
--- Normalize path separators for Windows (ensure backslashes)
-local function normalize_path_for_windows(path)
-    if not path then return path end
-    -- Replace forward slashes with backslashes for Windows
-    return path:gsub("/", "\\")
+-- Ensure nested table path exists, creating tables as needed
+-- Usage: ensure_nested(t, "a", "b", "c") ensures t.a.b.c exists
+local function ensure_nested(t, ...)
+    local current = t
+    for _, key in ipairs({...}) do
+        if not current[key] then current[key] = {} end
+        current = current[key]
+    end
+    return current
+end
+
+-- Generic JSON file reader with logging
+local function read_json_file(path, label)
+    logger:info("[install] Reading " .. label .. ": " .. path)
+
+    if not fs.exists(path) then
+        logger:error("[install] " .. label .. " not found at: " .. path)
+        return nil
+    end
+
+    local content, err = utils.read_file(path)
+    if not content then
+        logger:error("[install] Failed to read " .. label .. ": " .. (err or "unknown error"))
+        return nil
+    end
+
+    local data, decode_err = json.decode(content)
+    if not data then
+        logger:error("[install] Failed to decode " .. label .. ": " .. (decode_err or "unknown error"))
+        return nil
+    end
+
+    return data
 end
 
 -- ============================================================================
@@ -47,9 +74,7 @@ local function get_extension_dir()
 end
 
 local function is_windows()
-    -- Detect platform by checking for Windows-style path
-    local steam_path = millennium.steam_path()
-    return steam_path:match("^%a:") ~= nil
+    return jit.os == "Windows"
 end
 
 local function get_steam_config_dir()
@@ -68,15 +93,14 @@ local function get_steam_config_dir()
         return nil
     else
         -- Linux: ~/.local/share/Steam/config/htmlcache/Default
+        -- Or symlink:  ~/.steam/steam/config/htmlcache/Default
         local home = utils.getenv("HOME")
         if home then
-            return fs.join(home, ".local", "share", "Steam", "config", "htmlcache", "Default")
+            return fs.join(home, ".steam", "steam", "config", "htmlcache", "Default")
         end
         return nil
     end
 end
-
-
 
 -- ============================================================================
 -- Extension ID (read from pre-generated keys file)
@@ -89,27 +113,10 @@ local function read_extension_keys()
         return nil
     end
 
-    local keys_path = fs.join(extension_dir, "extension-keys.json")
-    logger:info("[install] Looking for keys at: " .. keys_path)
-
-    if not fs.exists(keys_path) then
-        logger:error("[install] extension-keys.json not found. Run generate-extension-keys.ts first!")
-        return nil
+    local keys = read_json_file(fs.join(extension_dir, "extension-keys.json"), "extension-keys.json")
+    if keys then
+        logger:info("[install] Extension ID: " .. tostring(keys.extensionId))
     end
-
-    local content, err = utils.read_file(keys_path)
-    if not content then
-        logger:error("[install] Failed to read keys: " .. (err or "unknown error"))
-        return nil
-    end
-
-    local keys, decode_err = json.decode(content)
-    if not keys then
-        logger:error("[install] Failed to decode keys: " .. (decode_err or "unknown error"))
-        return nil
-    end
-
-    logger:info("[install] Extension ID: " .. tostring(keys.extensionId))
     return keys
 end
 
@@ -120,27 +127,10 @@ local function read_manifest()
         return nil
     end
 
-    local manifest_path = fs.join(extension_dir, "manifest.json")
-    logger:info("[install] Reading manifest: " .. manifest_path)
-
-    if not fs.exists(manifest_path) then
-        logger:error("[install] manifest.json not found at: " .. manifest_path)
-        return nil
+    local manifest = read_json_file(fs.join(extension_dir, "manifest.json"), "manifest.json")
+    if manifest then
+        logger:info("[install] Extension: " .. tostring(manifest.name) .. " v" .. tostring(manifest.version))
     end
-
-    local content, err = utils.read_file(manifest_path)
-    if not content then
-        logger:error("[install] Failed to read manifest: " .. (err or "unknown error"))
-        return nil
-    end
-
-    local manifest, decode_err = json.decode(content)
-    if not manifest then
-        logger:error("[install] Failed to decode manifest: " .. (decode_err or "unknown error"))
-        return nil
-    end
-
-    logger:info("[install] Extension: " .. tostring(manifest.name) .. " v" .. tostring(manifest.version))
     return manifest
 end
 
@@ -385,35 +375,18 @@ end
 
 -- Remove empty tables and arrays (Chromium's DeepCopyWithoutEmptyChildren)
 local function remove_empty_children(obj)
-    if type(obj) ~= "table" then
-        return obj
-    end
-
-    -- Check if array
-    local is_array = #obj > 0 or next(obj) == nil
-    if is_array and #obj == 0 then
-        return nil -- Empty array
-    end
+    if type(obj) ~= "table" then return obj end
+    if next(obj) == nil then return nil end
 
     local cleaned = {}
-    local has_keys = false
-
     for k, v in pairs(obj) do
         local cleaned_v = remove_empty_children(v)
-        if cleaned_v ~= nil then
-            -- Skip empty tables
-            if type(cleaned_v) ~= "table" or next(cleaned_v) ~= nil then
-                cleaned[k] = cleaned_v
-                has_keys = true
-            end
+        if cleaned_v ~= nil and (type(cleaned_v) ~= "table" or next(cleaned_v) ~= nil) then
+            cleaned[k] = cleaned_v
         end
     end
 
-    if not has_keys then
-        return nil
-    end
-
-    return cleaned
+    return next(cleaned) ~= nil and cleaned or nil
 end
 
 -- Escape '<' in JSON string (Chromium requirement)
@@ -425,8 +398,15 @@ end
 -- HMAC Context
 -- ============================================================================
 
+---@class HmacContext
+---@field sid string
+---@field seed_hex string
+---@field seed_bytes string
 local HmacContext = {}
 
+---@param sid string
+---@param seed_hex string
+---@return HmacContext
 function HmacContext:new(sid, seed_hex)
     local obj = {
         sid = sid or "",
@@ -437,6 +417,9 @@ function HmacContext:new(sid, seed_hex)
     return obj
 end
 
+---@param json_path string
+---@param value any
+---@return string|nil
 function HmacContext:compute_mac(json_path, value)
     local cleaned = remove_empty_children(value)
     -- Use sorted JSON for consistent key ordering (must match JS JSON.stringify)
@@ -457,6 +440,8 @@ function HmacContext:compute_mac(json_path, value)
     return mac
 end
 
+---@param macs table
+---@return string|nil
 function HmacContext:compute_super_mac(macs)
     -- Use sorted JSON for consistent key ordering
     local macs_json = json_encode_sorted(macs)
@@ -591,17 +576,12 @@ function M.install()
         logger:info("[install] Canonical extension path: " .. extension_dir)
     end
 
-    -- Normalize path separators for Windows (ensure backslashes)
-    -- if is_windows() then
-    --     extension_dir = normalize_path_for_windows(extension_dir)
-    --     logger:info("[install] Normalized Windows path: " .. extension_dir)
-    -- end
-
     -- Build extension settings
     local extension_settings = build_extension_settings(extension_dir, manifest)
     logger:info("[install] Built extension settings")
 
     -- Initialize HMAC context (Windows only)
+    ---@type HmacContext|nil
     local hmac_ctx = nil
     if is_windows() then
         logger:info("[install] Initializing HMAC context for Windows...")
@@ -625,54 +605,24 @@ function M.install()
     local prefs_path = fs.join(config_dir, "Preferences")
     local secure_prefs_path = fs.join(config_dir, "Secure Preferences")
 
-    -- Read Preferences
-    local prefs = {}
-    if fs.exists(prefs_path) then
-        local content, err = utils.read_file(prefs_path)
-        if content then
-            local decoded, decode_err = json.decode(content)
-            if decoded then
-                prefs = decoded
-                logger:info("[install] Loaded existing Preferences")
-            else
-                logger:warn("[install] Failed to decode Preferences: " .. (decode_err or "unknown"))
-            end
-        else
-            logger:warn("[install] Failed to read Preferences: " .. (err or "unknown"))
+    -- Helper to load prefs file with fallback to empty table
+    local function load_prefs_file(path, label)
+        if not fs.exists(path) then
+            logger:warn("[install] " .. label .. " not found, will create new")
+            return {}
         end
-    else
-        logger:warn("[install] Preferences not found, will create new")
+        local data = read_json_file(path, label)
+        if data then
+            logger:info("[install] Loaded existing " .. label)
+        end
+        return data or {}
     end
 
-    -- Read Secure Preferences
-    local secure_prefs = nil
-    local has_secure_prefs = fs.exists(secure_prefs_path)
-    if has_secure_prefs then
-        local content, err = utils.read_file(secure_prefs_path)
-        if content then
-            local decoded, decode_err = json.decode(content)
-            if decoded then
-                secure_prefs = decoded
-                logger:info("[install] Loaded existing Secure Preferences")
-            else
-                logger:warn("[install] Failed to decode Secure Preferences: " .. (decode_err or "unknown"))
-                secure_prefs = {}
-            end
-        else
-            logger:warn("[install] Failed to read Secure Preferences: " .. (err or "unknown"))
-            secure_prefs = {}
-        end
-    else
-        logger:info("[install] Secure Preferences not found, will skip")
-    end
+    local prefs = load_prefs_file(prefs_path, "Preferences")
+    local secure_prefs = fs.exists(secure_prefs_path) and load_prefs_file(secure_prefs_path, "Secure Preferences") or nil
 
     -- Compute HMACs if needed (Windows only) - do this BEFORE modifying prefs
-    local ext_mac = nil
-    local dev_mode_mac = nil
-    local secure_ext_mac = nil
-    local secure_dev_mode_mac = nil
-    local secure_super_mac = nil
-
+    local ext_mac, dev_mode_mac
     if hmac_ctx then
         logger:info("[install] Computing HMAC signatures...")
         ext_mac = hmac_ctx:compute_mac("extensions.settings." .. extension_id, extension_settings)
@@ -680,57 +630,35 @@ function M.install()
 
         dev_mode_mac = hmac_ctx:compute_mac("extensions.ui.developer_mode", true)
         if dev_mode_mac then logger:info("[install] Developer mode MAC computed") end
-
-        -- For secure prefs, we need the super_mac computed after setting up macs structure
-        if has_secure_prefs then
-            secure_ext_mac = ext_mac  -- Same MAC for both files
-            secure_dev_mode_mac = dev_mode_mac
-        end
     end
 
-    -- Set up Preferences structure
-    if not prefs.extensions then prefs.extensions = {} end
-    if not prefs.extensions.settings then prefs.extensions.settings = {} end
-    if not prefs.extensions.ui then prefs.extensions.ui = {} end
-    prefs.extensions.ui.developer_mode = true
-    prefs.extensions.settings[extension_id] = extension_settings
-
-    if hmac_ctx then
-        if not prefs.protection then prefs.protection = {} end
-        if not prefs.protection.macs then prefs.protection.macs = {} end
-        if not prefs.protection.macs.extensions then prefs.protection.macs.extensions = {} end
-        if not prefs.protection.macs.extensions.settings then prefs.protection.macs.extensions.settings = {} end
-        if not prefs.protection.ui then prefs.protection.ui = {} end
-
-        if ext_mac then prefs.protection.macs.extensions.settings[extension_id] = ext_mac end
-        if dev_mode_mac then prefs.protection.ui.developer_mode = dev_mode_mac end
-    end
-
-    -- Set up Secure Preferences structure
-    if secure_prefs then
-        if not secure_prefs.extensions then secure_prefs.extensions = {} end
-        if not secure_prefs.extensions.settings then secure_prefs.extensions.settings = {} end
-        if not secure_prefs.extensions.ui then secure_prefs.extensions.ui = {} end
-        secure_prefs.extensions.ui.developer_mode = true
-        secure_prefs.extensions.settings[extension_id] = extension_settings
+    -- Helper to set up extension in a prefs object
+    local function setup_extension_prefs(p, compute_super)
+        ensure_nested(p, "extensions", "settings")
+        ensure_nested(p, "extensions", "ui")
+        p.extensions.ui.developer_mode = true
+        p.extensions.settings[extension_id] = extension_settings
 
         if hmac_ctx then
-            if not secure_prefs.protection then secure_prefs.protection = {} end
-            if not secure_prefs.protection.macs then secure_prefs.protection.macs = {} end
-            if not secure_prefs.protection.macs.extensions then secure_prefs.protection.macs.extensions = {} end
-            if not secure_prefs.protection.macs.extensions.settings then secure_prefs.protection.macs.extensions.settings = {} end
-            if not secure_prefs.protection.ui then secure_prefs.protection.ui = {} end
+            ensure_nested(p, "protection", "macs", "extensions", "settings")
+            ensure_nested(p, "protection", "ui")
+            if ext_mac then p.protection.macs.extensions.settings[extension_id] = ext_mac end
+            if dev_mode_mac then p.protection.ui.developer_mode = dev_mode_mac end
 
-            if secure_ext_mac then secure_prefs.protection.macs.extensions.settings[extension_id] = secure_ext_mac end
-            if secure_dev_mode_mac then secure_prefs.protection.ui.developer_mode = secure_dev_mode_mac end
-
-            -- Super MAC for Secure Preferences
-            secure_super_mac = hmac_ctx:compute_super_mac(secure_prefs.protection.macs)
-            if secure_super_mac then
-                secure_prefs.protection.super_mac = secure_super_mac
-                logger:info("[install] Super MAC computed")
+            if compute_super then
+                local super_mac = hmac_ctx:compute_super_mac(p.protection.macs)
+                if super_mac then
+                    p.protection.super_mac = super_mac
+                    logger:info("[install] Super MAC computed")
+                end
             end
         end
+    end
+
+    -- Set up both Preferences and Secure Preferences
+    setup_extension_prefs(prefs, false)
+    if secure_prefs then
+        setup_extension_prefs(secure_prefs, true)
     end
 
     -- Pre-encode JSON to minimize time between writes and kill
