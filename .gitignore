@@ -4,7 +4,7 @@ node_modules/
 build/
 !bun.lockb
 public/extendium.css
-.extensions/
+.extensions*
 metadata.json
 external-links.json
 install-state.json

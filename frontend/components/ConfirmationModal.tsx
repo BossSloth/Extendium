@@ -6,6 +6,7 @@ import { mainWindow } from 'shared';
 export interface ConfirmationModalProps {
   onCancel?(): void;
   onOK?(): Promise<void> | void;
+  readonly bDestructiveWarning?: boolean;
   readonly description: ReactNode;
   readonly hideCloseIcon?: boolean;
   readonly modal: ShowModalResult | null;
@@ -21,6 +22,7 @@ function ConfirmationModal({
   onOK,
   hideCloseIcon = false,
   okButtonText,
+  bDestructiveWarning,
 }: ConfirmationModalProps): React.ReactNode {
   return (
     <ConfirmModal
@@ -37,6 +39,7 @@ function ConfirmationModal({
         modal?.Close();
       }}
       strOKButtonText={okButtonText}
+      bDestructiveWarning={bDestructiveWarning}
     />
   );
 }
@@ -44,6 +47,7 @@ function ConfirmationModal({
 export interface ShowConfirmationModalOptions {
   onCancel?(): void;
   onOK?(): Promise<void> | void;
+  readonly bDestructiveWarning?: boolean;
   readonly bNeverPopOut?: boolean;
   readonly closeOnOK?: boolean;
   readonly description: ReactNode;
@@ -63,6 +67,7 @@ export function showConfirmationModal({
   popupHeight,
   popupWidth,
   closeOnOK = true,
+  bDestructiveWarning,
 }: ShowConfirmationModalOptions): ShowModalResult {
   let modal: ShowModalResult | null = null;
 
@@ -98,6 +103,7 @@ export function showConfirmationModal({
         okButtonText={okButtonText}
         onOK={handleOK}
         onCancel={handleCancel}
+        bDestructiveWarning={bDestructiveWarning}
       />
     );
   }

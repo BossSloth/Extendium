@@ -6,3 +6,5 @@ export const GetExtendiumInfo = callable<[], string>('GetExtendiumInfo');
 export const UpdateExternalLinks = callable<[{ external_links: string; }], void>('UpdateExternalLinks');
 
 export const InstallInternalExtension = callable<[], string>('InstallInternalExtension');
+
+export const DeleteLegacyExtensions = callable<[], string>('DeleteLegacyExtensions');

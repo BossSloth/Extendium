@@ -124,6 +124,7 @@ export default defineConfig(
       'no-alert': 'off',
       camelcase: 'off',
       '@typescript-eslint/strict-void-return': 'off',
+      'react/no-unescaped-entities': 'off',
       // #endregion
 
       // #region React

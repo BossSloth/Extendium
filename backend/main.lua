@@ -4,6 +4,7 @@ local json = require("json")
 local utils = require("utils")
 local logger = require("logger")
 local install_extension = require("install_extension.init")
+local legacy_extensions = require("legacy_extensions")
 
 local EXTENDIUM_EXTERNAL_LINKS_FILE = "external-links.json"
 local EXTENDIUM_INSTALL_STATE_FILE = "install-state.json"
@@ -153,7 +154,9 @@ function CheckIfInternalExtensionIsInstalled()
                 lastChecked = os.time(),
                 errorMessage = "Extension installation failed. Please try installing manually or check logs."
             })
-            millennium.call_frontend_method("showExtensionInstalationFailedDialog")
+            millennium.call_frontend_method("showExtensionInstallationFailedDialog")
+
+            return true
         else
             logger:info("First run - attempting to install extension")
             SaveInstallState({
@@ -178,14 +181,24 @@ function CheckIfInternalExtensionIsInstalled()
             end
         end
     end
+
+    return false
 end
 
 function on_load()
     millennium.ready()
 end
 
+---Delete the .extensions folder
+function DeleteLegacyExtensions()
+    return legacy_extensions.DeleteLegacyExtensions()
+end
+
 function on_frontend_loaded()
-    CheckIfInternalExtensionIsInstalled()
+    local did_show_dialog = CheckIfInternalExtensionIsInstalled()
+    if not did_show_dialog then
+        legacy_extensions.HandleLegacyExtensions()
+    end
 end
 
 return {
