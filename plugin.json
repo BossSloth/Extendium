@@ -3,6 +3,6 @@
   "name": "extendium",
   "common_name": "Extendium",
   "description": "A plugin for Millennium that adds chrome extensions support to the client",
-  "version": "1.1.1",
+  "version": "2.0.0",
   "backendType": "lua"
 }
