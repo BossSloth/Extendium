@@ -1,4 +1,3 @@
-/* eslint-disable react/no-unescaped-entities */
 import { Extension } from '@extension/Extension';
 import { ConfirmModal, showModal } from '@steambrew/client';
 import { getExtensionManifest, getExtensions, persistentExtensionsPage, uninstallExtension } from 'chrome/ChromeExtensionPageManager';

@@ -6,7 +6,7 @@ import { BrowserView } from './BrowserView';
 import { SteamDialog } from './SteamComponents';
 import { usePopupsStore } from './stores/popupsStore';
 
-export function ExtensionSettingsPopup(): React.ReactNode {
+function ExtensionSettingsPopup(): React.ReactNode {
   const { settingsPopup, setSettingsPopup } = usePopupsStore();
 
   if (!settingsPopup.open) {

@@ -186,7 +186,7 @@ async function handleBrowserViewCreated(optionsLinks: [string, string][]): Promi
   });
 }
 
-export function getOptionLinks(): Map<string, string> {
+function getOptionLinks(): Map<string, string> {
   return Array.from(useExtensionsStore.getState().extensions.values()).map((extension): [string, string] => {
     return [extension.extensionInfo.optionsPage?.url ?? '', extension.id];
   }).filter(link => link[0] !== '')

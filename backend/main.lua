@@ -177,13 +177,14 @@ function CheckIfInternalExtensionIsInstalled()
     return false
 end
 
-function on_load()
-    millennium.ready()
-end
-
 ---Delete the .extensions folder
 function DeleteLegacyExtensions()
     return legacy_extensions.DeleteLegacyExtensions()
+end
+
+function on_load()
+    logger:info("Extendium loaded in Millennium version: " .. millennium.version())
+    millennium.ready()
 end
 
 function on_frontend_loaded()

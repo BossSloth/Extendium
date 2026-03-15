@@ -8,7 +8,7 @@ import tseslint from 'typescript-eslint';
 
 export default defineConfig(
   { files: ['**/*.{js,mjs,cjs,ts}'] },
-  globalIgnores(['.millennium/', '.venv/', '.extensions/', 'webkit/chromeInjectionContent.js', './helpers']),
+  globalIgnores(['.millennium/', '.venv/', '.extensions*', 'webkit/chromeInjectionContent.js', './helpers']),
   {
     languageOptions: {
       globals: globals.browser,

@@ -11,16 +11,12 @@ export function initMainWindow(_mainWindow: Window): void {
   mainWindow = _mainWindow;
 }
 
-export let pluginDir: string;
-
-export function initPluginDir(_pluginDir: string): void {
-  pluginDir = _pluginDir;
-}
-
 export let infos: ExtendiumInfo;
 
 export function initInfos(_infos: ExtendiumInfo): void {
-  _infos.externalLinks = JSON.parse(_infos.externalLinks as unknown as string) as ExternalLink[];
+  if (_infos.externalLinks !== undefined) {
+    _infos.externalLinks = JSON.parse(_infos.externalLinks as unknown as string) as ExternalLink[];
+  }
   infos = _infos;
 }
 

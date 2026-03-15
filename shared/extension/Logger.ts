@@ -7,18 +7,17 @@ export class Logger {
 
   constructor(readonly parent: Extension, readonly VERBOSE: boolean, readonly context: string) {
     this.ctxBadgeStyle = Logger.makeStyleFromStr(this.context);
-    if (this.parent.locale.isReady()) {
-      this.init();
-    }
+
+    this.init();
   }
 
   public init(): void {
-    this.extBadgeStyle = Logger.makeStyleFromStr(this.parent.getName());
+    this.extBadgeStyle = Logger.makeStyleFromStr(this.parent.name);
   }
 
   public log(type: string, ...args: unknown[]): void {
     if (this.VERBOSE) {
-      const prefix = `%c[${this.parent.getName()}]%c[${this.context}]%c[${type}]`;
+      const prefix = `%c[${this.parent.name}]%c[${this.context}]%c[${type}]`;
       console.debug(prefix, this.extBadgeStyle, this.ctxBadgeStyle, Logger.makeStyleFromStr(type), ...args);
     }
   }
@@ -30,7 +29,7 @@ export class Logger {
   }
 
   public silentError(type: string, ...args: unknown[]): void {
-    const prefix = `%c[${this.parent.getName()}]%c[${this.context}]%c[${type}]`;
+    const prefix = `%c[${this.parent.name}]%c[${this.context}]%c[${type}]`;
     console.error(prefix, this.extBadgeStyle, this.ctxBadgeStyle, Logger.makeStyleFromStr(type), ...args);
   }
 
@@ -39,7 +38,7 @@ export class Logger {
   }
 
   public warn(type: string, ...args: unknown[]): void {
-    const prefix = `%c[${this.parent.getName()}]%c[${this.context}]%c[${type}]`;
+    const prefix = `%c[${this.parent.name}]%c[${this.context}]%c[${type}]`;
     console.warn(prefix, this.extBadgeStyle, this.ctxBadgeStyle, Logger.makeStyleFromStr(type), ...args);
   }
 

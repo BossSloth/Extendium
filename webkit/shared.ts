@@ -1,12 +1,3 @@
-import { ExtensionWrapper } from './ExtensionWrapper';
-import { WebSocketClient } from './websocket/WebSocketClient';
-
-export let webSocketClient: WebSocketClient;
-
-export function initWebSocketClient(): void {
-  webSocketClient = new WebSocketClient();
-}
-
 export function loadStyle(src: string): void {
   const style = document.createElement('link');
   style.setAttribute('rel', 'stylesheet');
@@ -22,12 +13,6 @@ export function loadScriptWithContent(src: string, document: Document, content: 
   script.setAttribute('original-src', src);
 
   document.head.appendChild(script);
-}
-
-declare global {
-  interface Window {
-    extensions: Map<string, ExtensionWrapper>;
-  }
 }
 
 export function isSteamPage(): boolean {

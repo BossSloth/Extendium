@@ -28,7 +28,7 @@ export function StorageManager(): React.ReactNode {
       <div className="storage-manager-item" style={{ paddingLeft: `${depth * 10}px` }}>
         <details key={keyStr}>
           <summary>{keyStr}</summary>
-          {Object.entries(obj).map(([key, value]) => (
+          {Object.entries(obj).map(async ([key, value]) => (
             typeof value === 'object' && value !== null
               ? renderObject(value as object, key, depth + 1)
               : <div className="storage-manager-item" style={{ paddingLeft: `${(depth + 1) * 10}px` }} key={key}>{key}: {String(value)}</div>

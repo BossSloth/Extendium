@@ -1,4 +1,3 @@
-/* eslint-disable react/no-unescaped-entities */
 import { ConfirmModal, showModal } from '@steambrew/client';
 import { InstallInternalExtension } from 'callables';
 import React from 'react';

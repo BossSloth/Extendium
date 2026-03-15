@@ -6,7 +6,7 @@ import { createOptionsWindow } from '../../windowManagement';
 import { Separator } from '../Separator';
 import { useExtensionsBarStore } from '../stores/extensionsBarStore';
 
-export function ExtensionContextMenu({ extension }: { readonly extension: Extension; }): JSX.Element {
+function ExtensionContextMenu({ extension }: { readonly extension: Extension; }): JSX.Element {
   const { setExtensionsOrder } = useExtensionsBarStore();
 
   function openHomepage(): void {

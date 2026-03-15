@@ -10,9 +10,9 @@ const INCLUDED = [
   'LICENSE',
   'README.md',
   'plugin.json',
-  'requirements.txt',
   'metadata.json',
   'CHANGELOG.md',
+  'fake-header-extension'
 ];
 
 const EXCLUDED = [

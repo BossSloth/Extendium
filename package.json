@@ -23,6 +23,7 @@
     "eslint-plugin-perfectionist": "^4.15.1",
     "eslint-plugin-react": "^7.37.5",
     "globals": "^17.3.0",
+    "knip": "^5.86.0",
     "nodemon": "^3.1.14",
     "semantic-release": "^24.2.9",
     "steam-types": "^2.1.0",

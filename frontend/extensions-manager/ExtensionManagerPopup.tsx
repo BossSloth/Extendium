@@ -11,7 +11,7 @@ import { ExtensionManagerRoot } from './ExtensionManagerRoot';
 import { ExtendiumSettings } from './Settings/ExtendiumSettings';
 import { StorageManager } from './Storage/StorageManager';
 
-export function ExtensionManagerPopup(): React.ReactNode {
+function ExtensionManagerPopup(): React.ReactNode {
   const { managerPopup, setManagerPopup } = usePopupsStore();
   const { extensions } = useExtensionsStore();
 
