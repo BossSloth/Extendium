@@ -1,4 +1,4 @@
-import { ExtendiumInfo } from '@extension/Metadata';
+import { ExtendiumInfo, ExternalLink } from '@extension/Metadata';
 import { UserInfo } from '@extension/shared';
 import { Millennium } from '@steambrew/client';
 import * as ReactDOM from 'react-dom';
@@ -20,6 +20,7 @@ export function initPluginDir(_pluginDir: string): void {
 export let infos: ExtendiumInfo;
 
 export function initInfos(_infos: ExtendiumInfo): void {
+  _infos.externalLinks = JSON.parse(_infos.externalLinks as unknown as string) as ExternalLink[];
   infos = _infos;
 }
 

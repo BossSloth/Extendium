@@ -29,14 +29,14 @@ export function ExtensionManagerRoot(): React.ReactNode {
           <FaStore />
           Install extension
         </DialogButton>
+        <DialogButton
+          onClick={() => { OpenTargetPage('chrome://extensions'); }}
+          className={`span-icon ${settingsClasses.SettingsDialogButton}`}
+        >
+          <IoExtensionPuzzle />
+          Advanced extension management
+        </DialogButton>
         <div style={{ display: 'flex', gap: '6px' }}>
-          <DialogButton
-            onClick={() => { OpenTargetPage('chrome://extensions'); }}
-            className={`span-icon ${settingsClasses.SettingsDialogButton}`}
-          >
-            <IoExtensionPuzzle />
-            Advanced extension management
-          </DialogButton>
           <DialogButton
             onClick={() => { setManagerPopup({ route: 'settings' }); }}
             className={`span-icon ${settingsClasses.SettingsDialogButton}`}

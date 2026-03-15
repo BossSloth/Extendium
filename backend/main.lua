@@ -5,7 +5,6 @@ local utils = require("utils")
 local logger = require("logger")
 local install_extension = require("install_extension.init")
 local legacy_extensions = require("legacy_extensions")
-
 local EXTENDIUM_EXTERNAL_LINKS_FILE = "external-links.json"
 local EXTENDIUM_INSTALL_STATE_FILE = "install-state.json"
 
@@ -22,7 +21,7 @@ function GetExternalLinks()
     local plugin_dir = GetPluginDir()
     if not plugin_dir then
         logger:error("Failed to get plugin directory")
-        return {}
+        return nil
     end
 
     local external_links_path = fs.join(plugin_dir, EXTENDIUM_EXTERNAL_LINKS_FILE)
@@ -30,18 +29,11 @@ function GetExternalLinks()
     if fs.is_file(external_links_path) then
         local content, err = utils.read_file(external_links_path)
         if content then
-            local external_links, decode_err = json.decode(content)
-            if external_links then
-                return external_links
-            else
-                logger:error("Error decoding external links " .. external_links_path .. ": " .. (decode_err or "unknown error"))
-            end
+            return content
         else
             logger:error("Error reading external links " .. external_links_path .. ": " .. (err or "unknown error"))
         end
     end
-
-    return nil
 end
 
 ---@param external_links string

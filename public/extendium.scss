@@ -152,9 +152,10 @@ $grid-gutter: 12px;
 }
 
 .root-buttons {
-  display: grid;
+  display: flex;
   gap: 12px;
-  grid-template-columns: repeat(auto-fill, 400px);
+  justify-content: center;
+  width: 100%;
 
   * {
     box-sizing: border-box !important;
