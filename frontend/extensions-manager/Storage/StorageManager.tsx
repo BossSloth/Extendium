@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/promise-function-async */
 import { showConfirmationModal } from 'components/ConfirmationModal';
 import { extensionBarStorageKey, useExtensionsBarStore } from 'components/stores/extensionsBarStore';
 import { usePopupsStore } from 'components/stores/popupsStore';
@@ -28,11 +29,17 @@ export function StorageManager(): React.ReactNode {
       <div className="storage-manager-item" style={{ paddingLeft: `${depth * 10}px` }}>
         <details key={keyStr}>
           <summary>{keyStr}</summary>
-          {Object.entries(obj).map(async ([key, value]) => (
-            typeof value === 'object' && value !== null
-              ? renderObject(value as object, key, depth + 1)
-              : <div className="storage-manager-item" style={{ paddingLeft: `${(depth + 1) * 10}px` }} key={key}>{key}: {String(value)}</div>
-          ))}
+          {Object.entries(obj).map(([key, value]) => {
+            if (typeof value === 'object' && value !== null) {
+              return renderObject(value as object, key, depth + 1);
+            }
+
+            return (
+              <div className="storage-manager-item" style={{ paddingLeft: `${(depth + 1) * 10}px` }} key={key}>
+                {key}: {String(value)}
+              </div>
+            );
+          })}
         </details>
       </div>
     );
