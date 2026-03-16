@@ -224,6 +224,7 @@ function M.check_status()
     end
 
     local installed = false
+    local needs_cleanup = false
 
     local prefs_path = fs.join(config_dir, "Preferences")
     local secure_prefs_path = fs.join(config_dir, "Secure Preferences")
@@ -233,12 +234,55 @@ function M.check_status()
 
     if prefs and check_extension_in_prefs(prefs, keys.extensionId) then
         logger:info("[check_status] Extension found in Preferences")
-        installed = true
+
+        local ext_path = prefs.extensions.settings[keys.extensionId].path
+        if ext_path and not fs.exists(ext_path) then
+            logger:warn("[check_status] Extension path does not exist: " .. ext_path)
+            needs_cleanup = true
+        else
+            installed = true
+        end
     end
 
     if secure_prefs and check_extension_in_prefs(secure_prefs, keys.extensionId) then
         logger:info("[check_status] Extension found in Secure Preferences")
-        installed = true
+
+        local ext_path = secure_prefs.extensions.settings[keys.extensionId].path
+        if ext_path and not fs.exists(ext_path) then
+            logger:warn("[check_status] Extension path does not exist in Secure Preferences: " .. ext_path)
+            needs_cleanup = true
+        else
+            installed = true
+        end
+    end
+
+    if needs_cleanup then
+        logger:info("[check_status] Cleaning up invalid extension entries...")
+
+        if prefs and check_extension_in_prefs(prefs, keys.extensionId) then
+            prefs.extensions.settings[keys.extensionId] = nil
+            local prefs_json = json.encode(prefs)
+            local success, write_err = sys_utils.write_file(prefs_path, prefs_json)
+            if success then
+                logger:info("[check_status] Removed invalid extension from Preferences")
+            else
+                logger:error("[check_status] Failed to clean Preferences: " .. (write_err or "unknown"))
+            end
+        end
+
+        if secure_prefs and check_extension_in_prefs(secure_prefs, keys.extensionId) then
+            secure_prefs.extensions.settings[keys.extensionId] = nil
+            local secure_prefs_json = json.encode(secure_prefs)
+            local success, write_err = sys_utils.write_file(secure_prefs_path, secure_prefs_json)
+            if success then
+                logger:info("[check_status] Removed invalid extension from Secure Preferences")
+            else
+                logger:error("[check_status] Failed to clean Secure Preferences: " .. (write_err or "unknown"))
+            end
+        end
+
+        kill_steam_webhelper()
+        installed = false
     end
 
     logger:info("[check_status] Installation status: " .. (installed and "installed" or "not installed"))

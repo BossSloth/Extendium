@@ -136,21 +136,21 @@ function CheckIfInternalExtensionIsInstalled()
             })
         end
     else
-        logger:info("Extension is not installed")
+        logger:info("Helper extension is not installed")
 
         if install_state.installAttempted then
-            logger:error("Extension installation failed - extension not found after previous install attempt")
+            logger:error("Helper extension installation failed - extension not found after previous install attempt")
             SaveInstallState({
                 installAttempted = true,
                 installFailed = true,
                 lastChecked = os.time(),
-                errorMessage = "Extension installation failed. Please try installing manually or check logs."
+                errorMessage = "Helper extension installation failed. Please try installing manually or check logs."
             })
             millennium.call_frontend_method("showExtensionInstallationFailedDialog")
 
             return true
         else
-            logger:info("First run - attempting to install extension")
+            logger:info("First run - attempting to install helper extension")
             SaveInstallState({
                 installAttempted = true,
                 installFailed = false,
@@ -161,9 +161,9 @@ function CheckIfInternalExtensionIsInstalled()
             local result = json.decode(install_result)
 
             if result and result.success then
-                logger:info("Extension installation initiated successfully")
+                logger:info("Helper extension installation initiated successfully")
             else
-                logger:error("Extension installation failed: " .. (result and result.error or "unknown error"))
+                logger:error("Helper extension installation failed: " .. (result and result.error or "unknown error"))
                 SaveInstallState({
                     installAttempted = true,
                     installFailed = true,
@@ -194,7 +194,12 @@ function on_frontend_loaded()
     end
 end
 
+function on_unload()
+    logger:info("Extendium unloaded")
+end
+
 return {
     on_load = on_load,
     on_frontend_loaded = on_frontend_loaded,
+    on_unload = on_unload,
 }

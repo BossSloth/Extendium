@@ -35,6 +35,11 @@ export function BrowserView({ url, expectedParentPopupTitle, onFocusChanged, onC
         parentPopupBrowserID: popupId,
         bOnlyAllowTrustedPopups: true,
       });
+
+      if (!browserPopup.strCreateURL) {
+        throw new Error('CreatePopup returned invalid popup without strCreateURL');
+      }
+
       const newBrowserWindow = window.open(browserPopup.strCreateURL);
       if (!newBrowserWindow) {
         throw new Error('Failed to open popup');

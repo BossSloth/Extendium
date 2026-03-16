@@ -86,6 +86,11 @@ function createHiddenWindow(randomId: string): void {
   const popup = SteamClient.BrowserView.CreatePopup({
     parentPopupBrowserID: mainWindow.SteamClient.Browser.GetBrowserID(),
   });
+
+  if (!popup.strCreateURL) {
+    throw new Error('CreatePopup returned invalid popup without strCreateURL');
+  }
+
   const popupWindow = window.open(popup.strCreateURL);
 
   if (!popupWindow) {
