@@ -1,4 +1,4 @@
-import { ExtendiumInfo } from '@extension/Metadata';
+import { ExtendiumInfo, ExternalLink } from '@extension/Metadata';
 import { callable } from '@steambrew/webkit';
 import { linkClickInterceptor } from './linkModifier';
 
@@ -8,5 +8,7 @@ export const GetExtendiumInfo = callable<[], string>('GetExtendiumInfo');
 export default async function WebkitMain(): Promise<void> {
   const extendiumInfo = JSON.parse(await GetExtendiumInfo()) as ExtendiumInfo;
 
-  linkClickInterceptor(extendiumInfo.externalLinks ?? []);
+  const externalLinks = extendiumInfo.externalLinks ? JSON.parse(extendiumInfo.externalLinks as unknown as string) as ExternalLink[] : [];
+
+  linkClickInterceptor(externalLinks);
 }

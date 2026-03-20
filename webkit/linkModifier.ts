@@ -9,12 +9,12 @@ export function linkClickInterceptor(externalLinks: ExternalLink[]): void {
     if (anchor) {
       const href = decodeURIComponent(anchor.href);
 
-      if (externalLinks.some(link => linkMatches(link, href))) {
+      if (externalLinks.some(link => linkMatches(link, href)) || !href.startsWith('http')) {
         location.href = `steam://openurl_external/${href}`;
         event.preventDefault();
       }
     }
-  });
+  }, true);
 }
 
 function linkMatches(link: ExternalLink, href: string): boolean {
