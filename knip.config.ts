@@ -1,8 +1,8 @@
 import type { KnipConfig } from 'knip';
 
 const config: KnipConfig = {
-  entry: ['frontend/index.tsx'],
-  project: ['frontend/**/*.{ts,tsx}'],
+  entry: ['webkit/index.tsx'],
+  project: ['{frontend,webkit,shared}/**/*.{ts,tsx}'],
 };
 
 export default config;

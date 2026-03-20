@@ -34,7 +34,7 @@
   "name": "extendium",
   "version": "2.0.0",
   "description": "A plugin for Millennium that adds chrome extensions support to the client",
-  "main": "./frontend/index.jsx",
+  "main": "./frontend/index.tsx",
   "author": "BossSloth",
   "license": "MIT",
   "dependencies": {
@@ -42,7 +42,6 @@
     "@dnd-kit/modifiers": "^9.0.0",
     "@dnd-kit/sortable": "^10.0.0",
     "@dnd-kit/utilities": "^3.2.2",
-    "@steambrew/api": "^5.8.4",
     "@steambrew/client": "^5.8.4",
     "@steambrew/ttc": "^3.2.6",
     "@steambrew/webkit": "5.8.4",

@@ -44,7 +44,7 @@ function generateTypeScriptFile(compatibilityMap: Map<string, string>, outputPat
 
 export type CompatibilityStatus = 'Perfect' | 'Great' | 'Okay' | 'Broken';
 
-export const extensionCompatibility: Record<string, CompatibilityStatus> = {
+const extensionCompatibility: Record<string, CompatibilityStatus> = {
 ${entries}
 } as const;
 

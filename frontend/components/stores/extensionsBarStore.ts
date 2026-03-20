@@ -6,7 +6,7 @@ interface ExtensionsBarStore {
   extensionsOrder: string[];
 }
 
-export const extensionBarStorageKey = 'extendium_extensionsBarStore';
+const extensionBarStorageKey = 'extendium_extensionsBarStore';
 
 export const useExtensionsBarStore = create<ExtensionsBarStore>()(persist(
   set =>

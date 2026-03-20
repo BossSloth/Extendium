@@ -8,7 +8,7 @@ interface SettingsStore {
   showCompatibilityPills: boolean;
 }
 
-export const settingsStorageKey = 'extendium_settingsStore';
+const settingsStorageKey = 'extendium_settingsStore';
 
 export const useSettingsStore = create<SettingsStore>()(persist(
   set =>
