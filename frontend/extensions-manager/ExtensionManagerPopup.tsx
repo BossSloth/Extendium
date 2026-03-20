@@ -3,13 +3,12 @@ import { EUIMode } from '@steambrew/client/build/globals/steam-client/shared';
 import { SteamDialog } from 'components/SteamComponents';
 import { usePopupsStore } from 'components/stores/popupsStore';
 import { Styles } from 'components/Styles';
-import { default as React } from 'react';
+import React from 'react';
 import { mainWindow } from 'shared';
 import { useExtensionsStore } from 'stores/extensionsStore';
 import { ExtensionDetailInfo } from './ExtensionDetailInfo';
 import { ExtensionManagerRoot } from './ExtensionManagerRoot';
 import { ExtendiumSettings } from './Settings/ExtendiumSettings';
-import { StorageManager } from './Storage/StorageManager';
 
 function ExtensionManagerPopup(): React.ReactNode {
   const { managerPopup, setManagerPopup } = usePopupsStore();
@@ -25,8 +24,6 @@ function ExtensionManagerPopup(): React.ReactNode {
     content = <ExtensionManagerRoot />;
   } else if (managerPopup.route.startsWith('info/')) {
     content = <ExtensionDetailInfo extension={extensions.get(managerPopup.route.split('/').pop() ?? '')} />;
-  } else if (managerPopup.route.startsWith('storage')) {
-    content = <StorageManager />;
   } else if (managerPopup.route.startsWith('settings')) {
     content = <ExtendiumSettings />;
   } else {

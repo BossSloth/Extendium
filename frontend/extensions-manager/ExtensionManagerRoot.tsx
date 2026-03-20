@@ -3,7 +3,7 @@ import { OpenTargetPage } from 'chrome/ChromePageManager';
 import { settingsClasses } from 'classes';
 import { usePopupsStore } from 'components/stores/popupsStore';
 import React from 'react';
-import { FaCog, FaDatabase, FaStore } from 'react-icons/fa';
+import { FaCog, FaStore } from 'react-icons/fa';
 import { IoExtensionPuzzle } from 'react-icons/io5';
 import { useExtensionsStore } from 'stores/extensionsStore';
 import { ExtensionManagerComponent } from './ExtensionManagerComponent';
@@ -15,13 +15,6 @@ export function ExtensionManagerRoot(): React.ReactNode {
   return (
     <>
       <div className="root-buttons">
-        <DialogButton
-          onClick={() => { setManagerPopup({ route: 'storage' }); }}
-          className={`span-icon ${settingsClasses.SettingsDialogButton}`}
-        >
-          <FaDatabase />
-          Manage storage
-        </DialogButton>
         <DialogButton
           onClick={() => { OpenTargetPage('https://chromewebstore.google.com/'); }}
           className={`span-icon ${settingsClasses.SettingsDialogButton}`}

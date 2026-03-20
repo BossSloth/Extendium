@@ -20,7 +20,7 @@ const EXCLUDED = [
 ];
 
 const ROOT_DIR = path.resolve(import.meta.dirname, '..');
-const PLUGIN_NAME = 'Extendium';
+const PLUGIN_NAME = 'extendium';
 
 async function runBuild(): Promise<boolean> {
   console.log(chalk.cyan.bold('Running bun build...'));

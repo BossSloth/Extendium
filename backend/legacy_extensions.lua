@@ -17,7 +17,6 @@ function M.HandleLegacyExtensions()
     local extensions_dir = fs.join(plugin_dir, ".extensions")
 
     if not fs.exists(extensions_dir) or not fs.is_directory(extensions_dir) then
-        logger:info("No .extensions directory found")
         return json.encode({})
     end
 
