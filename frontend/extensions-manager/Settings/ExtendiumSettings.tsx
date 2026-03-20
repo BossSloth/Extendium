@@ -1,4 +1,4 @@
-import { DialogBody, Field, SliderField } from '@steambrew/client';
+import { DialogBody, Field, SliderField, Toggle } from '@steambrew/client';
 import { usePopupsStore } from 'components/stores/popupsStore';
 import React from 'react';
 import { MdArrowBack } from 'react-icons/md';
@@ -7,7 +7,7 @@ import { useSettingsStore } from './settingsStore';
 
 export function ExtendiumSettings(): React.ReactNode {
   const { setManagerPopup } = usePopupsStore();
-  const { barMarginLeft, barMarginRight, setSettings } = useSettingsStore();
+  const { barMarginLeft, barMarginRight, showCompatibilityPills, setSettings } = useSettingsStore();
 
   return (
     <DialogBody>
@@ -38,6 +38,15 @@ export function ExtendiumSettings(): React.ReactNode {
         editableValue
         resetValue={0}
       />
+      <Field label="Show compatibility status pills next to extension names in the extension manager">
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <span>Show compatibility pills</span>
+          <Toggle
+            onChange={(value) => { setSettings({ showCompatibilityPills: value }); }}
+            value={showCompatibilityPills}
+          />
+        </div>
+      </Field>
       <ExternalLinksManager />
     </DialogBody>
   );

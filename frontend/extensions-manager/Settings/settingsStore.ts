@@ -5,6 +5,7 @@ interface SettingsStore {
   setSettings(settings: Partial<SettingsStore>): void;
   barMarginLeft: number;
   barMarginRight: number;
+  showCompatibilityPills: boolean;
 }
 
 export const settingsStorageKey = 'extendium_settingsStore';
@@ -14,6 +15,7 @@ export const useSettingsStore = create<SettingsStore>()(persist(
     ({
       barMarginLeft: 0,
       barMarginRight: 0,
+      showCompatibilityPills: true,
       setSettings: (settings: SettingsStore): void => {
         set(state => ({ ...state, ...settings }));
       },

@@ -1,0 +1,37 @@
+// Auto-generated file - Do not edit manually
+// Generated from compatibility CSV
+
+export type CompatibilityStatus = 'Perfect' | 'Great' | 'Okay' | 'Broken';
+
+export const extensionCompatibility: Record<string, CompatibilityStatus> = {
+  ddkjiahejlhfcafbddmgiahcphecmpfh: 'Great',
+  dhdgffkkebhmkfjojejmpbldmpobfkfo: 'Broken',
+  eimadpbcbfnmbkopoojfekhnkhdbieeh: 'Perfect',
+  cmeakgjggjdlcpncigglobpjbkabhmjl: 'Okay',
+  jjicbefpemnphinccgikpdaagjebbnhg: 'Perfect',
+  kdbmhfkmnlmbkgbabkdealhhbfhlmmon: 'Perfect',
+  dnhpnfgdlenaccegplpojghhmaamnnfp: 'Great',
+  kaibcgikagnkfgjnibflebpldakfhfih: 'Okay',
+  djbgadolfboockbofalipohdncimebic: 'Perfect',
+  fkagelmloambgokoeokbpihmgpkbgbfm: 'Great',
+  ndcooeababalnlpkfedmmbbbgkljhpjf: 'Great',
+  canbadmphamemnmdfngmcabnjmjgaiki: 'Perfect',
+  kdappijekicdbempkjaahnnmkookhfnj: 'Perfect',
+  jecikjbpiedagpmibmgpfgnkfpomgeok: 'Great',
+  lfjdaphbejfpncjfebkbcganmkinhhfl: 'Great',
+  hgapfodjjnkkoebpfbcfhhenkklchngn: 'Perfect',
+  gjhejidajnchnadcangcodljgdmenipa: 'Perfect',
+  dhpcikljplaooekklhbjohojbjbinega: 'Perfect',
+  ngonfifpkpeefnhelnfdkficaiihklid: 'Perfect',
+  ocabaebkfcojookdnihccpcngaaigfan: 'Great',
+  lcobepkldcbbjfnpjnonocmlifjdlcdh: 'Perfect',
+  kkgmmlflilcfcogmfpnhakfamdkdcbpl: 'Great',
+  cdcfacnigofkflfapbbbpjjipgipnoma: 'Perfect',
+  hebdfnoheiibmkfobehgdbmilckpjjhl: 'Perfect',
+  dimefhnkbbhebmnnhnnaiemghgjkjgpa: 'Perfect',
+  fpijccoohfcbgljdmhmklohjfebfjmif: 'Perfect',
+} as const;
+
+export function getExtensionCompatibility(extensionId: string): CompatibilityStatus | undefined {
+  return extensionCompatibility[extensionId];
+}

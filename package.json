@@ -4,7 +4,8 @@
     "sass": "sass ./public/extendium.scss:./public/extendium.css --style compressed --embed-sources --embed-source-map",
     "watch": "nodemon --watch public/extendium.scss --exec \"npm run sass && npm run dev\"",
     "build": "npm run sass && millennium-ttc --build prod",
-    "lint": "eslint"
+    "lint": "eslint",
+    "gen:compatibility": "bun run ./helpers/generate-compatibility-map.ts \"./Extendium 2.0 extension compatibility list - Compatibility list.csv\""
   },
   "devDependencies": {
     "@eslint/js": "^9.39.3",
