@@ -1,5 +1,6 @@
 import { Extension } from '@extension/Extension';
 import { Menu, MenuItem, showContextMenu } from '@steambrew/client';
+import { uninstallExtension } from 'chrome/ChromeExtensionPageManager';
 import { openExtensionManagerPopup } from 'extensions-manager/ExtensionManagerPopup';
 import React, { JSX } from 'react';
 import { createOptionsWindow } from '../../windowManagement';
@@ -29,6 +30,7 @@ function ExtensionContextMenu({ extension }: { readonly extension: Extension; })
         </MenuItem>
         <Separator />
         {extension.options.hasOptions() && <MenuItem onClick={() => { createOptionsWindow(extension); }}>Options</MenuItem>}
+        <MenuItem onClick={() => { uninstallExtension(extension.id); }}>Remove extension</MenuItem>
         <MenuItem onClick={unpin}>Unpin</MenuItem>
         <Separator />
         <MenuItem onClick={() => { openExtensionManagerPopup(`info/${extension.id}`); }}>Manage</MenuItem>

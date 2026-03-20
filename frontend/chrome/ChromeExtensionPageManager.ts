@@ -1,5 +1,6 @@
 /* eslint-disable no-underscore-dangle */
 import { ChromeDevToolsProtocol } from '@steambrew/client';
+import { useExtensionsStore } from 'stores/extensionsStore';
 import { createTarget, JsonSerializable, RuntimeEvaluate, Serializable, waitForDomReadyInTarget } from './ChromePageManager';
 import { ExtensionInfo } from './types';
 
@@ -22,10 +23,11 @@ export async function getExtensionFileContent(id: string, filePath: string): Pro
 }
 
 export async function uninstallExtension(id: string): Promise<void> {
-  return persistentExtensionsPage.evaluateExpression(
+  await persistentExtensionsPage.evaluateExpression(
     async (_id: string) => chrome.management.uninstall(_id),
     [id],
   );
+  useExtensionsStore.getState().removeExtension(id);
 }
 
 declare global {
