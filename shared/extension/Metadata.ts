@@ -3,8 +3,13 @@ export interface ExtensionMetadata {
   url: string;
 }
 
+export interface ExtendiumSettings {
+  openLinksInCurrentTab?: boolean;
+}
+
 export interface ExtendiumInfo {
   externalLinks?: ExternalLink[];
+  settings?: ExtendiumSettings;
 }
 
 export interface ExternalLink {

@@ -1,6 +1,6 @@
-import { ExternalLink } from '@extension/Metadata';
+import { ExtendiumSettings, ExternalLink } from '@extension/Metadata';
 
-export function linkClickInterceptor(externalLinks: ExternalLink[]): void {
+export function linkClickInterceptor(externalLinks: ExternalLink[], settings: ExtendiumSettings): void {
   document.addEventListener('click', (event) => {
     const target = event.target as HTMLElement;
 
@@ -9,7 +9,26 @@ export function linkClickInterceptor(externalLinks: ExternalLink[]): void {
     if (anchor) {
       const href = decodeURIComponent(anchor.href);
 
-      if (externalLinks.some(link => linkMatches(link, href)) || !href.startsWith('http')) {
+      if (settings.openLinksInCurrentTab === true) {
+        if (anchor.target === '_blank') {
+          anchor.target = '_self';
+        }
+
+        const externalPrefixes = [
+          'steam://openurl_external/',
+          'steam://openurl/',
+        ];
+
+        for (const prefix of externalPrefixes) {
+          if (href.startsWith(prefix)) {
+            const url = href.replace(prefix, '');
+            anchor.href = url;
+            break;
+          }
+        }
+      }
+
+      if (externalLinks.some(link => linkMatches(link, href)) || (!href.startsWith('http') && !href.startsWith('steam://'))) {
         location.href = `steam://openurl_external/${href}`;
         event.preventDefault();
       }

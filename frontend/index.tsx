@@ -1,11 +1,12 @@
 import { ExtendiumInfo } from '@extension/Metadata';
 import { UserInfo } from '@extension/shared';
 import { Millennium } from '@steambrew/client';
-import { GetExtendiumInfo } from 'callables';
+import { GetExtendiumInfo, UpdateSettings } from 'callables';
 import { showExtensionInstallationFailedDialog } from 'extensionInstallationFailedDialog';
 import { showLegacyExtensionDialog } from 'legacyExtensionDialog';
 import { getUserInfoPromise, initInfos } from 'shared';
 import { handleUrlScheme } from 'urlSchemeHandler';
+import { useSettingsStore } from './extensions-manager/Settings/settingsStore';
 import { OnPopupCreation } from './onPopupCreation';
 
 let userInfo: UserInfo;
@@ -25,6 +26,10 @@ export default async function PluginMain(): Promise<void> {
   getUserInfoPromise().then((info) => {
     userInfo = info;
   });
+
+  const { openLinksInCurrentTab } = useSettingsStore.getState();
+  UpdateSettings({ settings: JSON.stringify({ openLinksInCurrentTab }) });
+
   initInfos(JSON.parse(await GetExtendiumInfo()) as ExtendiumInfo);
 
   const wnd = g_PopupManager.GetExistingPopup('SP Desktop_uid0');

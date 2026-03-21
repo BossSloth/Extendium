@@ -7,7 +7,7 @@ import { useSettingsStore } from './settingsStore';
 
 export function ExtendiumSettings(): React.ReactNode {
   const { setManagerPopup } = usePopupsStore();
-  const { barMarginLeft, barMarginRight, showCompatibilityPills, setSettings } = useSettingsStore();
+  const { barMarginLeft, barMarginRight, showCompatibilityPills, openLinksInCurrentTab, setSettings } = useSettingsStore();
 
   return (
     <DialogBody>
@@ -48,6 +48,16 @@ export function ExtendiumSettings(): React.ReactNode {
         </div>
       </Field>
       <ExternalLinksManager />
+      <Field label="Always open links in current tab on left click (ignores target blank)">
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <span>Open in current tab</span>
+          <Toggle
+            onChange={(value) => { setSettings({ openLinksInCurrentTab: value }); }}
+            value={openLinksInCurrentTab}
+          />
+        </div>
+      </Field>
+
     </DialogBody>
   );
 }
