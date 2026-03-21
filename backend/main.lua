@@ -8,6 +8,8 @@ local legacy_extensions = require("legacy_extensions")
 local EXTENDIUM_EXTERNAL_LINKS_FILE = "external-links.json"
 local EXTENDIUM_INSTALL_STATE_FILE = "install-state.json"
 
+local extendium_settings = {}
+
 function GetPluginDir()
     local backend_path = utils.get_backend_path()
     if not backend_path then
@@ -98,11 +100,23 @@ function SaveInstallState(state)
     end
 end
 
+---@param settings_json string
+---@return nil
+function UpdateSettings(settings_json)
+    local settings = json.decode(settings_json)
+    if settings then
+        extendium_settings = settings
+    else
+        logger:error("Error decoding settings JSON")
+    end
+end
+
 ---@return string
 function GetExtendiumInfo()
     return json.encode({
       externalLinks = GetExternalLinks(),
       installState = GetInstallState(),
+      settings = extendium_settings,
     })
 end
 
