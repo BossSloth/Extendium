@@ -28,7 +28,7 @@ export function linkClickInterceptor(externalLinks: ExternalLink[], settings: Ex
         }
       }
 
-      if (externalLinks.some(link => linkMatches(link, href)) || (!href.startsWith('http') && !href.startsWith('steam://'))) {
+      if (externalLinks.some(link => linkMatches(link, href))) {
         location.href = `steam://openurl_external/${href}`;
         event.preventDefault();
       }
