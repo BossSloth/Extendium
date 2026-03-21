@@ -52,6 +52,9 @@ Here's how to get started with installing and managing extensions in Steam.
 1. In the Extensions Manager, click the **Install extension** button.
 2. This will open the Chrome Web Store. Here you can install any extension just like how you would in a regular browser.
 
+> [!NOTE]
+> All extensions you install this way WILL stay installed even after disabling or removing Extendium as they are installed into your steam. Remember to uninstall them via Extendium if you no longer want to use them.
+
 ### 3. Access and Manage Your Extensions
 
 - **Extension Toolbar**: After installing an extension, it will appear in the extensions menu where you can pin it to the toolbar. Left-click an icon to open its action, or right-click for more options.
