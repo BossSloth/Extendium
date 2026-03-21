@@ -20,7 +20,7 @@ export function ToolbarManagerButton(): React.JSX.Element {
         bCreateHidden: false,
         bRetainOnHide: false,
         bNoFocusWhenShown: undefined,
-        title: 'Extensions',
+        title: 'useBrowserViewContextMenu',
       },
     );
   }

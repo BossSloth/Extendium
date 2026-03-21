@@ -49,7 +49,7 @@ export function ExtendiumSettings(): React.ReactNode {
       </Field>
       <ExternalLinksManager />
       <Field label="Always open links in current tab on left click (ignores target blank)">
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginTop: '1rem' }}>
           <span>Open in current tab</span>
           <Toggle
             onChange={(value) => { setSettings({ openLinksInCurrentTab: value }); }}

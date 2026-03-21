@@ -51,7 +51,7 @@ export function showExtensionContextMenu(extension: Extension, targetElement: El
       bCreateHidden: false,
       bRetainOnHide: false,
       bNoFocusWhenShown: undefined,
-      title: `${extension.name} - Context Menu`,
+      title: 'useBrowserViewContextMenu',
     },
   );
 }

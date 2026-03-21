@@ -1,4 +1,5 @@
-import { DialogHeader, Field } from '@steambrew/client';
+import { DialogHeader, Field, Menu } from '@steambrew/client';
+import { Styles } from 'components/Styles';
 import { openExtensionManagerPopup } from 'extensions-manager/ExtensionManagerPopup';
 import React, { useMemo } from 'react';
 import { FaCog } from 'react-icons/fa';
@@ -31,22 +32,27 @@ export function ToolbarManagerContextMenu(): React.JSX.Element {
   }
 
   return (
-    <div style={{ padding: '1rem', width: '18rem' }}>
-      <DialogHeader>Extensions</DialogHeader>
-      {enabledExtensions
-        .sort((a, b) => a.name.localeCompare(b.name))
-        .map(extension => (
-          <ManagerExtensionItem
-            key={extension.id}
-            extension={extension}
-            pinned={isExtensionPinned(extension.id)}
-            pinExtension={pinExtension}
-            unpinExtension={unpinExtension}
-          />
-        ))}
-      <div style={{ cursor: 'pointer' }} onClick={() => { openExtensionManagerPopup(); }}>
-        <Field icon={<FaCog />} label="Manage extensions" />
+    <>
+      <Styles />
+      <div className="extendium-toolbar-manager-context-menu">
+        <Menu label="Extension">
+          <DialogHeader>Extensions</DialogHeader>
+          {enabledExtensions
+            .sort((a, b) => a.name.localeCompare(b.name))
+            .map(extension => (
+              <ManagerExtensionItem
+                key={extension.id}
+                extension={extension}
+                pinned={isExtensionPinned(extension.id)}
+                pinExtension={pinExtension}
+                unpinExtension={unpinExtension}
+              />
+            ))}
+          <div style={{ cursor: 'pointer' }} onClick={() => { openExtensionManagerPopup(); }}>
+            <Field icon={<FaCog />} label="Manage extensions" />
+          </div>
+        </Menu>
       </div>
-    </div>
+    </>
   );
 }
