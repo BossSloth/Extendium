@@ -5,6 +5,7 @@ export type CompatibilityStatus = 'Perfect' | 'Great' | 'Okay' | 'Broken';
 
 const extensionCompatibility: Record<string, CompatibilityStatus> = {
   ddkjiahejlhfcafbddmgiahcphecmpfh: 'Great',
+  cjpalhdlnbpafiamejdnhcphjbkeiagm: 'Great',
   dhdgffkkebhmkfjojejmpbldmpobfkfo: 'Broken',
   eimadpbcbfnmbkopoojfekhnkhdbieeh: 'Perfect',
   cmeakgjggjdlcpncigglobpjbkabhmjl: 'Okay',
