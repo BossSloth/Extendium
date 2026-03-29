@@ -2,7 +2,7 @@
   "$schema": "https://raw.githubusercontent.com/SteamClientHomebrew/Millennium/main/src/sys/plugin-schema.json",
   "name": "extendium",
   "common_name": "Extendium",
-  "description": "A plugin for Millennium that adds chrome extensions support to the client",
+  "description": "Chrome extensions support for Steam client. Install browser extensions like SteamDB, Augmented Steam, UBlock Origin, and more in your Steam Desktop Client",
   "version": "1.1.1",
   "backendType": "lua"
 }

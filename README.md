@@ -2,6 +2,7 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Latest Release](https://img.shields.io/github/v/release/BossSloth/Extendium)](https://github.com/BossSloth/Extendium/releases/latest)
+[![Millennium Plugin](https://img.shields.io/badge/Millennium-Plugin-blue)](https://steambrew.app/plugin?id=788ed8554492)
 
 A Millennium plugin that brings the power of Chrome extensions to your Steam client.
 
@@ -160,3 +161,20 @@ Contributions are welcome! Feel free to submit a pull request or open an issue t
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+
+## Keywords
+
+steam chrome extensions, steam browser extensions, steam extensions, steam client extensions, steam plugin, steam addon, steam add-on, steam browser, steam client, millennium plugin, steambrew plugin, chrome web store steam, install chrome extensions in steam, browser extensions for steam, run extensions in steam, chrome extensions steam client, steam extension manager, steam extension loader, steam extension support,
+steamdb, steamdb extension, steamdb in steam client, steamdb steam browser,
+augmented steam, augmented steam extension, augmented steam in steam client, augmented steam steam browser,
+steam adblocker, adblocker for steam, adblock steam, ublock origin steam, ublock steam, ad blocker steam client, block ads steam, adguard steam, remove ads steam,
+steam inventory helper, steam inventory helper extension, steam trading extension, steam trade helper, steam market extension, steam marketplace extension, csgo trading extension, cs2 trading extension,
+steam dark mode, dark reader steam, dark mode steam client, steam theme extension,
+steam price tracker, steam price history, isthereanydeal steam, steam deals extension, steam sale extension, steam discount extension,
+protondb extension, protondb steam, steam linux extension, steam deck extension, steam deck browser extension,
+steam customization, steam client mod, steam client customization, steam ui mod, customize steam, steam skin, steam theme,
+tampermonkey steam, greasemonkey steam, userscript steam, steam userscripts,
+steam screenshot extension, steam review extension, steam wishlist extension, steam library extension,
+chrome extension steam overlay, steam overlay extensions, steam web browser extensions, steam built-in browser, steam cef browser, steam chromium extensions,
+how to install extensions in steam, how to use chrome extensions in steam, add extensions to steam, get browser extensions in steam, use browser extensions in steam client, steam browser addon, steam browser plugin, extensions for steam desktop client
