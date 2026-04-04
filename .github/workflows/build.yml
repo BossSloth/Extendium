@@ -26,11 +26,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Setup Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.12'
-
       - name: Setup Bun
         uses: oven-sh/setup-bun@v1
         with:
@@ -39,10 +34,9 @@ jobs:
       - name: Install dependencies
         run: |
           bun install
-          pip install -r requirements.txt
 
       - name: Build and create zip
-        run: python helpers/build_zip.py
+        run: bun helpers/build_zip.ts
         env:
           RELEASE_VERSION: ${{ inputs.version }}
 
