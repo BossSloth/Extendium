@@ -1,3 +1,41 @@
+# [2.0.0](https://github.com/BossSloth/Extendium/compare/v1.1.1...v2.0.0) (2026-04-04)
+
+
+### Bug Fixes
+
+* Empty external links breaking the settings menu, we now parse the external links twice ([4adb41d](https://github.com/BossSloth/Extendium/commit/4adb41d2ab6c8b45c1808d8e7d993889e76c3427))
+* Fixed all non link buttons like "Add to cart" not working ([f78cd6b](https://github.com/BossSloth/Extendium/commit/f78cd6b9f093a9f9b5060799b26299c1da2806fd))
+* Fixed external links no longer working in webkit ([2708abc](https://github.com/BossSloth/Extendium/commit/2708abcaa57cfa51a43537e51d4aff1b79472b6d))
+* no longer use libcrypto library but use own hmac implementation ([328e3f4](https://github.com/BossSloth/Extendium/commit/328e3f4cd76c018b3ae71030b7f6669ef2880369))
+* storage manager crashing steam ([75d48b1](https://github.com/BossSloth/Extendium/commit/75d48b1415bfd7534331a719eb812561373b98cd))
+* toolbar context menu not being styled by themes ([d5d9c52](https://github.com/BossSloth/Extendium/commit/d5d9c52c32d9acc55ab47cc8fb9d593831d70217))
+
+
+### chore
+
+* prepare for release by updating readme with info for 2.0 ([8d6b56a](https://github.com/BossSloth/Extendium/commit/8d6b56a060d77a8e3716bdace011959d74832e1e))
+
+
+### Features
+
+* add quick buttons to open extensions store and extensions page ([6eac90a](https://github.com/BossSloth/Extendium/commit/6eac90a73c820156839ee081c50dccbd8367966d))
+* Added compatibility status indicators with link to compatibility list ([307b97c](https://github.com/BossSloth/Extendium/commit/307b97c0554b7542eb123cf6ae564e80bcad61b8))
+* added setting to always open links in current tab instead of new window or external ([6051397](https://github.com/BossSloth/Extendium/commit/605139715120cf7cf19f45210a642b0395750a38))
+* added uninstall button to context extension menu ([36c1fde](https://github.com/BossSloth/Extendium/commit/36c1fdef3d4fbf31ad7b8255f5018a53b5e140ac))
+* first working version of automatic installation of internal extension ([2be18ef](https://github.com/BossSloth/Extendium/commit/2be18efda2310c9852c2d57eb88341d5d0a90bec))
+* fully port to lua and get rid of old way of managing extensions now fully using chrome's native extensions ([3b0b9c7](https://github.com/BossSloth/Extendium/commit/3b0b9c75642d806c1f2934da114f5058f51cc6e1))
+* implement native extension action popups in the steamclient with BrowserViews ([95bf007](https://github.com/BossSloth/Extendium/commit/95bf00769645e04d751cdb5c28311fd7d107debc))
+* prevent installation of broken extensions like tampermonkey to prevent bricking steam ([845de1e](https://github.com/BossSloth/Extendium/commit/845de1e6e4f4e27f60e52faf986007cefbf0bc64))
+* removed storage manager as it is no longer needed ([0f1e99b](https://github.com/BossSloth/Extendium/commit/0f1e99b1c04f3264827b96f0035ce23771618b22))
+* Show dialog on startup to migrate from old legacy extensions ([589b5dd](https://github.com/BossSloth/Extendium/commit/589b5dda5658e901a9eab520de4caf5048fac932))
+* Show error dialog of automatic installation of internal extension failed ([72f52e7](https://github.com/BossSloth/Extendium/commit/72f52e7aed0754164cfca91e5d87b56d7e4dfd7b))
+* working options page with new native extensions and sync enabled state better ([a9e4968](https://github.com/BossSloth/Extendium/commit/a9e4968b23f96072acc86d9951ccf878035ade09))
+
+
+### BREAKING CHANGES
+
+* Extendium has been fully rewritten all previously installed extensions and extension settings no longer work with 2.0 and will need to be migrated
+
 ## [1.1.1](https://github.com/BossSloth/Extendium/compare/v1.1.0...v1.1.1) (2025-12-19)
 
 
