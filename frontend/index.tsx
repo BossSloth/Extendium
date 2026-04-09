@@ -30,7 +30,10 @@ export default async function PluginMain(): Promise<void> {
   const { openLinksInCurrentTab } = useSettingsStore.getState();
   UpdateSettings({ settings: JSON.stringify({ openLinksInCurrentTab }) });
 
-  initInfos(JSON.parse(await GetExtendiumInfo()) as ExtendiumInfo);
+  const extendiumInfo = await GetExtendiumInfo();
+  if (extendiumInfo !== undefined) {
+    initInfos(JSON.parse(extendiumInfo) as ExtendiumInfo);
+  }
 
   const wnd = g_PopupManager.GetExistingPopup('SP Desktop_uid0');
   if (wnd) {

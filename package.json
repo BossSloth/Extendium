@@ -19,7 +19,7 @@
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
     "@types/webpack": "^5.28.5",
-    "devtools-protocol": "^0.0.1602427",
+    "devtools-protocol": "^0.0.1608973",
     "eslint": "^9.39.3",
     "eslint-plugin-perfectionist": "^4.15.1",
     "eslint-plugin-react": "^7.37.5",
@@ -42,7 +42,7 @@
     "@dnd-kit/modifiers": "^9.0.0",
     "@dnd-kit/sortable": "^10.0.0",
     "@dnd-kit/utilities": "^3.2.2",
-    "@steambrew/client": "^5.8.4",
+    "@steambrew/client": "^5.8.5",
     "@steambrew/ttc": "^3.2.6",
     "@steambrew/webkit": "5.8.4",
     "react-icons": "^5.6.0",
@@ -50,6 +50,6 @@
     "zustand": "^5.0.12"
   },
   "patchedDependencies": {
-    "@steambrew/client@5.8.4": "patches/@steambrew%2Fclient@5.8.4.patch"
+    "@steambrew/client@5.8.5": "patches/@steambrew%2Fclient@5.8.patch"
   }
 }

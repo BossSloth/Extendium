@@ -10,6 +10,7 @@ local EXTENDIUM_INSTALL_STATE_FILE = "install-state.json"
 
 local extendium_settings = {}
 
+---@return string|nil
 function GetPluginDir()
     local backend_path = utils.get_backend_path()
     if not backend_path then
@@ -18,12 +19,12 @@ function GetPluginDir()
     return fs.parent_path(backend_path)
 end
 
----@return table|nil
+---@return table|string
 function GetExternalLinks()
     local plugin_dir = GetPluginDir()
     if not plugin_dir then
         logger:error("Failed to get plugin directory")
-        return nil
+        return utils.empty_array()
     end
 
     local external_links_path = fs.join(plugin_dir, EXTENDIUM_EXTERNAL_LINKS_FILE)
@@ -36,15 +37,17 @@ function GetExternalLinks()
             logger:error("Error reading external links " .. external_links_path .. ": " .. (err or "unknown error"))
         end
     end
+
+    return utils.empty_array()
 end
 
 ---@param external_links string
----@return nil
+---@return string
 function UpdateExternalLinks(external_links)
     local plugin_dir = GetPluginDir()
     if not plugin_dir then
         logger:error("Failed to get plugin directory")
-        return
+        return "error"
     end
 
     local external_links_path = fs.join(plugin_dir, EXTENDIUM_EXTERNAL_LINKS_FILE)
@@ -53,14 +56,16 @@ function UpdateExternalLinks(external_links)
     if not success then
         logger:error("Error writing external links " .. external_links_path .. ": " .. (err or "unknown error"))
     end
+
+    return "success"
 end
 
----@return table|nil
+---@return table
 function GetInstallState()
     local plugin_dir = GetPluginDir()
     if not plugin_dir then
         logger:error("Failed to get plugin directory")
-        return nil
+        return {}
     end
 
     local state_path = fs.join(plugin_dir, EXTENDIUM_INSTALL_STATE_FILE)
@@ -79,16 +84,16 @@ function GetInstallState()
         end
     end
 
-    return nil
+    return {}
 end
 
 ---@param state table
----@return nil
+---@return string
 function SaveInstallState(state)
     local plugin_dir = GetPluginDir()
     if not plugin_dir then
         logger:error("Failed to get plugin directory")
-        return
+        return "error"
     end
 
     local state_path = fs.join(plugin_dir, EXTENDIUM_INSTALL_STATE_FILE)
@@ -98,17 +103,21 @@ function SaveInstallState(state)
     if not success then
         logger:error("Error writing install state " .. state_path .. ": " .. (err or "unknown error"))
     end
+
+    return "success"
 end
 
----@param settings_json string
----@return nil
-function UpdateSettings(settings_json)
-    local settings = json.decode(settings_json)
+---@param settings string
+---@return string
+function UpdateSettings(settings)
+    local settings = json.decode(settings)
     if settings then
         extendium_settings = settings
     else
         logger:error("Error decoding settings JSON")
     end
+
+    return "success"
 end
 
 ---@return string

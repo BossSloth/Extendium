@@ -1,5 +1,6 @@
 import { ChromeDevToolsProtocol, findClass } from '@steambrew/client';
 import { RuntimeEvaluate } from 'chrome/ChromePageManager';
+import type Protocol from 'devtools-protocol';
 import React, { useEffect, useRef, useState } from 'react';
 import { uniqueId } from 'shared';
 import { BrowserViewPopup } from 'steam-types/types/SteamClient/BrowserView/BrowserViewPopup';
@@ -112,25 +113,17 @@ export function BrowserView({ url, expectedParentPopupTitle, onFocusChanged, onC
   );
 }
 
-interface BindingCalledMessage {
-  method: string;
-  params?: {
-    name: string;
-    payload?: string;
-  };
-}
-
-const originalHandleMessage = ChromeDevToolsProtocol.handleMessage.bind(ChromeDevToolsProtocol);
-ChromeDevToolsProtocol.handleMessage = (message: unknown): void => {
-  const data: BindingCalledMessage = typeof message === 'string' ? JSON.parse(message) as BindingCalledMessage : message as BindingCalledMessage;
-
-  if (data.method === 'Runtime.bindingCalled' && data.params?.name === 'extendiumNavigate') {
-    const { url: targetUrl } = JSON.parse(data.params.payload ?? '{}') as { url: string; };
+function handleBindingCalled(event: Protocol.Runtime.BindingCalledEvent): void {
+  if (event.name === 'extendiumNavigate') {
+    const { url: targetUrl } = JSON.parse(event.payload) as { url: string; };
     handleUrlScheme(0, targetUrl);
   }
+}
 
-  originalHandleMessage(message);
-};
+// .on only exist in millennium beta for now so check if it exists
+if (typeof ChromeDevToolsProtocol.on === 'function') {
+  ChromeDevToolsProtocol.on('Runtime.bindingCalled', handleBindingCalled);
+}
 
 async function waitUntil(condition: () => boolean, timeout = 5000): Promise<void> {
   return new Promise((resolve, reject) => {

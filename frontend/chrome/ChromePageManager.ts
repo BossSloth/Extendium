@@ -147,7 +147,5 @@ export async function evaluateExpression<T extends JsonSerializable, TArgs exten
 export function OpenTargetPage(url: string): void {
   ChromeDevToolsProtocol.send('Target.createTarget', {
     url,
-    // @ts-expect-error focus might not exist
-    focus: true,
   });
 }
