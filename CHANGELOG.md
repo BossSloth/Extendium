@@ -1,3 +1,10 @@
+## [2.0.1](https://github.com/BossSloth/Extendium/compare/v2.0.0...v2.0.1) (2026-04-09)
+
+
+### Bug Fixes
+
+* Fixed extendium not working on the latest millennium beta (requires beta.20) ([b6afd2c](https://github.com/BossSloth/Extendium/commit/b6afd2c3b0f9a4b41205b68e2804146b688626f3))
+
 # [2.0.0](https://github.com/BossSloth/Extendium/compare/v1.1.1...v2.0.0) (2026-04-04)
 
 
