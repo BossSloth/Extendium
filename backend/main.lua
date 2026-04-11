@@ -19,12 +19,12 @@ function GetPluginDir()
     return fs.parent_path(backend_path)
 end
 
----@return table|string
+---@return string
 function GetExternalLinks()
     local plugin_dir = GetPluginDir()
     if not plugin_dir then
         logger:error("Failed to get plugin directory")
-        return utils.empty_array()
+        return "[]"
     end
 
     local external_links_path = fs.join(plugin_dir, EXTENDIUM_EXTERNAL_LINKS_FILE)
@@ -38,7 +38,7 @@ function GetExternalLinks()
         end
     end
 
-    return utils.empty_array()
+    return "[]"
 end
 
 ---@param external_links string
