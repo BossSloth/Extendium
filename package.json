@@ -32,7 +32,7 @@
   },
   "type": "module",
   "name": "extendium",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "description": "A plugin for Millennium that adds chrome extensions support to the client",
   "main": "./frontend/index.tsx",
   "author": "BossSloth",

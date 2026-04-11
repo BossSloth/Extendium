@@ -1,3 +1,10 @@
+## [2.0.2](https://github.com/BossSloth/Extendium/compare/v2.0.1...v2.0.2) (2026-04-11)
+
+
+### Bug Fixes
+
+* Fixed crash when no external links were saved ([1a960f3](https://github.com/BossSloth/Extendium/commit/1a960f317ee64ebbf9882ddae8621067687fb65d))
+
 ## [2.0.1](https://github.com/BossSloth/Extendium/compare/v2.0.0...v2.0.1) (2026-04-09)
 
 
