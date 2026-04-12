@@ -89,8 +89,4 @@ cjson_safe.null = cjson.null
 cjson_safe._NAME = cjson._NAME
 cjson_safe._VERSION = cjson._VERSION
 
----Create an empty JSON array
----@type table # Empty JSON array
-cjson.empty_array = cjson.empty_array
-
 return cjson

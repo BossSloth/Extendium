@@ -1,8 +1,7 @@
 -- Extension settings builder for Chrome preferences
 
 local sys_utils = require("utils")
-local install_utils = require("install_extension.json_helpers")
-local json = require("json")
+local install_utils = require("install_extension.utils")
 
 local M = {}
 
@@ -29,23 +28,23 @@ function M.build_extension_settings(extension_dir, manifest)
 
     return {
         active_permissions = {
-            api = #api_permissions > 0 and api_permissions or json.empty_array,
+            api = #api_permissions > 0 and api_permissions or install_utils.empty_array(),
             explicit_host = { "<all_urls>" },
-            manifest_permissions = json.empty_array,
+            manifest_permissions = install_utils.empty_array(),
             scriptable_host = { "<all_urls>" },
         },
         commands = {},
-        content_settings = json.empty_array,
+        content_settings = install_utils.empty_array(),
         creation_flags = 38,
         first_install_time = file_time,
         from_webstore = false,
         granted_permissions = {
-            api = #api_permissions > 0 and api_permissions or json.empty_array,
+            api = #api_permissions > 0 and api_permissions or install_utils.empty_array(),
             explicit_host = { "<all_urls>" },
-            manifest_permissions = json.empty_array,
+            manifest_permissions = install_utils.empty_array(),
             scriptable_host = { "<all_urls>" },
         },
-        incognito_content_settings = json.empty_array,
+        incognito_content_settings = install_utils.empty_array(),
         incognito_preferences = {},
         last_update_time = file_time,
         location = 4, -- kUnpacked (developer mode)
