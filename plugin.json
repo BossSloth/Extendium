@@ -3,7 +3,7 @@
   "name": "extendium",
   "common_name": "Extendium",
   "description": "Chrome extension support for Steam. Install extensions like SteamDB, Augmented Steam, UBlock Origin, and more in your Steam Desktop Client",
-  "version": "2.0.2",
+  "version": "2.0.3",
   "backendType": "lua",
   "include": [
     "fake-header-extension"

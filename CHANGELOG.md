@@ -1,3 +1,10 @@
+## [2.0.3](https://github.com/BossSloth/Extendium/compare/v2.0.2...v2.0.3) (2026-04-12)
+
+
+### Bug Fixes
+
+* reverted using json.empty_array as it doesn't work on millennium 2.35, Fixes [#82](https://github.com/BossSloth/Extendium/issues/82) ([6aa1498](https://github.com/BossSloth/Extendium/commit/6aa1498e7f35d3ae082958ef512f6ef1ceaf87ec))
+
 ## [2.0.2](https://github.com/BossSloth/Extendium/compare/v2.0.1...v2.0.2) (2026-04-11)
 
 
