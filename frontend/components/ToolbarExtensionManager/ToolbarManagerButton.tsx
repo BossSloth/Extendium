@@ -33,7 +33,7 @@ export function ToolbarManagerButton(): React.JSX.Element {
       onClick={openExtensionsContextMenu}
       title="Extensions"
     >
-      <IoExtensionPuzzleOutline color="gray" size={17} style={{ padding: 0 }} />
+      <IoExtensionPuzzleOutline size={17} style={{ padding: 0 }} />
     </button>
   );
 }
