@@ -43,7 +43,7 @@
     "@dnd-kit/sortable": "^10.0.0",
     "@dnd-kit/utilities": "^3.2.2",
     "@steambrew/client": "^5.8.5",
-    "@steambrew/ttc": "^3.2.6",
+    "@steambrew/ttc": "~3.2.6",
     "@steambrew/webkit": "5.8.4",
     "react-icons": "^5.6.0",
     "sass-embedded": "^1.98.0",
