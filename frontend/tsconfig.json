@@ -6,5 +6,6 @@
       "@extension/*": ["../shared/extension/*"]
     }
   },
+  "files": ["../global-overrides.d.ts"],
   "include": [".", "../shared/extension/**/*"]
 }

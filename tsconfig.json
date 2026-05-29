@@ -4,6 +4,7 @@
       "module": "ESNext",
       "target": "ES2022",
       "jsx": "react",
+      "rootDir": ".",
       "declaration": false,
       "moduleResolution": "bundler",
       "noUnusedLocals": true,
