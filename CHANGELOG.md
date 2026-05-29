@@ -1,3 +1,10 @@
+## [2.0.4](https://github.com/BossSloth/Extendium/compare/v2.0.3...v2.0.4) (2026-05-29)
+
+
+### Bug Fixes
+
+* made helper extension optional, more reliable and added documentation on how to install it manually ([18b3a04](https://github.com/BossSloth/Extendium/commit/18b3a04b91a3a60dee48ea23808c22c52d11c527))
+
 ## [2.0.3](https://github.com/BossSloth/Extendium/compare/v2.0.2...v2.0.3) (2026-04-12)
 
 
