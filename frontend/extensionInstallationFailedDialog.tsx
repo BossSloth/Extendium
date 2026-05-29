@@ -1,5 +1,5 @@
 import { ConfirmModal, showModal } from '@steambrew/client';
-import { InstallInternalExtension } from 'callables';
+import { IgnoreInternalExtensionRequirement, InstallInternalExtension } from 'callables';
 import React from 'react';
 import { mainWindow } from 'shared';
 
@@ -16,12 +16,14 @@ export function showExtensionInstallationFailedDialog(): void {
       strDescription={(
         <>
           <p>
-            Extendium needs a helper extension to work properly, but the automatic installation didn't complete successfully.
+            Extendium needs a helper extension to work fully, but the automatic installation didn't complete successfully.
+          </p>
+          <p>
+            Without the helper extension, some extensions like Augmented Steam won't work properly.
           </p>
           <p>
             You can try the automatic installation again, or manually install the helper extension
             by following the step-by-step instructions in the readme <a href="https://github.com/BossSloth/extendium/blob/main/README.md#helper-extension" onClick={openInExternalBrowser}>here</a>.
-            {/* TODO: create this section in the readme */}
           </p>
           <p>
             If the problem persists, please check the plugin logs for more details and report this issue
@@ -30,11 +32,16 @@ export function showExtensionInstallationFailedDialog(): void {
         </>
       )}
       strOKButtonText="Try installation again"
+      strMiddleButtonText="Ignore and don't show again"
       strCancelButtonText="Understood, I will manually install it"
       bDisableBackgroundDismiss
       bHideCloseIcon
       onOK={async () => {
         await InstallInternalExtension();
+        dialog.Close();
+      }}
+      onMiddleButton={async () => {
+        await IgnoreInternalExtensionRequirement();
         dialog.Close();
       }}
       onCancel={() => { dialog.Close(); }}

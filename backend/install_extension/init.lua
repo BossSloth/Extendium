@@ -52,9 +52,12 @@ end
 
 local function kill_steam_webhelper()
     if config.is_windows() then
-        sys_utils.exec('taskkill /F /IM steamwebhelper.exe')
+        local msg = "Steam has been closed to complete the Extendium plugin installation.     Please restart Steam."
+        sys_utils.exec('start "" powershell -WindowStyle Hidden -Command "taskkill /F /IM steamwebhelper.exe; taskkill /F /IM steam.exe; Add-Type -AssemblyName System.Windows.Forms; [System.Windows.Forms.MessageBox]::Show(\'' .. msg .. '\', \'Steam restart required - extendium\', [System.Windows.Forms.MessageBoxButtons]::OK, [System.Windows.Forms.MessageBoxIcon]::Warning)"')
     else
-        sys_utils.exec('pkill -f steamwebhelper')
+        sys_utils.exec('sleep 1 && pkill -KILL -f steam')
+        local msg = "Steam has been closed to complete the Extendium plugin installation.\\nPlease restart Steam."
+        sys_utils.exec('zenity --info --title "Steam restart required - extendium" --text "' .. msg .. '" &')
     end
     logger:info("[install] Steam webhelper killed")
 end
@@ -187,14 +190,14 @@ function M.install()
         logger:info("[install] Secure Preferences written")
     end
 
-    -- Kill Steam webhelper IMMEDIATELY after writing to prevent it from overriding our changes
-    kill_steam_webhelper()
-
     logger:info("========================================")
-    logger:info("[install] Installation complete!")
+    logger:info("[install] Installation complete! Please restart Steam!")
     logger:info("[install] Extension ID: " .. extension_id)
     logger:info("[install] Extension Path: " .. extension_dir)
     logger:info("========================================")
+
+    -- Kill Steam webhelper IMMEDIATELY after writing to prevent it from overriding our changes
+    kill_steam_webhelper()
 
     return json.encode({
         success = true,

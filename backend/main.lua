@@ -7,6 +7,7 @@ local install_extension = require("install_extension.init")
 local legacy_extensions = require("legacy_extensions")
 local EXTENDIUM_EXTERNAL_LINKS_FILE = "external-links.json"
 local EXTENDIUM_INSTALL_STATE_FILE = "install-state.json"
+local utils = require('utils')
 
 local extendium_settings = {}
 
@@ -144,10 +145,16 @@ function CheckInternalExtensionStatus()
 end
 
 function CheckIfInternalExtensionIsInstalled()
+    utils.sleep(3000)
+    local install_state = GetInstallState() or {}
+
+    if install_state.ignoreRequirement then
+        logger:info("Helper extension requirement is ignored, skipping check")
+        return false
+    end
+
     local status_result = install_extension.check_status()
     local status = json.decode(status_result)
-
-    local install_state = GetInstallState() or {}
 
     if status and status.installed then
         if install_state.installAttempted then
@@ -198,6 +205,19 @@ function CheckIfInternalExtensionIsInstalled()
     end
 
     return false
+end
+
+---Mark the helper extension requirement as ignored so the failure dialog is skipped on startup
+---@return string
+function IgnoreInternalExtensionRequirement()
+    SaveInstallState({
+        installAttempted = false,
+        installFailed = false,
+        ignoreRequirement = true,
+        lastChecked = os.time()
+    })
+    logger:info("Internal extension requirement ignored")
+    return "success"
 end
 
 ---Delete the .extensions folder

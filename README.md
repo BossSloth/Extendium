@@ -79,25 +79,53 @@ By default, all links open inside the Steam client. You can force certain URLs t
 - **Puzzle Icon is Missing**: Ensure Extendium is enabled in the Millennium menu and that you clicked **Save Changes** and restarted. Skin compatibility issues can also hide the icon.
 - **Extension Not Working**: Check the **[Compatibility List](https://docs.google.com/spreadsheets/d/e/2PACX-1vSGe55SdLrz9vILg6jPDvlOrkpeOgInPxor96t5MreHPkXNhft4XSwetj70aYhNjCocnfLxpk29Nkkf/pubhtml)** first. If it's listed as compatible, try reinstalling it. If the issue continues, open an **Extension Issue** on GitHub.
 
+### Disabling All Extensions (Emergency Reset)
+
+If everything goes fully wrong (e.g. an extension breaks the client and you can't access the Extensions Manager), you can disable all browser extensions by deleting the `Preferences` and `Secure Preferences` files in Steam's `htmlcache` while steam is closed.
+Don't worry, almost nothing is saved in these files, only extension settings and some browser state. If you want to be sure, back them up first.
+
+- **Windows**: `%localappdata%\Steam\htmlcache\Default`
+- **Linux**: `~/.steam/steam/config/htmlcache/Default`
+
+After deleting these files, boot up Steam.
+
+> [!WARNING]
+> Deleting these files resets the browser state and removes all installed extensions. You can reinstall them afterwards using the Extensions Manager.
+
 ### Manual Extension Installation
 
-If you wish to install an extension manually for example, if you cannot access the Chrome Web Store or want to install a development version, follow these steps as it's the same as doing it in a normal chrome browser.
+If you want to install an extension manually, for example when you cannot access the Chrome Web Store or you're loading a development version, the process mirrors loading an unpacked extension in a regular Chrome browser.
 
-1. **Download the Extension Files**
-   - Download the extension as a `.crx` file, `.zip` archive containing the extension files, or have the extension folder on your disk.
+1. **Open the Extensions Manager**
+   - Click the **puzzle icon** to the right of the address bar and select **Manage extensions**.
 
-2. **Open Chrome Extensions Page**
-   - In the extension manager, click the `Advanced extension management` button. This will open the `chrome://extensions` page in the Steam browser.
+2. **Download the Extension Files**
+   - Obtain the extension as a `.crx` file, a `.zip` archive containing the extension files, or an unpacked extension folder on your disk. If you have a `.zip`, extract it first.
 
-3. **Enable Developer Mode**
-   - Toggle on **Developer mode** in the top right corner of the extensions page.
+3. **Open the Chrome Extensions Page**
+   - In the Extensions Manager, click the **Advanced extension management** button. This opens the `chrome://extensions` page in a Chromium window.
 
-4. **Load the Extension**
-   - Click **Load unpacked** and select the folder containing your extension files.
-   - Alternatively, you can drag and drop a `.crx` file directly onto the extensions page.
+4. **Enable Developer Mode**
+   - Toggle on **Developer mode** in the top right corner of the page.
 
-5. **Verify Installation**
+5. **Load the Extension**
+   - Click **Load unpacked** and select the folder containing the extension's files (the folder with `manifest.json` inside).
+   - Alternatively, drag and drop a `.crx` file directly onto the page.
+
+6. **Verify Installation**
    - The extension should now appear in your extensions list and be ready to use.
+
+### Helper Extension
+
+Extendium ships with a small helper extension (`fake-header-extension`) that is required for some features to work properly. It is normally installed automatically on first bootup, but if the automatic installation fails you can install it manually.
+
+Follow the [Manual Extension Installation](#manual-extension-installation) steps above and, in the **Load the Extension** step, point **Load unpacked** at the `fake-header-extension` folder inside the Extendium plugin directory:
+
+- **Windows (Millennium < 3.0)**: `<Steam folder>/plugins/extendium/fake-header-extension`
+- **Windows (Millennium >= 3.0)**: `<Steam folder>/millennium/plugins/extendium/fake-header-extension`
+- **Linux**: `~/.local/share/millennium/plugins/extendium/fake-header-extension`
+
+After loading it, restart Steam to make sure Extendium picks it up.
 
 ## Known Limitations
 

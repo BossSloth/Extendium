@@ -1,8 +1,8 @@
 -- HMAC Context for computing MACs on Chrome preferences
 
 local logger = require("logger")
-local crypto = require("install_extension.crypto")
 local json_helpers = require("install_extension.json_helpers")
+local sha2 = require("install_extension.sha2")
 
 ---@class HmacContext
 ---@field sid string
@@ -18,7 +18,7 @@ function HmacContext.new(sid, seed_hex)
     local self = setmetatable({}, HmacContext)
     self.sid = sid or ""
     self.seed_hex = seed_hex or "" -- Empty for Steam CEF
-    self.seed_bytes = crypto.hex_to_bytes(seed_hex or "")
+    self.seed_bytes = sha2.hex_to_bin(seed_hex or "")
     return self
 end
 
@@ -36,7 +36,7 @@ function HmacContext:compute_mac(json_path, value)
     logger:info("[install] Message length: " .. #message)
     logger:info("[install] JSON preview: " .. json_value:sub(1, 100) .. "...")
 
-    local mac = crypto.compute_hmac_sha256(self.seed_bytes, message)
+    local mac = string.upper(sha2.hmac(sha2.sha256, self.seed_bytes, message))
     if mac then
         logger:info("[install] MAC: " .. mac:sub(1, 16) .. "...")
     else
@@ -55,7 +55,7 @@ function HmacContext:compute_super_mac(macs)
     logger:info("[install] Computing super MAC...")
     logger:info("[install] MACs JSON: " .. macs_json:sub(1, 100) .. "...")
 
-    local mac = crypto.compute_hmac_sha256(self.seed_bytes, message)
+    local mac = string.upper(sha2.hmac(sha2.sha256, self.seed_bytes, message))
     if mac then
         logger:info("[install] Super MAC: " .. mac:sub(1, 16) .. "...")
     else

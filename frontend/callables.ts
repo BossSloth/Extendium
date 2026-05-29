@@ -9,4 +9,6 @@ export const UpdateSettings = callable<[{ settings: string; }], void>('UpdateSet
 
 export const InstallInternalExtension = callable<[], string>('InstallInternalExtension');
 
+export const IgnoreInternalExtensionRequirement = callable<[], string>('IgnoreInternalExtensionRequirement');
+
 export const DeleteLegacyExtensions = callable<[], string>('DeleteLegacyExtensions');
