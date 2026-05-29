@@ -20,7 +20,7 @@
       "strict": true,
       "experimentalDecorators": true,
       "isolatedModules": true,
-      "types": ["steam-types", "chrome", "node"]
+      "types": ["steam-types", "chrome"]
     },
     "exclude": ["node_modules"]
 }

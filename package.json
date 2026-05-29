@@ -28,6 +28,7 @@
     "nodemon": "^3.1.14",
     "semantic-release": "^24.2.9",
     "steam-types": "^2.1.0",
+    "typescript": "^6.0.3",
     "typescript-eslint": "^8.57.1"
   },
   "type": "module",
