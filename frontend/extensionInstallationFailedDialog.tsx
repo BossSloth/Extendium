@@ -2,6 +2,7 @@ import { ConfirmModal, showModal } from '@steambrew/client';
 import { IgnoreInternalExtensionRequirement, InstallInternalExtension } from 'callables';
 import React from 'react';
 import { mainWindow } from 'shared';
+import { t } from './i18n';
 
 function openInExternalBrowser(event: React.MouseEvent<HTMLAnchorElement>): void {
   event.preventDefault();
@@ -10,30 +11,46 @@ function openInExternalBrowser(event: React.MouseEvent<HTMLAnchorElement>): void
 }
 
 export function showExtensionInstallationFailedDialog(): void {
+  const readmeParts = t('failedDesc3').split('{readmeLink}');
+  const githubParts = t('failedDesc4').split('{githubLink}');
+  const firstPart = githubParts[0];
+  const rest = githubParts[1] ?? '';
+  const discordParts = rest.split('{discordLink}');
+
   const dialog = showModal(
     <ConfirmModal
-      strTitle="Extendium installation failed"
+      strTitle={t('failedTitle')}
       strDescription={(
         <>
           <p>
-            Extendium needs a helper extension to work fully, but the automatic installation didn't complete successfully.
+            {t('failedDesc1')}
           </p>
           <p>
-            Without the helper extension, some extensions like Augmented Steam won't work properly.
+            {t('failedDesc2')}
           </p>
           <p>
-            You can try the automatic installation again, or manually install the helper extension
-            by following the step-by-step instructions in the readme <a href="https://github.com/BossSloth/extendium/blob/main/README.md#helper-extension" onClick={openInExternalBrowser}>here</a>.
+            {readmeParts[0]}
+            <a href="https://github.com/BossSloth/extendium/blob/main/README.md#helper-extension" onClick={openInExternalBrowser}>
+              {t('here')}
+            </a>
+            {readmeParts[1]}
           </p>
           <p>
-            If the problem persists, please check the plugin logs for more details and report this issue
-            on the <a href="https://github.com/BossSloth/extendium" onClick={openInExternalBrowser}>Extendium GitHub repository</a> or the <a href="https://discord.com/channels/1102739071085846623/1380854735183282309" onClick={openInExternalBrowser}>discord channel</a> with your log.
+            {firstPart}
+            <a href="https://github.com/BossSloth/extendium" onClick={openInExternalBrowser}>
+              {t('githubRepo')}
+            </a>
+            {discordParts[0]}
+            <a href="https://discord.com/channels/1102739071085846623/1380854735183282309" onClick={openInExternalBrowser}>
+              {t('discordChannel')}
+            </a>
+            {discordParts[1]}
           </p>
         </>
       )}
-      strOKButtonText="Try installation again"
-      strMiddleButtonText="Ignore and don't show again"
-      strCancelButtonText="Understood, I will manually install it"
+      strOKButtonText={t('tryAgain')}
+      strMiddleButtonText={t('ignoreBtn')}
+      strCancelButtonText={t('understoodBtn')}
       bDisableBackgroundDismiss
       bHideCloseIcon
       onOK={async () => {

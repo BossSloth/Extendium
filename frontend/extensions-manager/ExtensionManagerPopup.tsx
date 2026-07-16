@@ -9,6 +9,7 @@ import { useExtensionsStore } from 'stores/extensionsStore';
 import { ExtensionDetailInfo } from './ExtensionDetailInfo';
 import { ExtensionManagerRoot } from './ExtensionManagerRoot';
 import { ExtendiumSettings } from './Settings/ExtendiumSettings';
+import { t } from '../i18n';
 
 function ExtensionManagerPopup(): React.ReactNode {
   const { managerPopup, setManagerPopup } = usePopupsStore();
@@ -27,12 +28,12 @@ function ExtensionManagerPopup(): React.ReactNode {
   } else if (managerPopup.route.startsWith('settings')) {
     content = <ExtendiumSettings />;
   } else {
-    content = <p>Error you somehow got to an undefined route please report this with this route &quot;<code>{managerPopup.route}</code>&quot;</p>;
+    content = <p>{t('undefinedRoute').replace('{route}', managerPopup.route ?? '')}</p>;
   }
 
   return (
     <SteamDialog
-      strTitle="Extensions"
+      strTitle={t('extensions')}
       onDismiss={() => { setManagerPopup({ open: false }); }}
       popupWidth={1280}
       popupHeight={mainWindow.innerHeight * 0.65}
