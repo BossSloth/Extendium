@@ -5,6 +5,7 @@ import React, { useMemo } from 'react';
 import { FaCog } from 'react-icons/fa';
 import { useExtensionsStore } from 'stores/extensionsStore';
 import { useExtensionsBarStore } from '../stores/extensionsBarStore';
+import { t } from '../../i18n';
 import { ManagerExtensionItem } from './ManagerExtensionItem';
 
 export function ToolbarManagerContextMenu(): React.JSX.Element {
@@ -35,8 +36,8 @@ export function ToolbarManagerContextMenu(): React.JSX.Element {
     <>
       <Styles />
       <div className="extendium-toolbar-manager-context-menu">
-        <Menu label="Extension">
-          <DialogHeader>Extensions</DialogHeader>
+        <Menu label={t('extensions')}>
+          <DialogHeader>{t('extensions')}</DialogHeader>
           {enabledExtensions
             .sort((a, b) => a.name.localeCompare(b.name))
             .map(extension => (
@@ -49,7 +50,7 @@ export function ToolbarManagerContextMenu(): React.JSX.Element {
               />
             ))}
           <div style={{ cursor: 'pointer' }} onClick={() => { openExtensionManagerPopup(); }}>
-            <Field icon={<FaCog />} label="Manage extensions" />
+            <Field icon={<FaCog />} label={t('manageExtensions')} />
           </div>
         </Menu>
       </div>

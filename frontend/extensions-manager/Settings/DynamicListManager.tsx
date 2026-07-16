@@ -1,6 +1,7 @@
 import { ExternalLink } from '@extension/Metadata';
 import { Field } from '@steambrew/client';
 import React, { useCallback, useMemo, useRef } from 'react';
+import { t } from '../../i18n';
 
 export interface ExternalLinksManagerProps {
   onChange(next: ExternalLink[]): void;
@@ -17,9 +18,9 @@ export default function DynamicListManager({
   value,
   onChange,
   onSave,
-  title = 'External links',
-  placeholder = 'Paste or type a link…',
-  addButtonLabel = 'Add link',
+  title = t('extLinksTitle'),
+  placeholder = t('extLinksPlaceholder'),
+  addButtonLabel = t('extLinksAdd'),
   className,
   allowEmpty = false,
 }: ExternalLinksManagerProps): React.ReactNode {
@@ -66,13 +67,13 @@ export default function DynamicListManager({
         <span className="ext-links-title">{title}</span>
       </div>
 
-      <Field description="Manage URL patterns that should always open in an external browser. For each entry, provide a string to match against the URL. If 'Regex' is checked, the string is treated as a regular expression. Otherwise, it performs a simple case sensitive text search." />
+      <Field description={t('extLinksDesc')} />
 
       <div className="ext-links-list">
         {items.length === 0
           ? (
               <div className="ext-links-empty">
-                No links yet.
+                {t('extLinksEmpty')}
               </div>
             )
           : (
@@ -100,21 +101,21 @@ export default function DynamicListManager({
                       }
                     }}
                   />
-                  <label className="ext-links-toggle" title="Treat match as a regular expression">
+                  <label className="ext-links-toggle" title={t('extLinksRegexTooltip')}>
                     <input
                       type="checkbox"
                       checked={link.isRegex}
                       onChange={(e) => { setItem(idx, { ...link, isRegex: e.currentTarget.checked }, true); }}
                     />
-                    <span>Regex</span>
+                    <span>{t('extLinksRegex')}</span>
                   </label>
                   <button
                     type="button"
                     className="ext-links-remove"
                     onClick={() => { removeItem(idx); }}
-                    title="Remove"
+                    title={t('extLinksRemove')}
                   >
-                    Remove
+                    {t('extLinksRemove')}
                   </button>
                 </div>
               ))

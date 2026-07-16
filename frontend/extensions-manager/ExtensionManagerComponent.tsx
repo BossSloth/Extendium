@@ -7,6 +7,7 @@ import React from 'react';
 import { useExtensionsStore } from 'stores/extensionsStore';
 import { getExtensionCompatibility, type CompatibilityStatus } from '../extensionCompatibility';
 import { useSettingsStore } from '../extensions-manager/Settings/settingsStore';
+import { t } from '../i18n';
 
 export function ExtensionManagerComponent({ extension }: { readonly extension: Extension; }): React.ReactNode {
   const { setManagerPopup } = usePopupsStore();
@@ -59,7 +60,7 @@ export function ExtensionManagerComponent({ extension }: { readonly extension: E
               <span
                 className="compatibility-pill"
                 style={{ backgroundColor: getCompatibilityColor(compatibility) }}
-                title={`Compatibility: ${compatibility}, click for compatibility list`}
+                title={t('clickForCompList').replace('{compatibility}', compatibility)}
                 onClick={() => { SteamClient.System.OpenInSystemBrowser(COMPATIBILITY_LIST_URL); }}
               >
                 {compatibility}
@@ -72,8 +73,8 @@ export function ExtensionManagerComponent({ extension }: { readonly extension: E
         </div>
       </div>
       <div className="extension-buttons">
-        <DialogButton onClick={() => { setManagerPopup({ route: `info/${extension.id}` }); }}>Details</DialogButton>
-        <DialogButton onClick={() => { fullyUninstallExtension(); }}>Remove</DialogButton>
+        <DialogButton onClick={() => { setManagerPopup({ route: `info/${extension.id}` }); }}>{t('details')}</DialogButton>
+        <DialogButton onClick={() => { fullyUninstallExtension(); }}>{t('remove')}</DialogButton>
         <Toggle onChange={handleToggleChange} value={extension.enabled} />
       </div>
     </div>

@@ -8,6 +8,7 @@ interface SettingsStore {
   barMarginRight: number;
   openLinksInCurrentTab: boolean;
   showCompatibilityPills: boolean;
+  language: 'auto' | 'en' | 'ja';
 }
 
 const settingsStorageKey = 'extendium_settingsStore';
@@ -19,7 +20,8 @@ export const useSettingsStore = create<SettingsStore>()(persist(
       barMarginRight: 0,
       showCompatibilityPills: true,
       openLinksInCurrentTab: false,
-      setSettings: (settings: SettingsStore): void => {
+      language: 'auto',
+      setSettings: (settings: Partial<SettingsStore>): void => {
         set((state) => {
           const newState = { ...state, ...settings };
           if (newState.openLinksInCurrentTab !== state.openLinksInCurrentTab) {

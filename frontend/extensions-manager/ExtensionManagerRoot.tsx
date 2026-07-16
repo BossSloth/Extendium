@@ -6,6 +6,7 @@ import React from 'react';
 import { FaCog, FaStore } from 'react-icons/fa';
 import { IoExtensionPuzzle } from 'react-icons/io5';
 import { useExtensionsStore } from 'stores/extensionsStore';
+import { t } from '../i18n';
 import { ExtensionManagerComponent } from './ExtensionManagerComponent';
 
 export function ExtensionManagerRoot(): React.ReactNode {
@@ -20,14 +21,14 @@ export function ExtensionManagerRoot(): React.ReactNode {
           className={`span-icon ${settingsClasses.SettingsDialogButton}`}
         >
           <FaStore />
-          Install extension
+          {t('installExtension')}
         </DialogButton>
         <DialogButton
           onClick={() => { OpenTargetPage('chrome://extensions'); }}
           className={`span-icon ${settingsClasses.SettingsDialogButton}`}
         >
           <IoExtensionPuzzle />
-          Advanced extension management
+          {t('advancedExtManagement')}
         </DialogButton>
         <div style={{ display: 'flex', gap: '6px' }}>
           <DialogButton

@@ -8,6 +8,7 @@ import { FaExclamationCircle } from 'react-icons/fa';
 import { MdArrowBack, MdArrowForward, MdOpenInNew } from 'react-icons/md';
 import { mainWindow } from 'shared';
 import { createOptionsWindow } from 'windowManagement';
+import { t } from '../i18n';
 
 export function ExtensionDetailInfo({ extension }: { readonly extension: Extension | undefined; }): React.ReactNode {
   const [views, setViews] = React.useState<Protocol.Target.TargetInfo[]>([]);
@@ -20,7 +21,7 @@ export function ExtensionDetailInfo({ extension }: { readonly extension: Extensi
           <button onClick={() => { setManagerPopup({ route: null }); }} type="button" className="md-button">
             <MdArrowBack />
           </button>
-          Error in extension
+          {t('errorInExtension')}
         </div>
       </div>
     );
@@ -53,6 +54,10 @@ export function ExtensionDetailInfo({ extension }: { readonly extension: Extensi
     }
   }, []);
 
+  const errorInstructions = t('errorInstructions');
+  const devmodeText = t('enableDevModeText');
+  const parts = errorInstructions.split('{devmodeLink}');
+
   return (
     <div className="extension-detail-info">
       <div className="page-header">
@@ -64,23 +69,23 @@ export function ExtensionDetailInfo({ extension }: { readonly extension: Extensi
       </div>
 
       <div className="section">
-        <div className="heading">Description</div>
+        <div className="heading">{t('description')}</div>
         <div className="content">{extension.description}</div>
       </div>
 
       <div className="section hr">
-        <div className="heading">Version</div>
+        <div className="heading">{t('version')}</div>
         <div className="content">{extension.version}</div>
       </div>
 
       <div className="section hr">
-        <div className="heading">Id</div>
+        <div className="heading">{t('id')}</div>
         <div className="content">{extension.id}</div>
       </div>
 
       {views.length > 0 && (
         <div className="section hr">
-          <div className="heading">Inspect views</div>
+          <div className="heading">{t('inspectViews')}</div>
           <div className="content">
             <ul>
               {views.map(view => (
@@ -105,10 +110,14 @@ export function ExtensionDetailInfo({ extension }: { readonly extension: Extensi
         <div className="section hr" id="errors">
           <div className="heading">
             <FaExclamationCircle color="red" />
-            Errors
+            {t('errors')}
           </div>
           <div className="content">
-            <span style={{ marginBottom: '1rem' }}>For detailed error information, <a href="steam://devmode/enable" onClick={() => { initializeViews(); }}>enable dev mode</a> and open the console of the specified view in the list above</span>
+            <span style={{ marginBottom: '1rem' }}>
+              {parts[0]}
+              <a href="steam://devmode/enable" onClick={() => { initializeViews(); }}>{devmodeText}</a>
+              {parts[1]}
+            </span>
             <ul>
               {extension.logger.errors.map(error => (
                 <li key={error}><code>{error}</code></li>
@@ -120,13 +129,13 @@ export function ExtensionDetailInfo({ extension }: { readonly extension: Extensi
 
       {extension.options.hasOptions() && (
         <div className="section hr clickable-row" onClick={() => { createOptionsWindow(extension); }}>
-          <span>Extension options</span>
+          <span>{t('extensionOptions')}</span>
           <button type="button"><MdOpenInNew /></button>
         </div>
       )}
 
       <div className="section hr clickable-row" onClick={() => { fullyUninstallExtension(); }}>
-        <span>Remove extension</span>
+        <span>{t('removeExtension')}</span>
         <button type="button"><MdArrowForward /></button>
       </div>
     </div>

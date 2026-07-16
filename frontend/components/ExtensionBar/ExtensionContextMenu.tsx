@@ -6,6 +6,7 @@ import React, { JSX } from 'react';
 import { createOptionsWindow } from '../../windowManagement';
 import { Separator } from '../Separator';
 import { useExtensionsBarStore } from '../stores/extensionsBarStore';
+import { t } from '../../i18n';
 
 function ExtensionContextMenu({ extension }: { readonly extension: Extension; }): JSX.Element {
   const { setExtensionsOrder } = useExtensionsBarStore();
@@ -29,11 +30,11 @@ function ExtensionContextMenu({ extension }: { readonly extension: Extension; })
           {extension.name}
         </MenuItem>
         <Separator />
-        {extension.options.hasOptions() && <MenuItem onClick={() => { createOptionsWindow(extension); }}>Options</MenuItem>}
-        <MenuItem onClick={() => { uninstallExtension(extension.id); }}>Remove extension</MenuItem>
-        <MenuItem onClick={unpin}>Unpin</MenuItem>
+        {extension.options.hasOptions() && <MenuItem onClick={() => { createOptionsWindow(extension); }}>{t('options')}</MenuItem>}
+        <MenuItem onClick={() => { uninstallExtension(extension.id); }}>{t('removeExtension')}</MenuItem>
+        <MenuItem onClick={unpin}>{t('unpin')}</MenuItem>
         <Separator />
-        <MenuItem onClick={() => { openExtensionManagerPopup(`info/${extension.id}`); }}>Manage</MenuItem>
+        <MenuItem onClick={() => { openExtensionManagerPopup(`info/${extension.id}`); }}>{t('manage')}</MenuItem>
       </Menu>
     </div>
   );

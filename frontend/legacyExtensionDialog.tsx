@@ -4,6 +4,7 @@ import { OpenTargetPage } from 'chrome/ChromePageManager';
 import { showConfirmationModal } from 'components/ConfirmationModal';
 import React from 'react';
 import { mainWindow } from 'shared';
+import { t } from './i18n';
 
 export interface LegacyExtension {
   extensionId?: string;
@@ -22,11 +23,11 @@ function LegacyExtensionDialogDescription({ extensions }: { readonly extensions:
   return (
     <>
       <p>
-        The following extensions were found in Extendium's .extensions folder. These were previously installed using Extendium's old installation method and will no longer work.
+        {t('legacyDesc')}
         <br />
-        Please reinstall them from the Chrome Web Store to ensure they function correctly.
+        {t('legacyReinstall')}
         <br />
-        To not show this dialog again use the "Delete All" button below to delete all legacy extensions.
+        {t('legacyDeleteInstruction')}
       </p>
       <div style={{ marginTop: '10px', marginBottom: '10px', maxHeight: '300px', overflowY: 'auto' }}>
         {extensions.map(ext => (
@@ -35,11 +36,11 @@ function LegacyExtensionDialogDescription({ extensions }: { readonly extensions:
             {ext.hasMetadata && ext.url !== undefined
               ? (
                   <a href={ext.url} onClick={openInSteam} style={{ fontSize: '12px', color: '#66c0f4' }}>
-                    Open in Chrome Web Store
+                    {t('openInWebStore')}
                   </a>
                 )
               : (
-                  <div style={{ fontSize: '12px', color: '#8f98a0' }}>Manually installed (no web store link)</div>
+                  <div style={{ fontSize: '12px', color: '#8f98a0' }}>{t('manuallyInstalled')}</div>
                 )}
           </div>
         ))}
@@ -64,15 +65,15 @@ export function showLegacyExtensionDialog(extensionsJson: string): void {
   function handleDeleteAll(): void {
     dialog.Close();
     showConfirmationModal({
-      title: 'Delete All Legacy Extensions?',
-      description: 'Are you sure you want to delete all legacy extension folders? This action cannot be undone.',
-      okButtonText: 'Delete All',
+      title: t('deleteConfirmTitle'),
+      description: t('deleteConfirmDesc'),
+      okButtonText: t('deleteAllBtn'),
       onOK: async () => {
         await DeleteLegacyExtensions();
         showConfirmationModal({
-          title: 'Legacy Extensions Deleted',
-          description: 'All legacy extension folders have been deleted.',
-          okButtonText: 'OK',
+          title: t('deletedTitle'),
+          description: t('deletedDesc'),
+          okButtonText: t('okBtn'),
         });
       },
       bDestructiveWarning: true,
@@ -81,11 +82,11 @@ export function showLegacyExtensionDialog(extensionsJson: string): void {
 
   dialog = showModal(
     <ConfirmModal
-      strTitle="Legacy Extendium Extensions Detected"
+      strTitle={t('legacyTitle')}
       strDescription={<LegacyExtensionDialogDescription extensions={extensions} />}
-      strOKButtonText={hasAnyWebstoreExtensions ? 'Open All in Web Store' : 'OK'}
-      strMiddleButtonText="Delete All"
-      strCancelButtonText={hasAnyWebstoreExtensions ? 'Close' : undefined}
+      strOKButtonText={hasAnyWebstoreExtensions ? t('openAllInWebStore') : t('okBtn')}
+      strMiddleButtonText={t('deleteAllBtn')}
+      strCancelButtonText={hasAnyWebstoreExtensions ? t('closeBtn') : undefined}
       bDisableBackgroundDismiss
       onOK={() => {
         if (hasAnyWebstoreExtensions) {

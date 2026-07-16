@@ -6,6 +6,7 @@ import { BROKEN_EXTENSION_IDS, INTERNAL_HOME_PAGE_URL } from 'constant';
 import React from 'react';
 import { mainWindow } from 'shared';
 import { useExtensionsStore } from 'stores/extensionsStore';
+import { t } from './i18n';
 
 export async function initializeExtension(): Promise<void> {
   const { setExtension, removeExtension } = useExtensionsStore.getState();
@@ -58,23 +59,23 @@ export async function initializeExtension(): Promise<void> {
 function showBrokenExtensionWarning(extensionId: string, extensionName: string): void {
   const dialog = showModal(
     <ConfirmModal
-      strTitle="Unsupported extension installed"
+      strTitle={t('unsupportedTitle')}
       bAlertDialog
       bDisableBackgroundDismiss
       bHideCloseIcon
       strDescription={(
         <>
           <p>
-            We've automatically detected an extension ({extensionName}:{extensionId}) that is known to cause Steam to become unresponsive, crash or become fully bricked.
+            {t('unsupportedDesc1').replace('{extensionName}', extensionName).replace('{extensionId}', extensionId)}
           </p>
           <strong>
-            You WILL NEED to remove this extension to prevent potential issues with your Steam client.
+            {t('unsupportedDesc2')}
             <br />
-            You can find more information about compatible extensions on the Extendium github page.
+            {t('unsupportedDesc3')}
           </strong>
         </>
       )}
-      strOKButtonText="Uninstall extension"
+      strOKButtonText={t('uninstallBtn')}
       onOK={() => {
         uninstallExtension(extensionId).then(() => {
           dialog.Close();
