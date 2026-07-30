@@ -25,7 +25,7 @@ Wondering if your favorite Chrome extension works with Extendium? Check our offi
 1. Ensure you have **Millennium** installed on your Steam client.
 2. Download the **[latest release](https://github.com/BossSloth/Extendium/releases/latest)** from GitHub or install it from the **[Steambrew](https://steambrew.app/plugin?id=788ed8554492)** website.
 3. (Manual only) Place the plugin files into your Millennium plugins directory (typically a `plugins` folder inside your Steam installation).
-4. **Restart** your Steam client.
+4. **Restart** your Steam client using your normal Millennium launch method (on macOS, typically `Steam Millennium.app`).
 5. Open the Millennium plugin menu and **enable** the Extendium plugin.
 6. Click **Save Changes** at the top of the menu and **restart Steam** one more time.
 
@@ -85,6 +85,7 @@ If everything goes fully wrong (e.g. an extension breaks the client and you can'
 Don't worry, almost nothing is saved in these files, only extension settings and some browser state. If you want to be sure, back them up first.
 
 - **Windows**: `%localappdata%\Steam\htmlcache\Default`
+- **macOS**: `~/Library/Application Support/Steam/config/htmlcache/Default`
 - **Linux**: `~/.steam/steam/config/htmlcache/Default`
 
 After deleting these files, boot up Steam.
@@ -123,9 +124,14 @@ Follow the [Manual Extension Installation](#manual-extension-installation) steps
 
 - **Windows (Millennium < 3.0)**: `<Steam folder>/plugins/extendium/fake-header-extension`
 - **Windows (Millennium >= 3.0)**: `<Steam folder>/millennium/plugins/extendium/fake-header-extension`
+- **macOS**: `~/Library/Application Support/Millennium/plugins/extendium/fake-header-extension`
 - **Linux**: `~/.local/share/millennium/plugins/extendium/fake-header-extension`
 
-After loading it, restart Steam to make sure Extendium picks it up.
+After loading it, restart Steam using your normal Millennium launch method to make sure Extendium picks it up.
+
+If you previously selected **Ignore and don't show again**, close Steam, delete
+`install-state.json` from the `extendium` plugin directory listed above, and
+relaunch Steam to let Extendium retry the helper installation.
 
 ## Known Limitations
 

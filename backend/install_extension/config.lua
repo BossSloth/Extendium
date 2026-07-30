@@ -12,6 +12,25 @@ function M.is_windows()
     return jit.os == "Windows"
 end
 
+function M.is_macos()
+    return jit.os == "OSX"
+end
+
+function M.is_linux()
+    return jit.os == "Linux"
+end
+
+function M.get_platform_name()
+    if M.is_windows() then
+        return "Windows"
+    elseif M.is_macos() then
+        return "macOS"
+    elseif M.is_linux() then
+        return "Linux"
+    end
+    return "Unsupported (" .. tostring(jit.os) .. ")"
+end
+
 function M.get_plugin_dir()
     local backend_path = utils.get_backend_path()
     if not backend_path then
@@ -32,17 +51,23 @@ function M.get_steam_config_dir()
     local steam_path = millennium.steam_path()
     logger:info("[install] Steam path: " .. tostring(steam_path))
 
-    local is_win = M.is_windows()
-    logger:info("[install] Platform: " .. (is_win and "Windows" or "Linux"))
+    logger:info("[install] Platform: " .. M.get_platform_name())
 
-    if is_win then
+    if M.is_windows() then
         -- Windows: %LOCALAPPDATA%\Steam\htmlcache\Default
         local appdata = utils.getenv("LOCALAPPDATA")
         if appdata then
             return fs.join(appdata, "Steam", "htmlcache", "Default")
         end
         return nil
-    else
+    elseif M.is_macos() then
+        -- macOS: ~/Library/Application Support/Steam/config/htmlcache/Default
+        local home = utils.getenv("HOME")
+        if home then
+            return fs.join(home, "Library", "Application Support", "Steam", "config", "htmlcache", "Default")
+        end
+        return nil
+    elseif M.is_linux() then
         -- Linux: ~/.local/share/Steam/config/htmlcache/Default
         -- Or symlink:  ~/.steam/steam/config/htmlcache/Default
         local home = utils.getenv("HOME")
@@ -51,6 +76,9 @@ function M.get_steam_config_dir()
         end
         return nil
     end
+
+    logger:error("[install] Unsupported platform: " .. tostring(jit.os))
+    return nil
 end
 
 -- Generic JSON file reader with logging

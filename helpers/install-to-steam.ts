@@ -10,7 +10,7 @@
  * - manifest.json must contain the "key" field with the public key
  */
 
-import { execSync } from 'child_process';
+import { execFileSync, execSync } from 'child_process';
 import { createHash, createHmac } from 'crypto';
 import { existsSync, readFileSync, realpathSync, writeFileSync } from 'fs';
 import { homedir, platform } from 'os';
@@ -25,6 +25,9 @@ const EXTENSION_DIR = resolve(join(import.meta.dir, '..', 'fake-header-extension
 function getSteamConfigDir(): string {
   if (platform() === 'win32') {
     return join(homedir(), 'AppData/Local/Steam/htmlcache/Default');
+  }
+  if (platform() === 'darwin') {
+    return join(homedir(), 'Library/Application Support/Steam/config/htmlcache/Default');
   }
   return join(homedir(), '.local/share/Steam/config/htmlcache/Default');
 }
@@ -56,7 +59,11 @@ interface ChromePreferences {
   };
   protection?: {
     macs?: {
-      extensions?: { settings?: Record<string, string>; [key: string]: unknown };
+      extensions?: {
+        settings?: Record<string, string>;
+        ui?: Record<string, string>;
+        [key: string]: unknown;
+      };
       [key: string]: unknown;
     };
     ui?: Record<string, string>;
@@ -113,7 +120,7 @@ function getWindowsFileTime(): string {
 }
 
 // ============================================================================
-// HMAC Signature Generation (Windows only)
+// HMAC Signature Generation (Windows and macOS)
 // ============================================================================
 
 function extractSeedFromPak(pakPath: string): string | null {
@@ -171,6 +178,22 @@ function getWindowsSid(): string {
   return '';
 }
 
+function getMacDeviceId(): string {
+  if (platform() !== 'darwin') return '';
+  try {
+    const output = execFileSync(
+      '/usr/sbin/ioreg',
+      ['-rd1', '-c', 'IOPlatformExpertDevice'],
+      { encoding: 'utf-8' },
+    );
+    const deviceId = output.match(/"IOPlatformUUID"\s*=\s*"([^"]+)"/)?.[1] ?? '';
+    if (/^[\dA-Fa-f]{8}(?:-[\dA-Fa-f]{4}){3}-[\dA-Fa-f]{12}$/.test(deviceId)) {
+      return deviceId;
+    }
+  } catch { /* ignore */ }
+  return '';
+}
+
 function removeEmptyChildren(obj: unknown): unknown {
   if (obj === null || obj === undefined) return obj;
   if (Array.isArray(obj)) {
@@ -192,30 +215,54 @@ function removeEmptyChildren(obj: unknown): unknown {
   return obj;
 }
 
-function computeMac(seed: Buffer, sid: string, jsonPath: string, value: unknown): string {
+export function canonicalizeForHmac(value: unknown): unknown {
+  if (Array.isArray(value)) {
+    return value.map(canonicalizeForHmac);
+  }
+  if (typeof value === 'object' && value !== null) {
+    const canonical: Record<string, unknown> = {};
+    for (const key of Object.keys(value).sort()) {
+      canonical[key] = canonicalizeForHmac((value as Record<string, unknown>)[key]);
+    }
+    return canonical;
+  }
+  return value;
+}
+
+export function stringifyForHmac(value: unknown): string {
   const cleaned = removeEmptyChildren(value);
-  const jsonValue = JSON.stringify(cleaned).replace(/</g, '\\u003C').replace(/\\u2122/g, '™');
+  return (JSON.stringify(canonicalizeForHmac(cleaned)) ?? 'null')
+    .replace(/</g, '\\u003C')
+    .replace(/\\u2122/g, '™');
+}
+
+export function computeMac(seed: Buffer, deviceId: string, jsonPath: string, value: unknown): string {
+  const jsonValue = stringifyForHmac(value);
   const hmac = createHmac('sha256', seed);
-  hmac.update(sid + jsonPath + jsonValue, 'utf-8');
+  hmac.update(deviceId + jsonPath + jsonValue, 'utf-8');
   return hmac.digest('hex').toUpperCase();
 }
 
-function computeSuperMac(seed: Buffer, sid: string, macs: unknown): string {
+export function computeSuperMac(seed: Buffer, deviceId: string, macs: unknown): string {
   const hmac = createHmac('sha256', seed);
-  hmac.update(sid + JSON.stringify(macs), 'utf-8');
+  hmac.update(deviceId + stringifyForHmac(macs), 'utf-8');
   return hmac.digest('hex').toUpperCase();
 }
 
-interface HmacContext { seed: Buffer; sid: string }
+interface HmacContext { seed: Buffer; deviceId: string }
 
 function initializeHmacContext(): HmacContext | null {
-  const sid = getWindowsSid();
-  if (!sid) return null;
-  console.log(`🔑 Windows SID: ${sid}`);
+  let deviceId = '';
+  if (platform() === 'win32') {
+    deviceId = getWindowsSid();
+  } else if (platform() === 'darwin') {
+    deviceId = getMacDeviceId();
+  }
+  if (!deviceId) return null;
 
-  const seedHex = extractSeedFromPak(getSteamResourcesPakPath());
+  const seedHex = platform() === 'darwin' ? null : extractSeedFromPak(getSteamResourcesPakPath());
   const seed = seedHex ? Buffer.from(seedHex, 'hex') : Buffer.alloc(0);
-  return { seed, sid };
+  return { seed, deviceId };
 }
 
 // ============================================================================
@@ -286,14 +333,19 @@ function main() {
     withholding_permissions: false,
   };
 
-  // Initialize HMAC context (Windows only)
+  // Initialize HMAC context for platforms with tracked preferences
   const isWindows = platform() === 'win32';
+  const isMacOS = platform() === 'darwin';
   let hmacContext: HmacContext | null = null;
 
-  if (isWindows) {
+  if (isWindows || isMacOS) {
     console.log('\n🔐 Initializing HMAC context...');
     hmacContext = initializeHmacContext();
     if (!hmacContext) {
+      if (isMacOS) {
+        console.error('❌ Could not read the macOS device identifier required to sign Chromium preferences.');
+        process.exit(1);
+      }
       console.log('⚠️  Could not initialize HMAC. Extension may not load.');
     }
   }
@@ -303,19 +355,38 @@ function main() {
   const preferencesFile = join(steamConfigDir, 'Preferences');
   const securePreferencesFile = join(steamConfigDir, 'Secure Preferences');
 
+  const preferenceTargets: Array<{
+    filePath: string;
+    isSecure: boolean;
+    prefs: ChromePreferences;
+  }> = [];
+
+  // Parse every existing file before writing either one. This avoids replacing
+  // malformed browser state or leaving a partial installation.
   for (const [filePath, isSecure] of [[preferencesFile, false], [securePreferencesFile, true]] as const) {
     if (!existsSync(filePath)) {
-      if (isSecure) continue;
+      if (isSecure) {
+        if (isMacOS) {
+          console.error('❌ Secure Preferences not found. Start Steam once before installing the extension.');
+          process.exit(1);
+        }
+        continue;
+      }
+      preferenceTargets.push({ filePath, isSecure, prefs: {} });
+      continue;
     }
 
-    console.log(`\n📝 Updating ${isSecure ? 'Secure Preferences' : 'Preferences'}...`);
-
-    let prefs: ChromePreferences = {};
     try {
-      prefs = JSON.parse(readFileSync(filePath, 'utf-8'));
+      const prefs = JSON.parse(readFileSync(filePath, 'utf-8')) as ChromePreferences;
+      preferenceTargets.push({ filePath, isSecure, prefs });
     } catch {
-      if (isSecure) continue;
+      console.error(`❌ ${isSecure ? 'Secure Preferences' : 'Preferences'} could not be read; no files were changed.`);
+      process.exit(1);
     }
+  }
+
+  for (const { filePath, isSecure, prefs } of preferenceTargets) {
+    console.log(`\n📝 Updating ${isSecure ? 'Secure Preferences' : 'Preferences'}...`);
 
     // Set up extension structure
     if (!prefs.extensions) prefs.extensions = {};
@@ -331,16 +402,21 @@ function main() {
       if (!prefs.protection.macs) prefs.protection.macs = {};
       if (!prefs.protection.macs.extensions) prefs.protection.macs.extensions = {};
       if (!prefs.protection.macs.extensions.settings) prefs.protection.macs.extensions.settings = {};
-      if (!prefs.protection.ui) prefs.protection.ui = {};
+      if (!prefs.protection.macs.extensions.ui) prefs.protection.macs.extensions.ui = {};
 
-      const extMac = computeMac(hmacContext.seed, hmacContext.sid, `extensions.settings.${extensionId}`, extensionSettings);
+      const extMac = computeMac(hmacContext.seed, hmacContext.deviceId, `extensions.settings.${extensionId}`, extensionSettings);
       prefs.protection.macs.extensions.settings[extensionId] = extMac;
 
-      const devModeMac = computeMac(hmacContext.seed, hmacContext.sid, 'extensions.ui.developer_mode', true);
-      prefs.protection.ui.developer_mode = devModeMac;
+      const devModeMac = computeMac(hmacContext.seed, hmacContext.deviceId, 'extensions.ui.developer_mode', true);
+      prefs.protection.macs.extensions.ui.developer_mode = devModeMac;
+
+      if (prefs.protection.ui) {
+        delete prefs.protection.ui.developer_mode;
+        if (Object.keys(prefs.protection.ui).length === 0) delete prefs.protection.ui;
+      }
 
       if (isSecure) {
-        const superMac = computeSuperMac(hmacContext.seed, hmacContext.sid, prefs.protection.macs);
+        const superMac = computeSuperMac(hmacContext.seed, hmacContext.deviceId, prefs.protection.macs);
         prefs.protection.super_mac = superMac;
         console.log(`✅ Super MAC: ${superMac.substring(0, 16)}...`);
       }
@@ -352,15 +428,26 @@ function main() {
 
   if (isWindows) {
     execSync('taskkill /F /IM steamwebhelper.exe')
+  } else if (isMacOS) {
+    try {
+      execFileSync(
+        '/usr/bin/pkill',
+        ['-KILL', '-f', '/Steam Helper.app/Contents/MacOS/Steam Helper'],
+      );
+    } catch { /* Steam helpers may already be closed */ }
+    try {
+      execFileSync('/usr/bin/pkill', ['-KILL', '-x', 'steam_osx']);
+    } catch { /* Steam may already be closed */ }
   } else {
     execSync('pkill -f steamwebhelper')
   }
 
   console.log('\n✨ Installation complete!');
   console.log('\n📌 Next steps:');
-  console.log('   1. Close Steam completely');
-  console.log('   2. Restart Steam');
-  console.log('   3. The extension will be loaded automatically');
+  console.log('   1. Restart Steam');
+  console.log('   2. The extension will be loaded automatically');
 }
 
-main();
+if (import.meta.main) {
+  main();
+}
