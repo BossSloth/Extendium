@@ -24,17 +24,38 @@ describe('Chromium tracked-preference HMACs', () => {
   test('sorts keys, escapes less-than signs, and removes empty children', () => {
     const first = {
       z: { empty: {}, value: '<all_urls>' },
+      path: '/Users/test/extension',
       a: true,
     };
     const second = {
       a: true,
+      path: '/Users/test/extension',
       z: { value: '<all_urls>', empty: {} },
     };
 
     expect(stringifyForHmac(first)).toBe(
-      '{"a":true,"z":{"value":"\\u003Call_urls>"}}',
+      '{"a":true,"path":"/Users/test/extension","z":{"value":"\\u003Call_urls>"}}',
     );
     expect(stringifyForHmac(second)).toBe(stringifyForHmac(first));
+  });
+
+  test('matches Chromium when URL and path values contain forward slashes', () => {
+    const value = {
+      matches: ['https://store.steampowered.com/'],
+      path: '/Users/test/extension',
+    };
+
+    expect(stringifyForHmac(value)).toBe(
+      '{"matches":["https://store.steampowered.com/"],"path":"/Users/test/extension"}',
+    );
+    expect(
+      computeMac(
+        EMPTY_SEED,
+        DEVICE_ID,
+        'extensions.settings.test',
+        value,
+      ),
+    ).toBe('52104A704C3604F6D23DFDFCD8A9F7997B39911771793ABC792E00E92D663BA9');
   });
 
   test('matches a canonical super-MAC golden vector', () => {
