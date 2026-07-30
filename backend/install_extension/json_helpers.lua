@@ -2,6 +2,12 @@
 
 local json = require("json")
 
+-- Chromium's canonical JSON does not escape forward slashes, while
+-- Millennium's bundled cjson does by default. Each plugin backend has its own
+-- Lua VM, so configure this VM to hash paths and URLs exactly as Chromium
+-- writes them.
+json.encode_escape_forward_slash(false)
+
 local M = {}
 
 -- Encode JSON with sorted keys (critical for HMAC - must match JS JSON.stringify order)

@@ -5,6 +5,7 @@
     "watch": "nodemon --watch public/extendium.scss --exec \"npm run sass && npm run dev\"",
     "build": "npm run sass && millennium-ttc --build prod",
     "lint": "eslint",
+    "test": "bun test",
     "gen:compatibility": "bun run ./helpers/generate-compatibility-map.ts \"./Extendium 2.0 extension compatibility list - Compatibility list.csv\""
   },
   "devDependencies": {
