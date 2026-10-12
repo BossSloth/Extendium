@@ -96,6 +96,14 @@
     header.style.display = 'block';
 
     const headerContent = /** @type {HTMLElement} */ (header.firstElementChild);
+
+    // The header template also contains a mobile header block whose hashed class names no longer match
+    // the store's stylesheets, so it shows up as an unstyled button. Only the desktop header is needed.
+    for (const child of Array.from(header.children)) {
+      if (child !== headerContent && child instanceof HTMLElement) {
+        child.style.display = 'none';
+      }
+    }
     headerContent.style.transition = 'height 0.25s ease-in-out 0s';
     headerContent.style.overflow = 'hidden';
     headerContent.style.setProperty('height', '0px', 'important');
