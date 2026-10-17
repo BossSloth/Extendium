@@ -1,3 +1,11 @@
+## [2.0.5](https://github.com/BossSloth/Extendium/compare/v2.0.4...v2.0.5) (2026-10-17)
+
+
+### Bug Fixes
+
+* Fixed react header to no longer be unstyled and show a white box on pages like the wishlist ([a4a4d9b](https://github.com/BossSloth/Extendium/commit/a4a4d9b1c66784d945aa749ab3297728feaed09e)), closes [#117](https://github.com/BossSloth/Extendium/issues/117)
+* update BrowserViewHost module finder to work on newer steam versions ([dd4667e](https://github.com/BossSloth/Extendium/commit/dd4667ed3ef4681710cd6343c87f3b91768c5d2d))
+
 ## [2.0.4](https://github.com/BossSloth/Extendium/compare/v2.0.3...v2.0.4) (2026-05-29)
 
 
