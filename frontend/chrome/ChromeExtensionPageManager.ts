@@ -46,7 +46,7 @@ export async function uninstallExtension(id: string): Promise<void> {
 
 declare global {
   interface Window {
-    __extendiumOnInstalledQueue?: Map<TrackedEvent, (chrome.developerPrivate.ExtensionInfo | string)[]>;
+    __extendiumOnInstalledQueue?: chrome.developerPrivate.EventData[];
   }
 }
 
@@ -54,7 +54,7 @@ const trackedEvents: `${chrome.developerPrivate.EventType}`[] = ['INSTALLED', 'U
 
 type TrackedEvent = (typeof trackedEvents)[number];
 
-type ExtensionEventCallback = (id: string, info?: chrome.developerPrivate.ExtensionInfo) => void;
+type ExtensionEventCallback = (id: string, info?: chrome.developerPrivate.ExtensionInfo) => void | Promise<void>;
 
 class PersistentExtensionsPage {
   private sessionId: string | null = null;
@@ -89,12 +89,10 @@ class PersistentExtensionsPage {
     await RuntimeEvaluate(
       this.sessionId,
       (_trackedEvents: readonly string[]) => {
-        window.__extendiumOnInstalledQueue ??= new Map();
+        window.__extendiumOnInstalledQueue ??= [];
         chrome.developerPrivate.onItemStateChanged.addListener((info) => {
           if (_trackedEvents.includes(info.event_type)) {
-            const current = window.__extendiumOnInstalledQueue?.get(info.event_type) ?? [];
-            current.push(info.extensionInfo ?? info.item_id);
-            window.__extendiumOnInstalledQueue?.set(info.event_type, current);
+            window.__extendiumOnInstalledQueue?.push(info);
           }
         });
       },
@@ -118,22 +116,16 @@ class PersistentExtensionsPage {
         const extensionEvents = await RuntimeEvaluate(
           this.sessionId, //
           () => {
-            return window.__extendiumOnInstalledQueue !== undefined
-              ? Object.fromEntries(window.__extendiumOnInstalledQueue)
-              : undefined;
+            return window.__extendiumOnInstalledQueue?.splice(0);
           },
         );
         if (extensionEvents) {
-          Object.entries(extensionEvents).forEach(([eventType, extensionInfos]) => {
-            if (PersistentExtensionsPage.isTrackedEvent(eventType)) {
-              extensionInfos.forEach((extensionInfo) => {
-                this.handleEvent(eventType, extensionInfo);
-              });
+          for (const event of extensionEvents) {
+            if (PersistentExtensionsPage.isTrackedEvent(event.event_type)) {
+              // eslint-disable-next-line no-await-in-loop -- Finish each state change before dispatching the next event.
+              await this.handleEvent(event.event_type, event.extensionInfo ?? event.item_id);
             }
-          });
-          await RuntimeEvaluate(this.sessionId, () => {
-            window.__extendiumOnInstalledQueue?.clear();
-          });
+          }
         }
       } catch (error) {
         console.error('Error polling for extension events:', error);
@@ -155,7 +147,10 @@ class PersistentExtensionsPage {
     return trackedEvents.includes(event as TrackedEvent);
   }
 
-  private handleEvent(eventType: TrackedEvent, extensionInfo: chrome.developerPrivate.ExtensionInfo | string): void {
+  private async handleEvent(
+    eventType: TrackedEvent,
+    extensionInfo: chrome.developerPrivate.ExtensionInfo | string,
+  ): Promise<void> {
     if (this.sessionId === null) {
       return;
     }
@@ -165,16 +160,17 @@ class PersistentExtensionsPage {
       return;
     }
 
-    callbacks.forEach((callback) => {
+    for (const callback of callbacks) {
       try {
-        callback(
+        // eslint-disable-next-line no-await-in-loop -- Wait for async listeners and catch their rejections here.
+        await callback(
           typeof extensionInfo === 'string' ? extensionInfo : extensionInfo.id,
           typeof extensionInfo === 'string' ? undefined : extensionInfo,
         );
       } catch (error) {
         console.error(`Error in ${eventType} callback:`, error);
       }
-    });
+    }
   }
 
   on(event: TrackedEvent, callback: ExtensionEventCallback): () => void {
