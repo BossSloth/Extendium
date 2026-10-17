@@ -11,7 +11,7 @@
     "sass": "sass ./public/extendium.scss:./public/extendium.css --style compressed --embed-sources --embed-source-map",
     "watch": "nodemon --watch public/extendium.scss --exec \"npm run sass && npm run dev\"",
     "build": "npm run sass && millennium-ttc --build prod",
-    "lint": "eslint",
+    "lint": "oxlint",
     "check": "bun check -p frontend && bun check -p webkit",
     "format": "oxfmt",
     "gen:compatibility": "bun run ./helpers/generate-compatibility-map.ts \"./Extendium 2.0 extension compatibility list - Compatibility list.csv\""
@@ -30,7 +30,6 @@
   },
   "devDependencies": {
     "@eslint-react/eslint-plugin": "^5.28.0",
-    "@eslint/js": "^10.0.1",
     "@semantic-release/changelog": "^7.0.0",
     "@semantic-release/exec": "^7.1.0",
     "@semantic-release/git": "^11.0.1",
@@ -45,13 +44,13 @@
     "devtools-protocol": "^0.0.1718299",
     "eslint": "^10.12.0",
     "eslint-plugin-perfectionist": "^5.12.1",
-    "globals": "^17.13.0",
     "knip": "^6.41.0",
     "nodemon": "^3.1.14",
     "oxfmt": "^0.73.0",
+    "oxlint": "^1.88.0",
+    "oxlint-tsgolint": "^7.0.2004",
     "semantic-release": "^25.0.9",
     "steam-types": "^2.2.0",
-    "typescript": "^6.0.3",
-    "typescript-eslint": "^8.71.2"
+    "typescript": "^6.0.3"
   }
 }
