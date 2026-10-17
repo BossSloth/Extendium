@@ -1,0 +1,7 @@
+{
+  "extends": "../frontend/tsconfig.json",
+  "compilerOptions": {
+    "types": ["bun", "chrome", "steam-types"]
+  },
+  "include": ["."]
+}

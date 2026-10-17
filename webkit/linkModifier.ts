@@ -38,6 +38,10 @@ export function linkClickInterceptor(externalLinks: ExternalLink[], settings: Ex
 }
 
 function linkMatches(link: ExternalLink, href: string): boolean {
+  if (link.match.trim() === '') {
+    return false;
+  }
+
   if (link.isRegex) {
     return stringToRegex(link.match).test(href);
   }
