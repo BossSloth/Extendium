@@ -1,4 +1,4 @@
-import React, { JSX, useEffect, useRef } from 'react';
+import React, { JSX, useEffect, useRef, useState } from 'react';
 import { Size } from './ExtensionBar/ExtensionButton';
 
 interface ExtensionActionProps {
@@ -7,15 +7,17 @@ interface ExtensionActionProps {
 }
 
 export function ExtensionAction({ children, onResizeCallback }: ExtensionActionProps): JSX.Element {
+  // eslint-disable-next-line @eslint-react/naming-convention-ref-name
   const container = useRef<HTMLDivElement>(null);
-  const sizeRef = useRef<Size>({ width: 200, height: 600 });
+  const [size, setSize] = useState<Size>({ width: 200, height: 600 });
 
   useEffect(() => {
     const popupWindow = container.current?.ownerDocument.defaultView;
     if (!popupWindow) return;
 
+    // eslint-disable-next-line @typescript-eslint/no-shadow
     onResizeCallback?.((size: Size) => {
-      sizeRef.current = size;
+      setSize(size);
       popupWindow.SteamClient.Window.ResizeTo(size.width, size.height, false);
       if (container.current) {
         container.current.style.width = `${size.width}px`;
@@ -51,10 +53,10 @@ export function ExtensionAction({ children, onResizeCallback }: ExtensionActionP
         }
       });
     });
-  }, [onResizeCallback]);
+  }, [onResizeCallback, size]);
 
   return (
-    <div style={{ width: sizeRef.current.width, height: sizeRef.current.height }} ref={container}>
+    <div style={{ width: size.width, height: size.height }} ref={container}>
       {children}
     </div>
   );

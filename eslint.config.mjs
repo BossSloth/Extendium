@@ -1,7 +1,7 @@
+import pluginReact from '@eslint-react/eslint-plugin';
 import pluginJs from '@eslint/js';
 import stylistic from '@stylistic/eslint-plugin';
 import perfectionist from 'eslint-plugin-perfectionist';
-import pluginReact from 'eslint-plugin-react';
 import { defineConfig, globalIgnores } from 'eslint/config';
 import globals from 'globals';
 import tseslint from 'typescript-eslint';
@@ -16,20 +16,19 @@ export default defineConfig(
         projectService: {
           allowDefaultProject: ['*config.mjs', 'helpers/clean-maps.mjs', 'fake-header-extension/*.js'],
         },
-        tsconfigRootDir: import.meta.dirname,
       },
     },
   },
   {
     settings: {
-      react: {
+      'react-x': {
         version: '19.2',
       },
     },
   },
   pluginJs.configs.all,
   ...tseslint.configs.all,
-  pluginReact.configs.flat.all,
+  pluginReact.configs.all,
   stylistic.configs.all,
   stylistic.configs['disable-legacy'],
   stylistic.configs.customize({
@@ -124,19 +123,10 @@ export default defineConfig(
       'no-alert': 'off',
       camelcase: 'off',
       '@typescript-eslint/strict-void-return': 'off',
-      'react/no-unescaped-entities': 'off',
       // #endregion
 
       // #region React
-      'react/jsx-filename-extension': ['error', { extensions: ['.tsx'] }],
-
       '@stylistic/jsx-one-expression-per-line': 'off',
-      'react/forbid-component-props': 'off',
-      'react/jsx-max-depth': 'off',
-      'react/jsx-no-literals': 'off',
-      'react/jsx-no-bind': 'off',
-      'react/require-default-props': 'off',
-      'react/jsx-no-leaked-render': 'off',
       // #endregion
     },
   },

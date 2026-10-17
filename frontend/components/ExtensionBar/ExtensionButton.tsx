@@ -1,4 +1,3 @@
-/* eslint-disable react/jsx-props-no-spreading */
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { Extension } from '@extension/Extension';
@@ -19,7 +18,7 @@ export interface Size {
 }
 
 export function ExtensionButton({ extension }: { readonly extension: Extension; }): JSX.Element {
-  const contextMenuWindow = useRef<Window | null>(null);
+  const contextMenuWindowRef = useRef<Window | null>(null);
   const popupContextMenuRef = useRef<ContextMenu | undefined>(undefined);
   const focusHasBeenSetRef = useRef<boolean>(false);
   const resizeCallbackRef = useRef<((size: Size) => void) | undefined>(undefined);
@@ -144,7 +143,7 @@ export function ExtensionButton({ extension }: { readonly extension: Extension; 
       }
     } else {
       popupContextMenuRef.current = undefined;
-      createPopupContextMenu(contextMenuWindow.current?.document.activeElement, clickEvent);
+      createPopupContextMenu(contextMenuWindowRef.current?.document.activeElement, clickEvent);
     }
 
     if (extension.action.popupUrl === undefined) {
@@ -158,10 +157,10 @@ export function ExtensionButton({ extension }: { readonly extension: Extension; 
   }
 
   function onContextMenu(): void {
-    if (!contextMenuWindow.current) return;
+    if (!contextMenuWindowRef.current) return;
 
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    showExtensionContextMenu(extension, contextMenuWindow.current.document.activeElement!);
+    showExtensionContextMenu(extension, contextMenuWindowRef.current.document.activeElement!);
   }
 
   return (
@@ -173,7 +172,7 @@ export function ExtensionButton({ extension }: { readonly extension: Extension; 
       title={extension.name}
       ref={(el) => {
         if (el) {
-          contextMenuWindow.current = el.ownerDocument.defaultView;
+          contextMenuWindowRef.current = el.ownerDocument.defaultView;
           // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
           if (KEEP_OPEN) {
             createPopupContextMenu(el);

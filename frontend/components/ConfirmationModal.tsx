@@ -1,4 +1,3 @@
-/* eslint-disable react/no-multi-comp */
 import { ConfirmModal, showModal, ShowModalResult } from '@steambrew/client';
 import React, { ReactNode, useEffect } from 'react';
 import { mainWindow } from 'shared';
@@ -75,6 +74,7 @@ export function showConfirmationModal({
     const [modalInstance, setModalInstance] = React.useState<ShowModalResult | null>(null);
 
     useEffect(() => {
+      // eslint-disable-next-line @eslint-react/set-state-in-effect
       setModalInstance(modal);
     }, []);
 

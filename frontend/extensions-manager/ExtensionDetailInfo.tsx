@@ -47,11 +47,12 @@ export function ExtensionDetailInfo({ extension }: { readonly extension: Extensi
     setManagerPopup({ route: null });
   }
 
+  // eslint-disable-next-line @eslint-react/rules-of-hooks
   React.useEffect(() => {
     if (isDev) {
       initializeViews();
     }
-  }, []);
+  });
 
   return (
     <div className="extension-detail-info">

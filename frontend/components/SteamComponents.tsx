@@ -67,13 +67,13 @@ const GenericDialog = findModuleExport(e =>
   && e?.toString?.()?.includes('.onlyPopoutIfNeeded') === true) as React.FC<GenericDialogProps>;
 
 export function SteamDialog({ children, ...props }: GenericDialogProps & { readonly children: React.ReactNode; }): React.ReactNode {
+  // eslint-disable-next-line @eslint-react/immutability
   props = {
     modal: false,
     ...props,
   };
 
   return (
-    // eslint-disable-next-line react/jsx-props-no-spreading
     <GenericDialog {...props}>
       <ModalRoot onCancel={props.onDismiss}>
         {children}

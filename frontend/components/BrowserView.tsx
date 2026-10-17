@@ -95,6 +95,7 @@ export function BrowserView({ url, expectedParentPopupTitle, onFocusChanged, onC
         ChromeDevToolsProtocol.send('Page.close', undefined, cdpSessionIdRef.current);
       }
     };
+    // eslint-disable-next-line @eslint-react/exhaustive-deps
   }, [url]);
 
   if (!browserView) {

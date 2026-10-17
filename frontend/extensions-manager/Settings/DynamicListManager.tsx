@@ -1,6 +1,6 @@
 import { ExternalLink } from '@extension/Metadata';
 import { Field } from '@steambrew/client';
-import React, { useCallback, useMemo, useRef } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 
 export interface ExternalLinksManagerProps {
   onChange(next: ExternalLink[]): void;
@@ -24,21 +24,22 @@ export default function DynamicListManager({
   allowEmpty = false,
 }: ExternalLinksManagerProps): React.ReactNode {
   const items = useMemo(() => value, [value]);
-  const isFirstLoad = useRef(true);
+  // eslint-disable-next-line @eslint-react/use-state
+  const [isFirstLoad, setFirstLoad] = useState(true);
 
   const setItem = useCallback(
     (index: number, next: ExternalLink, doSave = false) => {
       const copy = items.slice();
       copy[index] = next;
-      isFirstLoad.current = false;
+      setFirstLoad(false);
       onChange(copy);
       if (doSave) onSave(copy);
     },
-    [items, onChange],
+    [items, onChange, onSave],
   );
 
   const addItem = useCallback(() => {
-    isFirstLoad.current = false;
+    setFirstLoad(false);
     const next: ExternalLink[] = [...items, { match: '', isRegex: false }];
     onChange(next);
   }, [items, onChange]);
@@ -49,16 +50,16 @@ export default function DynamicListManager({
       onChange(next);
       onSave(next);
     },
-    [items, onChange],
+    [items, onChange, onSave],
   );
 
   const onBlurCleanup = useCallback(() => {
-    isFirstLoad.current = false;
+    setFirstLoad(false);
     onSave(items);
     if (allowEmpty) return;
     const cleaned = items.filter(s => s.match.trim().length > 0);
     if (cleaned.length !== items.length) onChange(cleaned);
-  }, [allowEmpty, items, onChange]);
+  }, [allowEmpty, items, onChange, onSave]);
 
   return (
     <div className={['ext-links-manager', className].filter(Boolean).join(' ')}>
@@ -77,14 +78,14 @@ export default function DynamicListManager({
             )
           : (
               items.map((link, idx) => (
-                // eslint-disable-next-line react/no-array-index-key
+                // eslint-disable-next-line @eslint-react/no-array-index-key
                 <div key={`${idx}`} className="ext-links-row">
                   <input
                     className="styled-input"
                     type="text"
                     inputMode="url"
                     value={link.match}
-                    autoFocus={idx === items.length - 1 && !isFirstLoad.current}
+                    autoFocus={idx === items.length - 1 && !isFirstLoad}
                     placeholder={placeholder}
                     onChange={(e) => { setItem(idx, { ...link, match: e.currentTarget.value }); }}
                     onBlur={onBlurCleanup}

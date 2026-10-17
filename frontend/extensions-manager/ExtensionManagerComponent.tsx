@@ -19,6 +19,7 @@ export function ExtensionManagerComponent({ extension }: { readonly extension: E
       async (id: string, enabled: boolean) => chrome.management.setEnabled(id, enabled),
       [extension.id, value],
     );
+    // eslint-disable-next-line @eslint-react/immutability
     extension.extensionInfo.state = value ? 'ENABLED' : 'DISABLED';
     setExtension(extension);
   }
@@ -74,6 +75,7 @@ export function ExtensionManagerComponent({ extension }: { readonly extension: E
       <div className="extension-buttons">
         <DialogButton onClick={() => { setManagerPopup({ route: `info/${extension.id}` }); }}>Details</DialogButton>
         <DialogButton onClick={() => { fullyUninstallExtension(); }}>Remove</DialogButton>
+        {/* eslint-disable-next-line @eslint-react/immutability */}
         <Toggle onChange={handleToggleChange} value={extension.enabled} />
       </div>
     </div>

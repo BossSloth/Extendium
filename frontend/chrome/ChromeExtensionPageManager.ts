@@ -72,9 +72,9 @@ class PersistentExtensionsPage {
       window.__extendiumOnInstalledQueue ??= new Map();
       chrome.developerPrivate.onItemStateChanged.addListener((info) => {
         if (_trackedEvents.includes(info.event_type)) {
-          const current = window.__extendiumOnInstalledQueue?.get(info.event_type as TrackedEvent) ?? [];
+          const current = window.__extendiumOnInstalledQueue?.get(info.event_type) ?? [];
           current.push(info.extensionInfo ?? info.item_id);
-          window.__extendiumOnInstalledQueue?.set(info.event_type as TrackedEvent, current);
+          window.__extendiumOnInstalledQueue?.set(info.event_type, current);
         }
       });
     }, [trackedEvents]);
