@@ -93,5 +93,7 @@ export interface BrowserViewHostProps extends React.HTMLAttributes<HTMLDivElemen
 }
 
 export const BrowserViewHost = findModuleExport(
-  (e) => e?.type?.toString?.()?.includes('RemotePlay.UnlockH264') === true,
+  (e) =>
+    e?.type?.toString?.()?.includes('full-screen') === true
+    && e?.type?.toString?.()?.includes('.ownerDocument.visibilityState') === true,
 ) as React.FC<BrowserViewHostProps>;
