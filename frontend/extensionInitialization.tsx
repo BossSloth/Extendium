@@ -1,6 +1,11 @@
 import { Extension } from '@extension/Extension';
 import { ConfirmModal, showModal } from '@steambrew/client';
-import { getExtensionManifest, getExtensions, persistentExtensionsPage, uninstallExtension } from 'chrome/ChromeExtensionPageManager';
+import {
+  getExtensionManifest,
+  getExtensions,
+  persistentExtensionsPage,
+  uninstallExtension,
+} from 'chrome/ChromeExtensionPageManager';
 import { ExtensionInfo } from 'chrome/types';
 import { BROKEN_EXTENSION_IDS, INTERNAL_HOME_PAGE_URL } from 'constant';
 import React from 'react';
@@ -62,10 +67,11 @@ function showBrokenExtensionWarning(extensionId: string, extensionName: string):
       bAlertDialog
       bDisableBackgroundDismiss
       bHideCloseIcon
-      strDescription={(
+      strDescription={
         <>
           <p>
-            We've automatically detected an extension ({extensionName}:{extensionId}) that is known to cause Steam to become unresponsive, crash or become fully bricked.
+            We've automatically detected an extension ({extensionName}:{extensionId}) that is known to cause Steam to
+            become unresponsive, crash or become fully bricked.
           </p>
           <strong>
             You WILL NEED to remove this extension to prevent potential issues with your Steam client.
@@ -73,14 +79,16 @@ function showBrokenExtensionWarning(extensionId: string, extensionName: string):
             You can find more information about compatible extensions on the Extendium github page.
           </strong>
         </>
-      )}
+      }
       strOKButtonText="Uninstall extension"
       onOK={() => {
-        uninstallExtension(extensionId).then(() => {
-          dialog.Close();
-        }).catch(() => {
-          showBrokenExtensionWarning(extensionId, extensionName);
-        });
+        uninstallExtension(extensionId)
+          .then(() => {
+            dialog.Close();
+          })
+          .catch(() => {
+            showBrokenExtensionWarning(extensionId, extensionName);
+          });
       }}
       onCancel={() => {
         showBrokenExtensionWarning(extensionId, extensionName);

@@ -27,13 +27,20 @@ function ExtensionManagerPopup(): React.ReactNode {
   } else if (managerPopup.route.startsWith('settings')) {
     content = <ExtendiumSettings />;
   } else {
-    content = <p>Error you somehow got to an undefined route please report this with this route &quot;<code>{managerPopup.route}</code>&quot;</p>;
+    content = (
+      <p>
+        Error you somehow got to an undefined route please report this with this route &quot;
+        <code>{managerPopup.route}</code>&quot;
+      </p>
+    );
   }
 
   return (
     <SteamDialog
       strTitle="Extensions"
-      onDismiss={() => { setManagerPopup({ open: false }); }}
+      onDismiss={() => {
+        setManagerPopup({ open: false });
+      }}
       popupWidth={1280}
       popupHeight={mainWindow.innerHeight * 0.65}
       minWidth={1280}
@@ -42,9 +49,7 @@ function ExtensionManagerPopup(): React.ReactNode {
       saveDimensionsKey="extensionManagerPopup"
     >
       <Styles />
-      <div className="extension-manager-popup">
-        {content}
-      </div>
+      <div className="extension-manager-popup">{content}</div>
     </SteamDialog>
   );
 }

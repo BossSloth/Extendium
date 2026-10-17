@@ -57,7 +57,7 @@ export default function DynamicListManager({
     setFirstLoad(false);
     onSave(items);
     if (allowEmpty) return;
-    const cleaned = items.filter(s => s.match.trim().length > 0);
+    const cleaned = items.filter((s) => s.match.trim().length > 0);
     if (cleaned.length !== items.length) onChange(cleaned);
   }, [allowEmpty, items, onChange, onSave]);
 
@@ -70,56 +70,58 @@ export default function DynamicListManager({
       <Field description="Manage URL patterns that should always open in an external browser. For each entry, provide a string to match against the URL. If 'Regex' is checked, the string is treated as a regular expression. Otherwise, it performs a simple case sensitive text search." />
 
       <div className="ext-links-list">
-        {items.length === 0
-          ? (
-              <div className="ext-links-empty">
-                No links yet.
-              </div>
-            )
-          : (
-              items.map((link, idx) => (
-                // eslint-disable-next-line @eslint-react/no-array-index-key
-                <div key={`${idx}`} className="ext-links-row">
-                  <input
-                    className="styled-input"
-                    type="text"
-                    inputMode="url"
-                    value={link.match}
-                    autoFocus={idx === items.length - 1 && !isFirstLoad}
-                    placeholder={placeholder}
-                    onChange={(e) => { setItem(idx, { ...link, match: e.currentTarget.value }); }}
-                    onBlur={onBlurCleanup}
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter') {
-                        e.preventDefault();
-                        // Add a new row when pressing Enter on the last item
-                        if (idx === items.length - 1) addItem();
-                      } else if (e.key === 'Backspace' && link.match.length === 0) {
-                        // Backspace on empty row removes it
-                        e.preventDefault();
-                        removeItem(idx);
-                      }
-                    }}
-                  />
-                  <label className="ext-links-toggle" title="Treat match as a regular expression">
-                    <input
-                      type="checkbox"
-                      checked={link.isRegex}
-                      onChange={(e) => { setItem(idx, { ...link, isRegex: e.currentTarget.checked }, true); }}
-                    />
-                    <span>Regex</span>
-                  </label>
-                  <button
-                    type="button"
-                    className="ext-links-remove"
-                    onClick={() => { removeItem(idx); }}
-                    title="Remove"
-                  >
-                    Remove
-                  </button>
-                </div>
-              ))
-            )}
+        {items.length === 0 ? (
+          <div className="ext-links-empty">No links yet.</div>
+        ) : (
+          items.map((link, idx) => (
+            // eslint-disable-next-line @eslint-react/no-array-index-key
+            <div key={`${idx}`} className="ext-links-row">
+              <input
+                className="styled-input"
+                type="text"
+                inputMode="url"
+                value={link.match}
+                autoFocus={idx === items.length - 1 && !isFirstLoad}
+                placeholder={placeholder}
+                onChange={(e) => {
+                  setItem(idx, { ...link, match: e.currentTarget.value });
+                }}
+                onBlur={onBlurCleanup}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    e.preventDefault();
+                    // Add a new row when pressing Enter on the last item
+                    if (idx === items.length - 1) addItem();
+                  } else if (e.key === 'Backspace' && link.match.length === 0) {
+                    // Backspace on empty row removes it
+                    e.preventDefault();
+                    removeItem(idx);
+                  }
+                }}
+              />
+              <label className="ext-links-toggle" title="Treat match as a regular expression">
+                <input
+                  type="checkbox"
+                  checked={link.isRegex}
+                  onChange={(e) => {
+                    setItem(idx, { ...link, isRegex: e.currentTarget.checked }, true);
+                  }}
+                />
+                <span>Regex</span>
+              </label>
+              <button
+                type="button"
+                className="ext-links-remove"
+                onClick={() => {
+                  removeItem(idx);
+                }}
+                title="Remove"
+              >
+                Remove
+              </button>
+            </div>
+          ))
+        )}
       </div>
 
       <div className="ext-links-actions">

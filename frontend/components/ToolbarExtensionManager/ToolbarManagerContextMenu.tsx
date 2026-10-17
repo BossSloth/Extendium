@@ -12,7 +12,7 @@ export function ToolbarManagerContextMenu(): React.JSX.Element {
   const { extensions: allExtensions } = useExtensionsStore();
 
   const enabledExtensions = useMemo(() => {
-    return Array.from(allExtensions.values()).filter(extension => extension.enabled);
+    return Array.from(allExtensions.values()).filter((extension) => extension.enabled);
   }, [allExtensions]);
 
   function isExtensionPinned(extensionId: string): boolean {
@@ -27,7 +27,7 @@ export function ToolbarManagerContextMenu(): React.JSX.Element {
 
   function unpinExtension(extensionId: string): void {
     setExtensionsOrder((order) => {
-      return order.filter(id => id !== extensionId);
+      return order.filter((id) => id !== extensionId);
     });
   }
 
@@ -39,7 +39,7 @@ export function ToolbarManagerContextMenu(): React.JSX.Element {
           <DialogHeader>Extensions</DialogHeader>
           {enabledExtensions
             .sort((a, b) => a.name.localeCompare(b.name))
-            .map(extension => (
+            .map((extension) => (
               <ManagerExtensionItem
                 key={extension.id}
                 extension={extension}
@@ -48,7 +48,12 @@ export function ToolbarManagerContextMenu(): React.JSX.Element {
                 unpinExtension={unpinExtension}
               />
             ))}
-          <div style={{ cursor: 'pointer' }} onClick={() => { openExtensionManagerPopup(); }}>
+          <div
+            style={{ cursor: 'pointer' }}
+            onClick={() => {
+              openExtensionManagerPopup();
+            }}
+          >
             <Field icon={<FaCog />} label="Manage extensions" />
           </div>
         </Menu>

@@ -36,7 +36,12 @@ export interface ContextMenu {
   m_popupContextMenu: BasicPopup;
 }
 
-export async function loadScript(src: string, document: Document, attributes?: NamedNodeMap, module?: boolean): Promise<void> {
+export async function loadScript(
+  src: string,
+  document: Document,
+  attributes?: NamedNodeMap,
+  module?: boolean,
+): Promise<void> {
   return new Promise<void>((resolve, reject) => {
     const script = document.createElement('script');
     script.setAttribute('type', 'text/javascript');
@@ -103,7 +108,8 @@ function getUserInfo(): UserInfo | undefined {
     accountBalance: App.GetCurrentUser().strAccountBalance,
     steamid,
     userId,
-    avatarUrl: friendStore.m_FriendsUIFriendStore.GetPlayer(friendStore.currentUserSteamID.GetAccountID()).persona.avatar_url_medium,
+    avatarUrl: friendStore.m_FriendsUIFriendStore.GetPlayer(friendStore.currentUserSteamID.GetAccountID()).persona
+      .avatar_url_medium,
     personaName: connectionManager.persona_name,
   };
 }

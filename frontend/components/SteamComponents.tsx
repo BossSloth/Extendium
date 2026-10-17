@@ -61,12 +61,17 @@ interface GenericDialogProps {
   readonly browserType?: unknown;
 }
 
-const GenericDialog = findModuleExport(e =>
-  e?.toString?.()?.includes('.popupHeight') === true
-  && e?.toString?.()?.includes('.popupWidth') === true
-  && e?.toString?.()?.includes('.onlyPopoutIfNeeded') === true) as React.FC<GenericDialogProps>;
+const GenericDialog = findModuleExport(
+  (e) =>
+    e?.toString?.()?.includes('.popupHeight') === true
+    && e?.toString?.()?.includes('.popupWidth') === true
+    && e?.toString?.()?.includes('.onlyPopoutIfNeeded') === true,
+) as React.FC<GenericDialogProps>;
 
-export function SteamDialog({ children, ...props }: GenericDialogProps & { readonly children: React.ReactNode; }): React.ReactNode {
+export function SteamDialog({
+  children,
+  ...props
+}: GenericDialogProps & { readonly children: React.ReactNode }): React.ReactNode {
   // eslint-disable-next-line @eslint-react/immutability
   props = {
     modal: false,
@@ -75,9 +80,7 @@ export function SteamDialog({ children, ...props }: GenericDialogProps & { reado
 
   return (
     <GenericDialog {...props}>
-      <ModalRoot onCancel={props.onDismiss}>
-        {children}
-      </ModalRoot>
+      <ModalRoot onCancel={props.onDismiss}>{children}</ModalRoot>
     </GenericDialog>
   );
 }
@@ -89,4 +92,6 @@ export interface BrowserViewHostProps extends React.HTMLAttributes<HTMLDivElemen
   underlay?: boolean;
 }
 
-export const BrowserViewHost = findModuleExport(e => e?.type?.toString?.()?.includes('RemotePlay.UnlockH264') === true) as React.FC<BrowserViewHostProps>;
+export const BrowserViewHost = findModuleExport(
+  (e) => e?.type?.toString?.()?.includes('RemotePlay.UnlockH264') === true,
+) as React.FC<BrowserViewHostProps>;

@@ -5,7 +5,11 @@ export class Logger {
   private extBadgeStyle = '';
   private readonly ctxBadgeStyle: string;
 
-  constructor(readonly parent: Extension, readonly VERBOSE: boolean, readonly context: string) {
+  constructor(
+    readonly parent: Extension,
+    readonly VERBOSE: boolean,
+    readonly context: string,
+  ) {
     this.ctxBadgeStyle = Logger.makeStyleFromStr(this.context);
 
     this.init();
@@ -60,27 +64,23 @@ export class Logger {
   }
 
   private static makeBadgeStyle(bg: string, fg: string): string {
-    return [
-      `background: ${bg}`,
-      `color: ${fg}`,
-      'padding: 1px 4px',
-      'border-radius: 3px',
-      'font-weight: 600',
-    ].join('; ');
+    return [`background: ${bg}`, `color: ${fg}`, 'padding: 1px 4px', 'border-radius: 3px', 'font-weight: 600'].join(
+      '; ',
+    );
   }
 
   private static colorFromString(input: string): string {
     // Deterministic hash
     let hash = 0;
     for (let i = 0; i < input.length; i++) {
-      hash = ((hash << 6) - hash) + input.charCodeAt(i);
+      hash = (hash << 6) - hash + input.charCodeAt(i);
       hash |= 0; // Convert to 32bit int
     }
 
     let color = '#';
     for (let i = 0; i < 3; i++) {
-      const value = (hash >> (i * 8)) & 0xFF;
-      color += (`00${value.toString(16)}`).slice(-2);
+      const value = (hash >> (i * 8)) & 0xff;
+      color += `00${value.toString(16)}`.slice(-2);
     }
 
     return color;
@@ -89,12 +89,12 @@ export class Logger {
   private static getTextColorForBg(hexBg: string): string {
     // YIQ contrast formula to decide black/white text
     const { r, g, b } = Logger.hexToRgb(hexBg);
-    const yiq = ((r * 299) + (g * 587) + (b * 114)) / 1000;
+    const yiq = (r * 299 + g * 587 + b * 114) / 1000;
 
     return yiq >= 128 ? '#000000' : '#ffffff';
   }
 
-  private static hexToRgb(hex: string): { r: number; g: number; b: number; } {
+  private static hexToRgb(hex: string): { r: number; g: number; b: number } {
     const clean = hex.replace('#', '');
     const bigint = parseInt(clean, 16);
     const r = (bigint >> 16) & 255;

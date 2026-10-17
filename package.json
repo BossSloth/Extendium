@@ -13,6 +13,7 @@
     "build": "npm run sass && millennium-ttc --build prod",
     "lint": "eslint",
     "check": "bun check -p frontend && bun check -p webkit",
+    "format": "oxfmt",
     "gen:compatibility": "bun run ./helpers/generate-compatibility-map.ts \"./Extendium 2.0 extension compatibility list - Compatibility list.csv\""
   },
   "dependencies": {
@@ -40,12 +41,14 @@
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",
     "@types/webpack": "^5.28.5",
+    "chalk": "^6.0.1",
     "devtools-protocol": "^0.0.1718299",
     "eslint": "^10.12.0",
     "eslint-plugin-perfectionist": "^5.12.1",
     "globals": "^17.13.0",
     "knip": "^6.41.0",
     "nodemon": "^3.1.14",
+    "oxfmt": "^0.73.0",
     "semantic-release": "^25.0.9",
     "steam-types": "^2.2.0",
     "typescript": "^6.0.3",

@@ -15,7 +15,7 @@ on:
         type: string
     outputs:
       artifact-name:
-        description: "Name of the uploaded artifact"
+        description: 'Name of the uploaded artifact'
         value: SteamHunters-plugin-${{ inputs.version }}
 
 jobs:

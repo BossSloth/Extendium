@@ -27,8 +27,7 @@ declare namespace chrome {
       EXTENSION_DIALOG = 'EXTENSION_DIALOG',
       EXTENSION_GUEST = 'EXTENSION_GUEST',
       EXTENSION_POPUP = 'EXTENSION_POPUP',
-      EXTENSION_SERVICE_WORKER_BACKGROUND
-        = 'EXTENSION_SERVICE_WORKER_BACKGROUND',
+      EXTENSION_SERVICE_WORKER_BACKGROUND = 'EXTENSION_SERVICE_WORKER_BACKGROUND',
       TAB_CONTENTS = 'TAB_CONTENTS',
       EXTENSION_SIDE_PANEL = 'EXTENSION_SIDE_PANEL',
       DEVELOPER_TOOLS = 'DEVELOPER_TOOLS',
@@ -433,68 +432,43 @@ declare namespace chrome {
 
     export type StringCallback = (s: string) => void;
 
-    export function addHostPermission(extensionId: string, host: string):
-    Promise<void>;
+    export function addHostPermission(extensionId: string, host: string): Promise<void>;
     export function autoUpdate(): Promise<void>;
-    export function choosePath(selectType: SelectType, fileType: FileType):
-    Promise<string>;
-    export function deleteExtensionErrors(
-      properties: DeleteExtensionErrorsProperties): Promise<void>;
-    export function getExtensionsInfo(options: GetExtensionsInfoOptions):
-    Promise<ExtensionInfo[]>;
+    export function choosePath(selectType: SelectType, fileType: FileType): Promise<string>;
+    export function deleteExtensionErrors(properties: DeleteExtensionErrorsProperties): Promise<void>;
+    export function getExtensionsInfo(options: GetExtensionsInfoOptions): Promise<ExtensionInfo[]>;
     export function getExtensionSize(id: string): Promise<string>;
     export function getProfileConfiguration(): Promise<ProfileInfo>;
     export function installDroppedFile(): Promise<void>;
-    export function loadUnpacked(options: LoadUnpackedOptions):
-    Promise<LoadError | null>;
+    export function loadUnpacked(options: LoadUnpackedOptions): Promise<LoadError | null>;
     export function notifyDragInstallInProgress(): void;
-    export function openDevTools(properties: OpenDevToolsProperties):
-    Promise<void>;
-    export function packDirectory(
-      path: string, privateKeyPath: string,
-      flags?: number): Promise<PackDirectoryResponse>;
-    export function reload(extensionId: string, options?: ReloadOptions):
-    Promise<LoadError | null>;
-    export function removeHostPermission(extensionId: string, host: string):
-    Promise<void>;
-    export function removeMultipleExtensions(extensionIds: string[]):
-    Promise<void>;
+    export function openDevTools(properties: OpenDevToolsProperties): Promise<void>;
+    export function packDirectory(path: string, privateKeyPath: string, flags?: number): Promise<PackDirectoryResponse>;
+    export function reload(extensionId: string, options?: ReloadOptions): Promise<LoadError | null>;
+    export function removeHostPermission(extensionId: string, host: string): Promise<void>;
+    export function removeMultipleExtensions(extensionIds: string[]): Promise<void>;
     export function repairExtension(extensionId: string): Promise<void>;
-    export function requestFileSource(properties:
-    RequestFileSourceProperties):
-    Promise<RequestFileSourceResponse>;
-    export function setShortcutHandlingSuspended(isSuspended: boolean):
-    Promise<void>;
+    export function requestFileSource(properties: RequestFileSourceProperties): Promise<RequestFileSourceResponse>;
+    export function setShortcutHandlingSuspended(isSuspended: boolean): Promise<void>;
     export function showOptions(extensionId: string): Promise<void>;
     export function showPath(extensionId: string): Promise<void>;
-    export function updateExtensionCommand(update: ExtensionCommandUpdate):
-    Promise<void>;
-    export function updateExtensionConfiguration(
-      update: ExtensionConfigurationUpdate): Promise<void>;
-    export function updateProfileConfiguration(
-      update: ProfileConfigurationUpdate): Promise<void>;
+    export function updateExtensionCommand(update: ExtensionCommandUpdate): Promise<void>;
+    export function updateExtensionConfiguration(update: ExtensionConfigurationUpdate): Promise<void>;
+    export function updateProfileConfiguration(update: ProfileConfigurationUpdate): Promise<void>;
     export function getUserSiteSettings(): Promise<UserSiteSettings>;
-    export function addUserSpecifiedSites(options: UserSiteSettingsOptions):
-    Promise<void>;
-    export function removeUserSpecifiedSites(
-      options: UserSiteSettingsOptions): Promise<void>;
+    export function addUserSpecifiedSites(options: UserSiteSettingsOptions): Promise<void>;
+    export function removeUserSpecifiedSites(options: UserSiteSettingsOptions): Promise<void>;
     export function getUserAndExtensionSitesByEtld(): Promise<SiteGroup[]>;
-    export function getMatchingExtensionsForSite(site: string):
-    Promise<MatchingExtensionInfo[]>;
-    export function updateSiteAccess(
-      site: string, updates: ExtensionSiteAccessUpdate[]): Promise<void>;
+    export function getMatchingExtensionsForSite(site: string): Promise<MatchingExtensionInfo[]>;
+    export function updateSiteAccess(site: string, updates: ExtensionSiteAccessUpdate[]): Promise<void>;
     export function dismissSafetyHubExtensionsMenuNotification(): void;
     export function dismissMv2DeprecationPanel(): void;
-    export function dismissMv2DeprecationNoticeForExtension(
-      extensionId: string): Promise<void>;
-    export function uploadExtensionToAccount(extensionId: string):
-    Promise<boolean>;
+    export function dismissMv2DeprecationNoticeForExtension(extensionId: string): Promise<void>;
+    export function uploadExtensionToAccount(extensionId: string): Promise<boolean>;
     export function showSiteSettings(extensionId: string): Promise<void>;
 
     export const onItemStateChanged: events.Event<(data: EventData) => void>;
-    export const onProfileStateChanged:
-    events.Event<(info: ProfileInfo) => void>;
-    export const onUserSiteSettingsChanged:
-    events.Event<(settings: UserSiteSettings) => void>;
+    export const onProfileStateChanged: events.Event<(info: ProfileInfo) => void>;
+    export const onUserSiteSettingsChanged: events.Event<(settings: UserSiteSettings) => void>;
   }
 }

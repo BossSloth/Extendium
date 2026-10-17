@@ -47,7 +47,10 @@ $secondary-text-color: rgba(255, 255, 255, 0.6);
   user-select: none;
   cursor: pointer;
   box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.3);
-  transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+  transition:
+    background 0.15s ease,
+    border-color 0.15s ease,
+    color 0.15s ease;
   gap: 4px;
 
   &:hover {
@@ -129,7 +132,6 @@ $secondary-text-color: rgba(255, 255, 255, 0.6);
     }
   }
 }
-
 
 //#region extension-manager
 $text-color: white;
@@ -216,7 +218,10 @@ $grid-gutter: 12px;
       align-items: center;
       justify-content: center;
       cursor: pointer;
-      transition: background 0.15s ease, transform 0.1s ease, border-color 0.15s ease;
+      transition:
+        background 0.15s ease,
+        transform 0.1s ease,
+        border-color 0.15s ease;
 
       svg {
         color: #53e582;
@@ -336,7 +341,7 @@ $grid-gutter: 12px;
     }
   }
 
-  & >:last-child {
+  & > :last-child {
     margin: auto 0;
     margin-left: 60px;
   }
@@ -425,7 +430,6 @@ $grid-gutter: 12px;
       @include icon-button;
     }
   }
-
 }
 
 .hr {
@@ -469,7 +473,6 @@ $grid-gutter: 12px;
       margin: 0;
     }
   }
-
 }
 $externalLinksDefaultBackground: rgba(255, 255, 255, 0.04);
 

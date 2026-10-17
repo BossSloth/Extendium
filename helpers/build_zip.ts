@@ -12,12 +12,10 @@ const INCLUDED = [
   'plugin.json',
   'metadata.json',
   'CHANGELOG.md',
-  'fake-header-extension'
+  'fake-header-extension',
 ];
 
-const EXCLUDED = [
-  '.scss',
-];
+const EXCLUDED = ['.scss'];
 
 const ROOT_DIR = path.resolve(import.meta.dirname, '..');
 const PLUGIN_NAME = 'extendium';
@@ -35,8 +33,7 @@ async function runBuild(): Promise<boolean> {
 
     console.log(chalk.green.bold('✓ Build completed successfully'));
     return true;
-  }
-  catch (e) {
+  } catch (e) {
     console.error(chalk.red(`Error running build: ${e}`));
     return false;
   }
@@ -84,7 +81,7 @@ async function createZip(version: string): Promise<boolean> {
 
   // Filter out excluded files
   const filteredFiles = allFiles.filter((file) => {
-    if (EXCLUDED.some(excluded => file.includes(excluded))) {
+    if (EXCLUDED.some((excluded) => file.includes(excluded))) {
       console.log(chalk.gray(`- Skipping: ${PLUGIN_NAME}/${file}`));
       return false;
     }
@@ -131,11 +128,11 @@ async function main(): Promise<void> {
     process.exit(1);
   }
 
-  if (!await runBuild()) {
+  if (!(await runBuild())) {
     process.exit(1);
   }
 
-  if (!await createZip(version)) {
+  if (!(await createZip(version))) {
     process.exit(1);
   }
 

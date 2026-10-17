@@ -49,7 +49,13 @@ export function ExtensionAction({ children, onResizeCallback }: ExtensionActionP
         }
 
         if (newX !== dimensions.x || newY !== dimensions.y) {
-          popupWindow.SteamClient.Window.PositionWindowRelative(details, newX - dimensions.x, newY - dimensions.y, 0, 0);
+          popupWindow.SteamClient.Window.PositionWindowRelative(
+            details,
+            newX - dimensions.x,
+            newY - dimensions.y,
+            0,
+            0,
+          );
         }
       });
     });

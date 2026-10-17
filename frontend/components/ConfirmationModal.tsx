@@ -108,16 +108,12 @@ export function showConfirmationModal({
     );
   }
 
-  modal = showModal(
-    <WrappedModal />,
-    mainWindow,
-    {
-      popupHeight,
-      popupWidth,
-      bNeverPopOut,
-      strTitle: title,
-    },
-  );
+  modal = showModal(<WrappedModal />, mainWindow, {
+    popupHeight,
+    popupWidth,
+    bNeverPopOut,
+    strTitle: title,
+  });
 
   return modal;
 }

@@ -67,13 +67,23 @@ interface ChromePreferences {
 }
 
 interface ExtensionSettings {
-  active_permissions?: { api: string[]; explicit_host?: string[]; manifest_permissions: string[]; scriptable_host?: string[] };
+  active_permissions?: {
+    api: string[];
+    explicit_host?: string[];
+    manifest_permissions: string[];
+    scriptable_host?: string[];
+  };
   commands?: Record<string, unknown>;
   content_settings?: unknown[];
   creation_flags?: number;
   first_install_time?: string;
   from_webstore?: boolean;
-  granted_permissions?: { api: string[]; explicit_host?: string[]; manifest_permissions: string[]; scriptable_host?: string[] };
+  granted_permissions?: {
+    api: string[];
+    explicit_host?: string[];
+    manifest_permissions: string[];
+    scriptable_host?: string[];
+  };
   incognito_content_settings?: unknown[];
   incognito_preferences?: Record<string, unknown>;
   last_update_time?: string;
@@ -95,10 +105,27 @@ interface ExtensionSettings {
 
 function translateCrxId(hexStr: string): string {
   const mapping: Record<string, string> = {
-    '0': 'a', '1': 'b', '2': 'c', '3': 'd', '4': 'e', '5': 'f', '6': 'g', '7': 'h',
-    '8': 'i', '9': 'j', 'a': 'k', 'b': 'l', 'c': 'm', 'd': 'n', 'e': 'o', 'f': 'p',
+    '0': 'a',
+    '1': 'b',
+    '2': 'c',
+    '3': 'd',
+    '4': 'e',
+    '5': 'f',
+    '6': 'g',
+    '7': 'h',
+    '8': 'i',
+    '9': 'j',
+    a: 'k',
+    b: 'l',
+    c: 'm',
+    d: 'n',
+    e: 'o',
+    f: 'p',
   };
-  return hexStr.split('').map(c => mapping[c] || c).join('');
+  return hexStr
+    .split('')
+    .map((c) => mapping[c] || c)
+    .join('');
 }
 
 function computeExtensionId(publicKeyBase64: string): string {
@@ -142,7 +169,8 @@ function extractSeedFromPak(pakPath: string): string | null {
 
   const candidates: Array<{ resId: number; seed: string }> = [];
   for (let i = 0; i < entries.length - 1; i++) {
-    const entry = entries[i], nextEntry = entries[i + 1];
+    const entry = entries[i],
+      nextEntry = entries[i + 1];
     if (!entry || !nextEntry) continue;
     const size = nextEntry.offset - entry.offset;
     if (size === 64) {
@@ -150,7 +178,7 @@ function extractSeedFromPak(pakPath: string): string | null {
     }
   }
 
-  const preferred = candidates.find(c => c.resId === 146);
+  const preferred = candidates.find((c) => c.resId === 146);
   return preferred?.seed ?? candidates[0]?.seed ?? null;
 }
 
@@ -159,7 +187,7 @@ function getWindowsSid(): string {
   try {
     const output = execSync(
       'powershell -Command "[System.Security.Principal.WindowsIdentity]::GetCurrent().User.Value"',
-      { encoding: 'utf-8' }
+      { encoding: 'utf-8' },
     );
     const sid = output.trim();
     if (sid.startsWith('S-1-')) {
@@ -167,17 +195,22 @@ function getWindowsSid(): string {
       parts.pop();
       return parts.join('-');
     }
-  } catch { /* ignore */ }
+  } catch {
+    /* ignore */
+  }
   return '';
 }
 
 function removeEmptyChildren(obj: unknown): unknown {
   if (obj === null || obj === undefined) return obj;
   if (Array.isArray(obj)) {
-    return obj.map(removeEmptyChildren).filter(item =>
-      !(Array.isArray(item) && item.length === 0) &&
-      !(typeof item === 'object' && item !== null && Object.keys(item).length === 0)
-    );
+    return obj
+      .map(removeEmptyChildren)
+      .filter(
+        (item) =>
+          !(Array.isArray(item) && item.length === 0)
+          && !(typeof item === 'object' && item !== null && Object.keys(item).length === 0),
+      );
   }
   if (typeof obj === 'object') {
     const cleaned: Record<string, unknown> = {};
@@ -194,7 +227,9 @@ function removeEmptyChildren(obj: unknown): unknown {
 
 function computeMac(seed: Buffer, sid: string, jsonPath: string, value: unknown): string {
   const cleaned = removeEmptyChildren(value);
-  const jsonValue = JSON.stringify(cleaned).replace(/</g, '\\u003C').replace(/\\u2122/g, '™');
+  const jsonValue = JSON.stringify(cleaned)
+    .replace(/</g, '\\u003C')
+    .replace(/\\u2122/g, '™');
   const hmac = createHmac('sha256', seed);
   hmac.update(sid + jsonPath + jsonValue, 'utf-8');
   return hmac.digest('hex').toUpperCase();
@@ -206,7 +241,10 @@ function computeSuperMac(seed: Buffer, sid: string, macs: unknown): string {
   return hmac.digest('hex').toUpperCase();
 }
 
-interface HmacContext { seed: Buffer; sid: string }
+interface HmacContext {
+  seed: Buffer;
+  sid: string;
+}
 
 function initializeHmacContext(): HmacContext | null {
   const sid = getWindowsSid();
@@ -249,8 +287,8 @@ function main() {
 
   // Extract permissions from manifest
   const permissions = manifest.permissions || [];
-  const apiPermissions = permissions.filter((p: string) =>
-    !p.includes('://') && !p.startsWith('<') && !p.startsWith('*')
+  const apiPermissions = permissions.filter(
+    (p: string) => !p.includes('://') && !p.startsWith('<') && !p.startsWith('*'),
   );
 
   // Build extension settings
@@ -303,7 +341,10 @@ function main() {
   const preferencesFile = join(steamConfigDir, 'Preferences');
   const securePreferencesFile = join(steamConfigDir, 'Secure Preferences');
 
-  for (const [filePath, isSecure] of [[preferencesFile, false], [securePreferencesFile, true]] as const) {
+  for (const [filePath, isSecure] of [
+    [preferencesFile, false],
+    [securePreferencesFile, true],
+  ] as const) {
     if (!existsSync(filePath)) {
       if (isSecure) continue;
     }
@@ -333,7 +374,12 @@ function main() {
       if (!prefs.protection.macs.extensions.settings) prefs.protection.macs.extensions.settings = {};
       if (!prefs.protection.ui) prefs.protection.ui = {};
 
-      const extMac = computeMac(hmacContext.seed, hmacContext.sid, `extensions.settings.${extensionId}`, extensionSettings);
+      const extMac = computeMac(
+        hmacContext.seed,
+        hmacContext.sid,
+        `extensions.settings.${extensionId}`,
+        extensionSettings,
+      );
       prefs.protection.macs.extensions.settings[extensionId] = extMac;
 
       const devModeMac = computeMac(hmacContext.seed, hmacContext.sid, 'extensions.ui.developer_mode', true);
@@ -351,9 +397,9 @@ function main() {
   }
 
   if (isWindows) {
-    execSync('taskkill /F /IM steamwebhelper.exe')
+    execSync('taskkill /F /IM steamwebhelper.exe');
   } else {
-    execSync('pkill -f steamwebhelper')
+    execSync('pkill -f steamwebhelper');
   }
 
   console.log('\n✨ Installation complete!');

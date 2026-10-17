@@ -18,29 +18,36 @@ function openInSteam(event: React.MouseEvent<HTMLAnchorElement>): void {
   OpenTargetPage(href);
 }
 
-function LegacyExtensionDialogDescription({ extensions }: { readonly extensions: LegacyExtension[]; }): React.ReactNode {
+function LegacyExtensionDialogDescription({ extensions }: { readonly extensions: LegacyExtension[] }): React.ReactNode {
   return (
     <>
       <p>
-        The following extensions were found in Extendium's .extensions folder. These were previously installed using Extendium's old installation method and will no longer work.
+        The following extensions were found in Extendium's .extensions folder. These were previously installed using
+        Extendium's old installation method and will no longer work.
         <br />
         Please reinstall them from the Chrome Web Store to ensure they function correctly.
         <br />
         To not show this dialog again use the "Delete All" button below to delete all legacy extensions.
       </p>
       <div style={{ marginTop: '10px', marginBottom: '10px', maxHeight: '300px', overflowY: 'auto' }}>
-        {extensions.map(ext => (
-          <div key={ext.name} style={{ marginBottom: '8px', padding: '8px', backgroundColor: 'rgba(255, 255, 255, 0.05)', borderRadius: '4px' }}>
+        {extensions.map((ext) => (
+          <div
+            key={ext.name}
+            style={{
+              marginBottom: '8px',
+              padding: '8px',
+              backgroundColor: 'rgba(255, 255, 255, 0.05)',
+              borderRadius: '4px',
+            }}
+          >
             <div style={{ fontWeight: 'bold' }}>{ext.name}</div>
-            {ext.hasMetadata && ext.url !== undefined
-              ? (
-                  <a href={ext.url} onClick={openInSteam} style={{ fontSize: '12px', color: '#66c0f4' }}>
-                    Open in Chrome Web Store
-                  </a>
-                )
-              : (
-                  <div style={{ fontSize: '12px', color: '#8f98a0' }}>Manually installed (no web store link)</div>
-                )}
+            {ext.hasMetadata && ext.url !== undefined ? (
+              <a href={ext.url} onClick={openInSteam} style={{ fontSize: '12px', color: '#66c0f4' }}>
+                Open in Chrome Web Store
+              </a>
+            ) : (
+              <div style={{ fontSize: '12px', color: '#8f98a0' }}>Manually installed (no web store link)</div>
+            )}
           </div>
         ))}
       </div>
@@ -55,7 +62,7 @@ export function showLegacyExtensionDialog(extensionsJson: string): void {
     return;
   }
 
-  const extensionsWithUrls = extensions.filter(ext => ext.hasMetadata && ext.url !== undefined);
+  const extensionsWithUrls = extensions.filter((ext) => ext.hasMetadata && ext.url !== undefined);
   const hasAnyWebstoreExtensions = extensionsWithUrls.length > 0;
 
   // eslint-disable-next-line prefer-const
@@ -97,7 +104,9 @@ export function showLegacyExtensionDialog(extensionsJson: string): void {
         }
       }}
       onMiddleButton={handleDeleteAll}
-      onCancel={() => { dialog.Close(); }}
+      onCancel={() => {
+        dialog.Close();
+      }}
     />,
     mainWindow,
     {

@@ -16,16 +16,26 @@ interface BrowserViewProps {
   readonly url: string;
 }
 
-export function BrowserView({ url, expectedParentPopupTitle, onFocusChanged, onCreated, onClosed }: BrowserViewProps): React.ReactNode {
+export function BrowserView({
+  url,
+  expectedParentPopupTitle,
+  onFocusChanged,
+  onCreated,
+  onClosed,
+}: BrowserViewProps): React.ReactNode {
   const [browserView, setBrowserView] = useState<BrowserViewPopup | null>(null);
   const cdpSessionIdRef = useRef<string | null>(null);
 
   useEffect(() => {
     async function initializeBrowser(): Promise<void> {
       await waitUntil(() => {
-        return Array.from(g_PopupManager.m_mapPopups.values()).some(popup => popup.m_strTitle === expectedParentPopupTitle);
+        return Array.from(g_PopupManager.m_mapPopups.values()).some(
+          (popup) => popup.m_strTitle === expectedParentPopupTitle,
+        );
       });
-      const popup = Array.from(g_PopupManager.m_mapPopups.values()).find(value => value.m_strTitle === expectedParentPopupTitle);
+      const popup = Array.from(g_PopupManager.m_mapPopups.values()).find(
+        (value) => value.m_strTitle === expectedParentPopupTitle,
+      );
       if (!popup) {
         throw new Error('Popup not found');
       }
@@ -61,27 +71,37 @@ export function BrowserView({ url, expectedParentPopupTitle, onFocusChanged, onC
       newBrowserWindow.document.title = randomId;
 
       const targets = await ChromeDevToolsProtocol.send('Target.getTargets');
-      const target = targets.targetInfos.find(tr => tr.title === randomId);
+      const target = targets.targetInfos.find((tr) => tr.title === randomId);
       if (!target) {
         throw new Error('Target not found');
       }
 
-      const sessionId = (await ChromeDevToolsProtocol.send('Target.attachToTarget', {
-        targetId: target.targetId,
-        flatten: true,
-      })).sessionId;
+      const sessionId = (
+        await ChromeDevToolsProtocol.send('Target.attachToTarget', {
+          targetId: target.targetId,
+          flatten: true,
+        })
+      ).sessionId;
 
       cdpSessionIdRef.current = sessionId;
 
       await ChromeDevToolsProtocol.send('Runtime.enable', undefined, sessionId);
 
-      await ChromeDevToolsProtocol.send('Runtime.addBinding', {
-        name: 'extendiumNavigate',
-      }, sessionId);
+      await ChromeDevToolsProtocol.send(
+        'Runtime.addBinding',
+        {
+          name: 'extendiumNavigate',
+        },
+        sessionId,
+      );
 
-      await ChromeDevToolsProtocol.send('Page.navigate', {
-        url,
-      }, sessionId);
+      await ChromeDevToolsProtocol.send(
+        'Page.navigate',
+        {
+          url,
+        },
+        sessionId,
+      );
 
       RuntimeEvaluate(sessionId, handleBrowserViewCreated, [Array.from(getOptionLinks())]);
 
@@ -105,18 +125,14 @@ export function BrowserView({ url, expectedParentPopupTitle, onFocusChanged, onC
   return (
     <>
       <style>{browserViewStyle}</style>
-      <BrowserViewHost
-        browser={browserView}
-        className={findClass('Browser') as string}
-        visible
-      />
+      <BrowserViewHost browser={browserView} className={findClass('Browser') as string} visible />
     </>
   );
 }
 
 function handleBindingCalled(event: Protocol.Runtime.BindingCalledEvent): void {
   if (event.name === 'extendiumNavigate') {
-    const { url: targetUrl } = JSON.parse(event.payload) as { url: string; };
+    const { url: targetUrl } = JSON.parse(event.payload) as { url: string };
     handleUrlScheme(0, targetUrl);
   }
 }
@@ -141,7 +157,7 @@ async function waitUntil(condition: () => boolean, timeout = 5000): Promise<void
   });
 }
 
-const browserViewStyle = /* css */`
+const browserViewStyle = /* css */ `
 .DialogContent {
   padding: 0 !important;
   padding-top: 2rem !important;
@@ -160,9 +176,13 @@ async function handleBrowserViewCreated(optionsLinks: [string, string][]): Promi
     if (document.readyState === 'complete') {
       resolve();
     } else {
-      document.addEventListener('DOMContentLoaded', () => {
-        resolve();
-      }, { once: true });
+      document.addEventListener(
+        'DOMContentLoaded',
+        () => {
+          resolve();
+        },
+        { once: true },
+      );
     }
   });
 
@@ -179,15 +199,19 @@ async function handleBrowserViewCreated(optionsLinks: [string, string][]): Promi
       if (extensionId !== undefined) {
         event.preventDefault();
 
-        (globalThis as BindingGlobal).extendiumNavigate?.(JSON.stringify({ url: `steam://extendium/extension/${extensionId}/options` }));
+        (globalThis as BindingGlobal).extendiumNavigate?.(
+          JSON.stringify({ url: `steam://extendium/extension/${extensionId}/options` }),
+        );
       }
     }
   });
 }
 
 function getOptionLinks(): Map<string, string> {
-  return Array.from(useExtensionsStore.getState().extensions.values()).map((extension): [string, string] => {
-    return [extension.extensionInfo.optionsPage?.url ?? '', extension.id];
-  }).filter(link => link[0] !== '')
+  return Array.from(useExtensionsStore.getState().extensions.values())
+    .map((extension): [string, string] => {
+      return [extension.extensionInfo.optionsPage?.url ?? '', extension.id];
+    })
+    .filter((link) => link[0] !== '')
     .reduce((map, [key, value]) => map.set(key, value), new Map<string, string>());
 }

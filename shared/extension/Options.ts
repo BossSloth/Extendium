@@ -1,8 +1,7 @@
 import { Extension } from './Extension';
 
 export class Options {
-  constructor(readonly extension: Extension) {
-  }
+  constructor(readonly extension: Extension) {}
 
   public hasOptions(): boolean {
     return this.getOptionsPageUrl() !== undefined;

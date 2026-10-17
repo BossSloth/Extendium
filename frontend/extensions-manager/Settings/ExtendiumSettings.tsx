@@ -7,12 +7,19 @@ import { useSettingsStore } from './settingsStore';
 
 export function ExtendiumSettings(): React.ReactNode {
   const { setManagerPopup } = usePopupsStore();
-  const { barMarginLeft, barMarginRight, showCompatibilityPills, openLinksInCurrentTab, setSettings } = useSettingsStore();
+  const { barMarginLeft, barMarginRight, showCompatibilityPills, openLinksInCurrentTab, setSettings } =
+    useSettingsStore();
 
   return (
     <DialogBody>
       <div className="header">
-        <button onClick={() => { setManagerPopup({ route: null }); }} type="button" className="md-button">
+        <button
+          onClick={() => {
+            setManagerPopup({ route: null });
+          }}
+          type="button"
+          className="md-button"
+        >
           <MdArrowBack />
         </button>
         <h1>Extendium Settings</h1>
@@ -23,7 +30,9 @@ export function ExtendiumSettings(): React.ReactNode {
         value={barMarginRight}
         min={-200}
         max={200}
-        onChange={(value) => { setSettings({ barMarginRight: value }); }}
+        onChange={(value) => {
+          setSettings({ barMarginRight: value });
+        }}
         showValue
         editableValue
         resetValue={0}
@@ -33,7 +42,9 @@ export function ExtendiumSettings(): React.ReactNode {
         value={barMarginLeft}
         min={-200}
         max={200}
-        onChange={(value) => { setSettings({ barMarginLeft: value }); }}
+        onChange={(value) => {
+          setSettings({ barMarginLeft: value });
+        }}
         showValue
         editableValue
         resetValue={0}
@@ -42,7 +53,9 @@ export function ExtendiumSettings(): React.ReactNode {
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
           <span>Show compatibility pills</span>
           <Toggle
-            onChange={(value) => { setSettings({ showCompatibilityPills: value }); }}
+            onChange={(value) => {
+              setSettings({ showCompatibilityPills: value });
+            }}
             value={showCompatibilityPills}
           />
         </div>
@@ -52,12 +65,13 @@ export function ExtendiumSettings(): React.ReactNode {
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginTop: '1rem' }}>
           <span>Open in current tab</span>
           <Toggle
-            onChange={(value) => { setSettings({ openLinksInCurrentTab: value }); }}
+            onChange={(value) => {
+              setSettings({ openLinksInCurrentTab: value });
+            }}
             value={openLinksInCurrentTab}
           />
         </div>
       </Field>
-
     </DialogBody>
   );
 }

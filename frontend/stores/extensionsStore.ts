@@ -7,7 +7,7 @@ interface ExtensionsStore {
   extensions: Map<string, Extension>;
 }
 
-export const useExtensionsStore = create<ExtensionsStore>()(set => ({
+export const useExtensionsStore = create<ExtensionsStore>()((set) => ({
   extensions: new Map(),
   setExtension: (extension: Extension): void => {
     set((state) => {

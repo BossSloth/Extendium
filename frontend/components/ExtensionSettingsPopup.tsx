@@ -16,7 +16,9 @@ function ExtensionSettingsPopup(): React.ReactNode {
   return (
     <SteamDialog
       strTitle={settingsPopup.title}
-      onDismiss={() => { setSettingsPopup({ open: false }); }}
+      onDismiss={() => {
+        setSettingsPopup({ open: false });
+      }}
       popupWidth={mainWindow.innerWidth / 2}
       popupHeight={mainWindow.innerHeight / 2}
       resizable

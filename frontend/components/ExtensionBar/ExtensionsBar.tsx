@@ -24,7 +24,7 @@ export function ExtensionsBar(): JSX.Element {
 
     if (active.id !== over?.id) {
       setExtensionsOrder((items) => {
-        const oldIndex = items.indexOf((active.id as string));
+        const oldIndex = items.indexOf(active.id as string);
         const newIndex = items.indexOf((over?.id ?? '') as string);
 
         return arrayMove(items, oldIndex, newIndex);

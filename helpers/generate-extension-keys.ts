@@ -15,12 +15,27 @@ interface ExtensionKeys {
 
 function translateCrxId(hexStr: string): string {
   const mapping: Record<string, string> = {
-    '0': 'a', '1': 'b', '2': 'c', '3': 'd',
-    '4': 'e', '5': 'f', '6': 'g', '7': 'h',
-    '8': 'i', '9': 'j', 'a': 'k', 'b': 'l',
-    'c': 'm', 'd': 'n', 'e': 'o', 'f': 'p',
+    '0': 'a',
+    '1': 'b',
+    '2': 'c',
+    '3': 'd',
+    '4': 'e',
+    '5': 'f',
+    '6': 'g',
+    '7': 'h',
+    '8': 'i',
+    '9': 'j',
+    a: 'k',
+    b: 'l',
+    c: 'm',
+    d: 'n',
+    e: 'o',
+    f: 'p',
   };
-  return hexStr.split('').map(c => mapping[c] || c).join('');
+  return hexStr
+    .split('')
+    .map((c) => mapping[c] || c)
+    .join('');
 }
 
 async function generateExtensionKeys(): Promise<ExtensionKeys> {
@@ -32,7 +47,7 @@ async function generateExtensionKeys(): Promise<ExtensionKeys> {
       hash: 'SHA-256',
     },
     true,
-    ['sign', 'verify']
+    ['sign', 'verify'],
   );
 
   const publicKeyDer = await crypto.subtle.exportKey('spki', publicKey);
@@ -86,7 +101,7 @@ async function main() {
   console.log('   Users can now run the install script to add it to Steam.');
 }
 
-main().catch(error => {
+main().catch((error) => {
   console.error(`\n❌ Error: ${error.message}`);
   process.exit(1);
 });

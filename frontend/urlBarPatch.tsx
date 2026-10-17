@@ -7,13 +7,10 @@ import { WaitForElement } from './shared';
 
 export async function patchUrlBar(document: Document): Promise<void> {
   const classes = {
-    steamdesktop: findModule(e => e.FocusBar) as Record<string, string>,
-    steamPopupTab: findModule(e => e.BrowserTabIcon) as Record<string, string>,
+    steamdesktop: findModule((e) => e.FocusBar) as Record<string, string>,
+    steamPopupTab: findModule((e) => e.BrowserTabIcon) as Record<string, string>,
   };
-  const urlBar = await WaitForElement(
-    `.${classes.steamdesktop.URLBar}, .${classes.steamPopupTab.URLBar}`,
-    document,
-  );
+  const urlBar = await WaitForElement(`.${classes.steamdesktop.URLBar}, .${classes.steamPopupTab.URLBar}`, document);
 
   if (!urlBar) {
     return;

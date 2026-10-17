@@ -10,7 +10,7 @@
    */
   async function sleep(ms) {
     // eslint-disable-next-line no-promise-executor-return
-    return new Promise(resolve => setTimeout(resolve, ms));
+    return new Promise((resolve) => setTimeout(resolve, ms));
   }
 
   /**
@@ -76,7 +76,8 @@
 
       pageContent.insertAdjacentHTML('afterbegin', html);
     } else {
-      pageContent = document.querySelector('.responsive_page_content')
+      pageContent =
+        document.querySelector('.responsive_page_content')
         ?? document.querySelector('.headerOverride')
         ?? document.querySelector('center');
 

@@ -21,22 +21,21 @@ interface SettingsPopupProps {
   title: string;
 }
 
-export const usePopupsStore = create<PopupsStore>()(set =>
-  ({
-    managerPopup: {
-      open: false,
-      route: null,
-    },
-    setManagerPopup: (popup): void => {
-      set(state => ({ managerPopup: { ...state.managerPopup, ...popup } }));
-    },
+export const usePopupsStore = create<PopupsStore>()((set) => ({
+  managerPopup: {
+    open: false,
+    route: null,
+  },
+  setManagerPopup: (popup): void => {
+    set((state) => ({ managerPopup: { ...state.managerPopup, ...popup } }));
+  },
 
-    settingsPopup: {
-      open: false,
-      content: null,
-      title: '',
-    },
-    setSettingsPopup: (popup): void => {
-      set(state => ({ settingsPopup: { ...state.settingsPopup, ...popup } }));
-    },
-  }));
+  settingsPopup: {
+    open: false,
+    content: null,
+    title: '',
+  },
+  setSettingsPopup: (popup): void => {
+    set((state) => ({ settingsPopup: { ...state.settingsPopup, ...popup } }));
+  },
+}));

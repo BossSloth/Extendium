@@ -6,13 +6,18 @@ import { Options } from './Options';
 
 export class Extension {
   public readonly onInstalled = new ChromeEvent<(details: chrome.runtime.InstalledDetails) => void>();
-  public readonly onStorageChanged = new ChromeEvent<(changes: Record<string, chrome.storage.StorageChange>, areaName: chrome.storage.AreaName) => void>();
+  public readonly onStorageChanged = new ChromeEvent<
+    (changes: Record<string, chrome.storage.StorageChange>, areaName: chrome.storage.AreaName) => void
+  >();
 
   public readonly action: Action;
   public readonly logger: Logger;
   public readonly options: Options;
 
-  constructor(readonly manifest: chrome.runtime.ManifestV3, readonly extensionInfo: ExtensionInfo) {
+  constructor(
+    readonly manifest: chrome.runtime.ManifestV3,
+    readonly extensionInfo: ExtensionInfo,
+  ) {
     this.action = new Action(this);
     this.logger = new Logger(this, true, 'Extension');
     this.options = new Options(this);

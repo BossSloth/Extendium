@@ -9,7 +9,7 @@ export class ChromeEvent<T extends (...args: any) => unknown = () => void> imple
   }
 
   removeListener(callback: T): void {
-    this.listeners = this.listeners.filter(l => l !== callback);
+    this.listeners = this.listeners.filter((l) => l !== callback);
   }
 
   hasListener(callback: T): boolean {

@@ -8,17 +8,18 @@ interface ExtensionsBarStore {
 
 const extensionBarStorageKey = 'extendium_extensionsBarStore';
 
-export const useExtensionsBarStore = create<ExtensionsBarStore>()(persist(
-  set =>
-    ({
+export const useExtensionsBarStore = create<ExtensionsBarStore>()(
+  persist(
+    (set) => ({
       extensionsOrder: [],
       setExtensionsOrder: (order): void => {
-        set(state => ({
+        set((state) => ({
           extensionsOrder: typeof order === 'function' ? order(state.extensionsOrder) : order,
         }));
       },
     }),
-  {
-    name: extensionBarStorageKey,
-  },
-));
+    {
+      name: extensionBarStorageKey,
+    },
+  ),
+);

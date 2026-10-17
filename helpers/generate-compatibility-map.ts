@@ -2,44 +2,44 @@ import { readFileSync, writeFileSync } from 'fs';
 import { join } from 'path';
 
 function extractExtensionId(link: string): string | null {
-	const match = link.match(/\/detail\/[^/]+\/([a-z]+)/);
-	return match?.[1] ?? null;
+  const match = link.match(/\/detail\/[^/]+\/([a-z]+)/);
+  return match?.[1] ?? null;
 }
 
 function parseCSV(csvPath: string): Map<string, string> {
-	const content = readFileSync(csvPath, 'utf-8');
-	const lines = content.split('\n').slice(1);
+  const content = readFileSync(csvPath, 'utf-8');
+  const lines = content.split('\n').slice(1);
 
-	const compatibilityMap = new Map<string, string>();
+  const compatibilityMap = new Map<string, string>();
 
+  for (const line of lines) {
+    const trimmedLine = line.trim();
+    if (!trimmedLine) continue;
 
-	for (const line of lines) {
-		const trimmedLine = line.trim();
-		if (!trimmedLine) continue;
+    const columns = trimmedLine.split(',');
 
-		const columns = trimmedLine.split(',');
+    const name = columns[0]?.trim() ?? '';
+    const link = columns[1]?.trim() ?? '';
+    const compatibility = columns[2]?.trim() ?? '';
 
-		const name = columns[0]?.trim() ?? '';
-		const link = columns[1]?.trim() ?? '';
-		const compatibility = columns[2]?.trim() ?? '';
+    if (!name || !link || !compatibility) continue;
 
-		if (!name || !link || !compatibility) continue;
+    const extensionId = extractExtensionId(link);
+    if (extensionId) {
+      compatibilityMap.set(extensionId, compatibility);
+    }
+  }
 
-		const extensionId = extractExtensionId(link);
-		if (extensionId) {
-			compatibilityMap.set(extensionId, compatibility);
-		}
-	}
-
-	return compatibilityMap;
+  return compatibilityMap;
 }
 
 function generateTypeScriptFile(compatibilityMap: Map<string, string>, outputPath: string): void {
-	const entries = Array.from(compatibilityMap.entries())
-		.map(([id, compat]) => `  ${id}: '${compat}'`)
-		.join(',\n') + ",";
+  const entries =
+    Array.from(compatibilityMap.entries())
+      .map(([id, compat]) => `  ${id}: '${compat}'`)
+      .join(',\n') + ',';
 
-	const content = `// Auto-generated file - Do not edit manually
+  const content = `// Auto-generated file - Do not edit manually
 // Generated from compatibility CSV
 
 export type CompatibilityStatus = 'Perfect' | 'Great' | 'Okay' | 'Broken';
@@ -53,24 +53,24 @@ export function getExtensionCompatibility(extensionId: string): CompatibilitySta
 }
 `;
 
-	writeFileSync(outputPath, content, 'utf-8');
+  writeFileSync(outputPath, content, 'utf-8');
 }
 
 function main() {
-	const csvPath = process.argv[2];
+  const csvPath = process.argv[2];
 
-	if (!csvPath) {
-		console.error('Usage: bun run helpers/generate-compatibility-map.ts <path-to-csv>');
-		process.exit(1);
-	}
+  if (!csvPath) {
+    console.error('Usage: bun run helpers/generate-compatibility-map.ts <path-to-csv>');
+    process.exit(1);
+  }
 
-	const compatibilityMap = parseCSV(csvPath);
-	const outputPath = join(process.cwd(), 'frontend', 'extensionCompatibility.ts');
+  const compatibilityMap = parseCSV(csvPath);
+  const outputPath = join(process.cwd(), 'frontend', 'extensionCompatibility.ts');
 
-	generateTypeScriptFile(compatibilityMap, outputPath);
+  generateTypeScriptFile(compatibilityMap, outputPath);
 
-	console.log(`✓ Generated compatibility map with ${compatibilityMap.size} extensions`);
-	console.log(`✓ Output: ${outputPath}`);
+  console.log(`✓ Generated compatibility map with ${compatibilityMap.size} extensions`);
+  console.log(`✓ Output: ${outputPath}`);
 }
 
 main();

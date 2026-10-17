@@ -9,20 +9,16 @@ export function ToolbarManagerButton(): React.JSX.Element {
   function openExtensionsContextMenu(): void {
     if (!buttonRef.current) return;
 
-    showContextMenu(
-      <ToolbarManagerContextMenu />,
-      buttonRef.current,
-      {
-        bOverlapHorizontal: true,
-        bGrowToElementWidth: true,
-        bForcePopup: true,
-        bDisableMouseOverlay: true,
-        bCreateHidden: false,
-        bRetainOnHide: false,
-        bNoFocusWhenShown: undefined,
-        title: 'useBrowserViewContextMenu',
-      },
-    );
+    showContextMenu(<ToolbarManagerContextMenu />, buttonRef.current, {
+      bOverlapHorizontal: true,
+      bGrowToElementWidth: true,
+      bForcePopup: true,
+      bDisableMouseOverlay: true,
+      bCreateHidden: false,
+      bRetainOnHide: false,
+      bNoFocusWhenShown: undefined,
+      title: 'useBrowserViewContextMenu',
+    });
   }
 
   return (

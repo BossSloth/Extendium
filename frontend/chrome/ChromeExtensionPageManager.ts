@@ -1,7 +1,13 @@
 /* eslint-disable no-underscore-dangle */
 import { ChromeDevToolsProtocol } from '@steambrew/client';
 import { useExtensionsStore } from 'stores/extensionsStore';
-import { createTarget, JsonSerializable, RuntimeEvaluate, Serializable, waitForDomReadyInTarget } from './ChromePageManager';
+import {
+  createTarget,
+  JsonSerializable,
+  RuntimeEvaluate,
+  Serializable,
+  waitForDomReadyInTarget,
+} from './ChromePageManager';
 import { ExtensionInfo } from './types';
 
 export async function getExtensions(): Promise<ExtensionInfo[]> {
@@ -15,16 +21,24 @@ export async function getExtensionManifest(id: string): Promise<chrome.runtime.M
 }
 
 export async function getExtensionFileContent(id: string, filePath: string): Promise<string> {
-  return persistentExtensionsPage.evaluateExpression(async (_id: string, _filePath: string) => {
-    const response = await chrome.developerPrivate.requestFileSource({ extensionId: _id, pathSuffix: _filePath, message: '', manifestKey: 'Invalid!' });
+  return persistentExtensionsPage.evaluateExpression(
+    async (_id: string, _filePath: string) => {
+      const response = await chrome.developerPrivate.requestFileSource({
+        extensionId: _id,
+        pathSuffix: _filePath,
+        message: '',
+        manifestKey: 'Invalid!',
+      });
 
-    return response.beforeHighlight + response.highlight + response.afterHighlight;
-  }, [id, filePath]);
+      return response.beforeHighlight + response.highlight + response.afterHighlight;
+    },
+    [id, filePath],
+  );
 }
 
 export async function uninstallExtension(id: string): Promise<void> {
   await persistentExtensionsPage.evaluateExpression(
-    async (_id: string) => chrome.management.uninstall(_id),
+    async (_id: string) => chrome.management.uninstall(_id), //
     [id],
   );
   useExtensionsStore.getState().removeExtension(id);
@@ -38,7 +52,7 @@ declare global {
 
 const trackedEvents: `${chrome.developerPrivate.EventType}`[] = ['INSTALLED', 'UNINSTALLED', 'UNLOADED', 'LOADED'];
 
-type TrackedEvent = typeof trackedEvents[number];
+type TrackedEvent = (typeof trackedEvents)[number];
 
 type ExtensionEventCallback = (id: string, info?: chrome.developerPrivate.ExtensionInfo) => void;
 
@@ -58,9 +72,13 @@ class PersistentExtensionsPage {
 
     await waitForDomReadyInTarget(this.sessionId);
 
-    await RuntimeEvaluate(this.sessionId, () => {
-      document.title = 'Extendium Extensions Manager';
-    }, []);
+    await RuntimeEvaluate(
+      this.sessionId,
+      () => {
+        document.title = 'Extendium Extensions Manager';
+      },
+      [],
+    );
   }
 
   private async setupEventListener(): Promise<void> {
@@ -68,16 +86,20 @@ class PersistentExtensionsPage {
       throw new Error('Session not initialized');
     }
 
-    await RuntimeEvaluate(this.sessionId, (_trackedEvents: readonly string[]) => {
-      window.__extendiumOnInstalledQueue ??= new Map();
-      chrome.developerPrivate.onItemStateChanged.addListener((info) => {
-        if (_trackedEvents.includes(info.event_type)) {
-          const current = window.__extendiumOnInstalledQueue?.get(info.event_type) ?? [];
-          current.push(info.extensionInfo ?? info.item_id);
-          window.__extendiumOnInstalledQueue?.set(info.event_type, current);
-        }
-      });
-    }, [trackedEvents]);
+    await RuntimeEvaluate(
+      this.sessionId,
+      (_trackedEvents: readonly string[]) => {
+        window.__extendiumOnInstalledQueue ??= new Map();
+        chrome.developerPrivate.onItemStateChanged.addListener((info) => {
+          if (_trackedEvents.includes(info.event_type)) {
+            const current = window.__extendiumOnInstalledQueue?.get(info.event_type) ?? [];
+            current.push(info.extensionInfo ?? info.item_id);
+            window.__extendiumOnInstalledQueue?.set(info.event_type, current);
+          }
+        });
+      },
+      [trackedEvents],
+    );
 
     this.isInitialized = true;
 
@@ -94,13 +116,17 @@ class PersistentExtensionsPage {
 
       try {
         const extensionEvents = await RuntimeEvaluate(
-          this.sessionId,
-          () => (window.__extendiumOnInstalledQueue ? Object.fromEntries(window.__extendiumOnInstalledQueue) : undefined),
+          this.sessionId, //
+          () => {
+            return window.__extendiumOnInstalledQueue !== undefined
+              ? Object.fromEntries(window.__extendiumOnInstalledQueue)
+              : undefined;
+          },
         );
         if (extensionEvents) {
           Object.entries(extensionEvents).forEach(([eventType, extensionInfos]) => {
             if (PersistentExtensionsPage.isTrackedEvent(eventType)) {
-              (extensionInfos).forEach((extensionInfo) => {
+              extensionInfos.forEach((extensionInfo) => {
                 this.handleEvent(eventType, extensionInfo);
               });
             }

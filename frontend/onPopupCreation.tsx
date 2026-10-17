@@ -53,7 +53,7 @@ async function OnTabbedPopupBrowserCreation(popup: Popup): Promise<void> {
     }
   }
 
-  const urlBar = await WaitForElement(`.${findModule(e => e.BrowserTabIcon).URLBar}`, popup.m_popup.document);
+  const urlBar = await WaitForElement(`.${findModule((e) => e.BrowserTabIcon).URLBar}`, popup.m_popup.document);
 
   const observer = new MutationObserver(observerCallback);
 
@@ -90,8 +90,10 @@ export function modifyLinks(document: Document): void {
 }
 
 export function getOptionLinks(): Map<string, Extension> {
-  return Array.from(useExtensionsStore.getState().extensions.values()).map((extension): [string, Extension] => {
-    return [extension.extensionInfo.optionsPage?.url ?? '', extension];
-  }).filter(link => link[0] !== '')
+  return Array.from(useExtensionsStore.getState().extensions.values())
+    .map((extension): [string, Extension] => {
+      return [extension.extensionInfo.optionsPage?.url ?? '', extension];
+    })
+    .filter((link) => link[0] !== '')
     .reduce((map, [key, value]) => map.set(key, value), new Map<string, Extension>());
 }

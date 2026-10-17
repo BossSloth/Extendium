@@ -17,14 +17,13 @@ export interface Size {
   readonly width: number;
 }
 
-export function ExtensionButton({ extension }: { readonly extension: Extension; }): JSX.Element {
+export function ExtensionButton({ extension }: { readonly extension: Extension }): JSX.Element {
   const contextMenuWindowRef = useRef<Window | null>(null);
   const popupContextMenuRef = useRef<ContextMenu | undefined>(undefined);
   const focusHasBeenSetRef = useRef<boolean>(false);
   const resizeCallbackRef = useRef<((size: Size) => void) | undefined>(undefined);
 
-  const { attributes, listeners, setNodeRef, transform, transition, isDragging }
-    = useSortable({ id: extension.id });
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: extension.id });
 
   const style: CSSProperties = {
     transform: CSS.Transform.toString(transform),
@@ -58,7 +57,13 @@ export function ExtensionButton({ extension }: { readonly extension: Extension; 
         for (const elem of document.body.children) {
           if (!elem.checkVisibility()) continue;
           const rect = elem.getBoundingClientRect();
-          allElemPos.push({ top: rect.top, left: rect.left, right: rect.right, bottom: rect.bottom, outerHTML: elem.outerHTML });
+          allElemPos.push({
+            top: rect.top,
+            left: rect.left,
+            right: rect.right,
+            bottom: rect.bottom,
+            outerHTML: elem.outerHTML,
+          });
         }
         let minTop = -1;
         let minLeft = -1;
@@ -78,9 +83,13 @@ export function ExtensionButton({ extension }: { readonly extension: Extension; 
         if (document.readyState === 'complete') {
           resolve(getSize());
         } else {
-          document.addEventListener('DOMContentLoaded', () => {
-            resolve(getSize());
-          }, { once: true });
+          document.addEventListener(
+            'DOMContentLoaded',
+            () => {
+              resolve(getSize());
+            },
+            { once: true },
+          );
         }
       });
     });
@@ -106,32 +115,35 @@ export function ExtensionButton({ extension }: { readonly extension: Extension; 
     const keepOpen = clickEvent !== undefined && clickEvent.ctrlKey && clickEvent.altKey;
     const title = `${extension.name} - Popup`;
 
-    popupContextMenuRef.current = (
-      showContextMenu(
-        <ExtensionAction onResizeCallback={(callback: (size: Size) => void) => { resizeCallbackRef.current = callback; }}>
-          <BrowserView
-            expectedParentPopupTitle={title}
-            url={extension.action.popupUrl}
-            onFocusChanged={handleFocusChanged}
-            onCreated={onBrowserViewCreated}
-            onClosed={onBrowserViewClosed}
-          />
-        </ExtensionAction>,
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        targetElement!,
-        {
-          bOverlapHorizontal: true,
-          bGrowToElementWidth: true,
-          bForcePopup: true,
-          bDisableMouseOverlay: true,
-          bCreateHidden: false,
-          bRetainOnHide: keepOpen,
-          bNoFocusWhenShown: undefined,
-          title,
-          // @ts-expect-error extra prop added by patch
-          shouldAllowBlurClose: () => !focusHasBeenSetRef.current,
-        },
-      ) as ContextMenu);
+    popupContextMenuRef.current = showContextMenu(
+      <ExtensionAction
+        onResizeCallback={(callback: (size: Size) => void) => {
+          resizeCallbackRef.current = callback;
+        }}
+      >
+        <BrowserView
+          expectedParentPopupTitle={title}
+          url={extension.action.popupUrl}
+          onFocusChanged={handleFocusChanged}
+          onCreated={onBrowserViewCreated}
+          onClosed={onBrowserViewClosed}
+        />
+      </ExtensionAction>,
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      targetElement!,
+      {
+        bOverlapHorizontal: true,
+        bGrowToElementWidth: true,
+        bForcePopup: true,
+        bDisableMouseOverlay: true,
+        bCreateHidden: false,
+        bRetainOnHide: keepOpen,
+        bNoFocusWhenShown: undefined,
+        title,
+        // @ts-expect-error extra prop added by patch
+        shouldAllowBlurClose: () => !focusHasBeenSetRef.current,
+      },
+    ) as ContextMenu;
     overrideContextMenuCancel(popupContextMenuRef.current);
   }
 

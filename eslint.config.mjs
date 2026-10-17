@@ -50,7 +50,6 @@ export default defineConfig(
 
       // #region Formatting preferences
       '@stylistic/function-call-argument-newline': ['error', 'consistent'],
-      '@stylistic/member-delimiter-style': ['error', { singleline: { requireLast: true } }],
       '@stylistic/newline-per-chained-call': ['error', { ignoreChainWithDepth: 3 }],
       '@stylistic/padding-line-between-statements': [
         'error',
@@ -66,6 +65,13 @@ export default defineConfig(
       '@stylistic/lines-around-comment': 'off',
       '@stylistic/multiline-comment-style': 'off',
       '@stylistic/object-property-newline': 'off',
+      '@stylistic/function-paren-newline': 'off',
+      '@stylistic/arrow-parens': 'off',
+      '@stylistic/indent': 'off',
+      '@stylistic/wrap-regex': 'off',
+      '@stylistic/operator-linebreak': 'off',
+      '@stylistic/multiline-ternary': 'off',
+      '@stylistic/jsx-wrap-multilines': 'off',
       // #endregion
 
       // #region Preferences

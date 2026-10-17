@@ -1,39 +1,40 @@
 import { ExtendiumSettings, ExternalLink } from '@extension/Metadata';
 
 export function linkClickInterceptor(externalLinks: ExternalLink[], settings: ExtendiumSettings): void {
-  document.addEventListener('click', (event) => {
-    const target = event.target as HTMLElement;
+  document.addEventListener(
+    'click',
+    (event) => {
+      const target = event.target as HTMLElement;
 
-    const anchor = target.closest('a');
+      const anchor = target.closest('a');
 
-    if (anchor) {
-      const href = decodeURIComponent(anchor.href);
+      if (anchor) {
+        const href = decodeURIComponent(anchor.href);
 
-      if (settings.openLinksInCurrentTab === true) {
-        if (anchor.target === '_blank') {
-          anchor.target = '_self';
-        }
+        if (settings.openLinksInCurrentTab === true) {
+          if (anchor.target === '_blank') {
+            anchor.target = '_self';
+          }
 
-        const externalPrefixes = [
-          'steam://openurl_external/',
-          'steam://openurl/',
-        ];
+          const externalPrefixes = ['steam://openurl_external/', 'steam://openurl/'];
 
-        for (const prefix of externalPrefixes) {
-          if (href.startsWith(prefix)) {
-            const url = href.replace(prefix, '');
-            anchor.href = url;
-            break;
+          for (const prefix of externalPrefixes) {
+            if (href.startsWith(prefix)) {
+              const url = href.replace(prefix, '');
+              anchor.href = url;
+              break;
+            }
           }
         }
-      }
 
-      if (externalLinks.some(link => linkMatches(link, href))) {
-        location.href = `steam://openurl_external/${href}`;
-        event.preventDefault();
+        if (externalLinks.some((link) => linkMatches(link, href))) {
+          location.href = `steam://openurl_external/${href}`;
+          event.preventDefault();
+        }
       }
-    }
-  }, true);
+    },
+    true,
+  );
 }
 
 function linkMatches(link: ExternalLink, href: string): boolean {

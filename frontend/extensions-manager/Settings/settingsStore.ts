@@ -12,9 +12,9 @@ interface SettingsStore {
 
 const settingsStorageKey = 'extendium_settingsStore';
 
-export const useSettingsStore = create<SettingsStore>()(persist(
-  set =>
-    ({
+export const useSettingsStore = create<SettingsStore>()(
+  persist(
+    (set) => ({
       barMarginLeft: 0,
       barMarginRight: 0,
       showCompatibilityPills: true,
@@ -30,7 +30,8 @@ export const useSettingsStore = create<SettingsStore>()(persist(
         });
       },
     }),
-  {
-    name: settingsStorageKey,
-  },
-));
+    {
+      name: settingsStorageKey,
+    },
+  ),
+);

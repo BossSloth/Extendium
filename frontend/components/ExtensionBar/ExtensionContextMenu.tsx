@@ -7,7 +7,7 @@ import { createOptionsWindow } from '../../windowManagement';
 import { Separator } from '../Separator';
 import { useExtensionsBarStore } from '../stores/extensionsBarStore';
 
-function ExtensionContextMenu({ extension }: { readonly extension: Extension; }): JSX.Element {
+function ExtensionContextMenu({ extension }: { readonly extension: Extension }): JSX.Element {
   const { setExtensionsOrder } = useExtensionsBarStore();
 
   function openHomepage(): void {
@@ -18,40 +18,54 @@ function ExtensionContextMenu({ extension }: { readonly extension: Extension; })
 
   function unpin(): void {
     setExtensionsOrder((order) => {
-      return order.filter(id => id !== extension.id);
+      return order.filter((id) => id !== extension.id);
     });
   }
 
   return (
     <div className="extension-context-menu">
       <Menu label={extension.name}>
-        <MenuItem onClick={openHomepage}>
-          {extension.name}
-        </MenuItem>
+        <MenuItem onClick={openHomepage}>{extension.name}</MenuItem>
         <Separator />
-        {extension.options.hasOptions() && <MenuItem onClick={() => { createOptionsWindow(extension); }}>Options</MenuItem>}
-        <MenuItem onClick={() => { uninstallExtension(extension.id); }}>Remove extension</MenuItem>
+        {extension.options.hasOptions() && (
+          <MenuItem
+            onClick={() => {
+              createOptionsWindow(extension);
+            }}
+          >
+            Options
+          </MenuItem>
+        )}
+        <MenuItem
+          onClick={() => {
+            uninstallExtension(extension.id);
+          }}
+        >
+          Remove extension
+        </MenuItem>
         <MenuItem onClick={unpin}>Unpin</MenuItem>
         <Separator />
-        <MenuItem onClick={() => { openExtensionManagerPopup(`info/${extension.id}`); }}>Manage</MenuItem>
+        <MenuItem
+          onClick={() => {
+            openExtensionManagerPopup(`info/${extension.id}`);
+          }}
+        >
+          Manage
+        </MenuItem>
       </Menu>
     </div>
   );
 }
 
 export function showExtensionContextMenu(extension: Extension, targetElement: Element): void {
-  showContextMenu(
-    <ExtensionContextMenu extension={extension} />,
-    targetElement,
-    {
-      bOverlapHorizontal: true,
-      bGrowToElementWidth: true,
-      bForcePopup: true,
-      bDisableMouseOverlay: true,
-      bCreateHidden: false,
-      bRetainOnHide: false,
-      bNoFocusWhenShown: undefined,
-      title: 'useBrowserViewContextMenu',
-    },
-  );
+  showContextMenu(<ExtensionContextMenu extension={extension} />, targetElement, {
+    bOverlapHorizontal: true,
+    bGrowToElementWidth: true,
+    bForcePopup: true,
+    bDisableMouseOverlay: true,
+    bCreateHidden: false,
+    bRetainOnHide: false,
+    bNoFocusWhenShown: undefined,
+    title: 'useBrowserViewContextMenu',
+  });
 }

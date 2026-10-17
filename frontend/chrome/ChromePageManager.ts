@@ -3,8 +3,17 @@ import { mainWindow, uniqueId } from 'shared';
 
 export type JsonPrimitive = string | number | boolean | null | undefined | void;
 
-// eslint-disable-next-line @typescript-eslint/no-unsafe-function-type, @typescript-eslint/no-explicit-any
-type NonSerializable = Function | Map<any, any> | Set<unknown> | WeakMap<object, unknown> | WeakSet<object> | Date | RegExp | Error;
+type NonSerializable =
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
+  | Function
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  | Map<any, any>
+  | Set<unknown>
+  | WeakMap<object, unknown>
+  | WeakSet<object>
+  | Date
+  | RegExp
+  | Error;
 
 export type ExcludeNonSerializable<T> = Exclude<T, NonSerializable>;
 
@@ -23,13 +32,17 @@ export async function waitForDomReadyInTarget(sessionId: string, timeoutMs = 150
         return;
       }
 
-      const res = await ChromeDevToolsProtocol.send('Runtime.evaluate', {
-        expression: '({ readyState: document.readyState, hasBody: document.body !== null })',
-        returnByValue: true,
-        awaitPromise: true,
-      }, sessionId);
+      const res = await ChromeDevToolsProtocol.send(
+        'Runtime.evaluate',
+        {
+          expression: '({ readyState: document.readyState, hasBody: document.body !== null })',
+          returnByValue: true,
+          awaitPromise: true,
+        },
+        sessionId,
+      );
 
-      const value = res.result.value as { readyState?: string; hasBody?: boolean; } | undefined;
+      const value = res.result.value as { readyState?: string; hasBody?: boolean } | undefined;
       const hasBody = value?.hasBody === true;
       const ready = value?.readyState === 'interactive' || value?.readyState === 'complete';
 
@@ -60,20 +73,26 @@ export async function createTarget(url: string, waitForDom: boolean): Promise<st
   createHiddenWindow(randomId);
 
   const targets = await ChromeDevToolsProtocol.send('Target.getTargets');
-  const target = targets.targetInfos.find(tr => tr.title === randomId);
+  const target = targets.targetInfos.find((tr) => tr.title === randomId);
   if (target === undefined) {
     throw new Error('Failed to find target');
   }
 
-  const sessionId = (await ChromeDevToolsProtocol.send('Target.attachToTarget', {
-    targetId: target.targetId,
-    flatten: true,
-  })).sessionId;
+  const sessionId = (
+    await ChromeDevToolsProtocol.send('Target.attachToTarget', {
+      targetId: target.targetId,
+      flatten: true,
+    })
+  ).sessionId;
 
   // Navigate to the URL
-  await ChromeDevToolsProtocol.send('Page.navigate', {
-    url,
-  }, sessionId);
+  await ChromeDevToolsProtocol.send(
+    'Page.navigate',
+    {
+      url,
+    },
+    sessionId,
+  );
 
   if (waitForDom) {
     await waitForDomReadyInTarget(sessionId);
@@ -108,18 +127,22 @@ export async function RuntimeEvaluate<T extends JsonSerializable, TArgs extends 
   let expressionString: string;
 
   if (typeof expression === 'function') {
-    const serializedArgs = args ? args.map(arg => JSON.stringify(arg)).join(', ') : '';
+    const serializedArgs = args ? args.map((arg) => JSON.stringify(arg)).join(', ') : '';
     expressionString = `(${expression.toString()})(${serializedArgs})`;
   } else {
     expressionString = expression;
   }
 
-  const response = await ChromeDevToolsProtocol.send('Runtime.evaluate', {
-    expression: expressionString,
-    returnByValue: true,
-    awaitPromise: true,
-    userGesture: true,
-  }, sessionId);
+  const response = await ChromeDevToolsProtocol.send(
+    'Runtime.evaluate',
+    {
+      expression: expressionString,
+      returnByValue: true,
+      awaitPromise: true,
+      userGesture: true,
+    },
+    sessionId,
+  );
 
   if (response.exceptionDetails) {
     throw new Error(response.exceptionDetails.exception?.description ?? 'Unknown error');

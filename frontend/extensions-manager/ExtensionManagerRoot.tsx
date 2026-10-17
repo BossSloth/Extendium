@@ -16,14 +16,18 @@ export function ExtensionManagerRoot(): React.ReactNode {
     <>
       <div className="root-buttons">
         <DialogButton
-          onClick={() => { OpenTargetPage('https://chromewebstore.google.com/'); }}
+          onClick={() => {
+            OpenTargetPage('https://chromewebstore.google.com/');
+          }}
           className={`span-icon ${settingsClasses.SettingsDialogButton}`}
         >
           <FaStore />
           Install extension
         </DialogButton>
         <DialogButton
-          onClick={() => { OpenTargetPage('chrome://extensions'); }}
+          onClick={() => {
+            OpenTargetPage('chrome://extensions');
+          }}
           className={`span-icon ${settingsClasses.SettingsDialogButton}`}
         >
           <IoExtensionPuzzle />
@@ -31,7 +35,9 @@ export function ExtensionManagerRoot(): React.ReactNode {
         </DialogButton>
         <div style={{ display: 'flex', gap: '6px' }}>
           <DialogButton
-            onClick={() => { setManagerPopup({ route: 'settings' }); }}
+            onClick={() => {
+              setManagerPopup({ route: 'settings' });
+            }}
             className={`span-icon ${settingsClasses.SettingsDialogButton}`}
             style={{ width: '40px', minWidth: 'unset' }}
           >
@@ -52,7 +58,7 @@ export function ExtensionManagerRoot(): React.ReactNode {
             // Then sort alphabetically by name
             return a.name.localeCompare(b.name);
           })
-          .map(extension => (
+          .map((extension) => (
             <ExtensionManagerComponent key={extension.id} extension={extension} />
           ))}
       </div>

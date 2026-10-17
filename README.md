@@ -37,10 +37,10 @@ Here's how to get started with installing and managing extensions in Steam.
 
 - Click the **puzzle icon** to the right of the address bar to open the extensions menu.
 
-*Default Skin:*
+_Default Skin:_
 ![Extensions puzzle icon next to the address bar](images/extension-icon.png)
 
-*Fluenty Skin:*
+_Fluenty Skin:_
 ![Extensions puzzle icon next to the address bar with Fluenty skin](images/extension-icon-fluenty.png)
 
 > [!NOTE]
@@ -189,7 +189,6 @@ Contributions are welcome! Feel free to submit a pull request or open an issue t
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
 
 ## Keywords
 
